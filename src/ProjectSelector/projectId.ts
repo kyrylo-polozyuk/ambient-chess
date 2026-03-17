@@ -1,3 +1,6 @@
+export const AUDIOTOOL_STUDIO_BASE =
+  "https://beta.audiotool.com/studio?project="
+
 /**
  * Extracts project ID from projectUrl
  * Handles various URL formats:

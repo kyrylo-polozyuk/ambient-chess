@@ -40,8 +40,11 @@ export const ErrorHandler = () => {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       if (!errorShownRef.current) {
         errorShownRef.current = true
+        const reason = event.reason as unknown
         const errorMessage =
-          event.reason?.message || event.reason || "Unknown error"
+          (reason instanceof Error ? reason.message : null) ??
+          (typeof reason === "string" ? reason : null) ??
+          "Unknown error"
         showDialog({
           id: "uncaught-error",
           title: "An unexpected error occurred",

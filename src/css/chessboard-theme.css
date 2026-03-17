@@ -27,13 +27,6 @@
   display: block;
 }
 
-.game-status {
-  font-size: 1.1rem;
-  padding: 0.6rem 0;
-  min-height: 2.6rem;
-  display: flex;
-}
-
 /* Chessboard ambient theme - matches app dark theme */
 .cm-chessboard.ambient .board .square.white {
   fill: var(--chess-board-bg-light);

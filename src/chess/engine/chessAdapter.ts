@@ -42,7 +42,9 @@ const piecesToBoard = (
   pieces: BoardConfig["pieces"],
 ): ({ type: PieceSymbol; color: "w" | "b" } | null)[][] => {
   const board: ({ type: PieceSymbol; color: "w" | "b" } | null)[][] =
-    Array.from({ length: 8 }, () => Array(8).fill(null))
+    Array.from({ length: 8 }, () =>
+      Array.from({ length: 8 }, () => null),
+    ) as ({ type: PieceSymbol; color: "w" | "b" } | null)[][]
 
   if (!pieces) return board
 

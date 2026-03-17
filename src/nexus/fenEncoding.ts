@@ -82,8 +82,10 @@ const setBits = (
  * Parses FEN piece placement into 64 squares (row 0 = rank 8, row 7 = rank 1).
  */
 const parseFenPieces = (fenPlacement: string): (number | null)[][] => {
-  const board: (number | null)[][] = Array.from({ length: 8 }, () =>
-    Array(8).fill(null),
+  const board: (number | null)[][] = Array.from(
+    { length: 8 },
+    (): (number | null)[] =>
+      Array.from({ length: 8 }, (): number | null => null),
   )
   const ranks = fenPlacement.split("/")
   if (ranks.length !== 8) return board

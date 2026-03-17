@@ -5,7 +5,13 @@ import type { ChessboardRef } from "./chess/Chessboard"
 import { AudiotoolContext } from "./context"
 import { useDialog } from "./dialog/useDialog"
 import { useAuth } from "./hooks/useAuth"
-import { extractProjectId } from "./ProjectSelector/projectId"
+import {
+  AUDIOTOOL_STUDIO_BASE,
+  extractProjectId,
+} from "./ProjectSelector/projectId"
+
+const buildAudiotoolUrl = (projectUrl: string): string =>
+  `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
 import { trimUsername } from "./utils/username"
 
 type GameMode = "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
@@ -169,135 +175,140 @@ export const Game = (props: {
         blackPlayerName={blackPlayerName}
       />
 
-      <div className="row small-gap wrap center">
-        {!isVsCollaborator && (
-          <>
-            <button
-              className={` ${mode === "autoplay" ? "active" : ""} hug`}
-              onClick={() =>
-                setMode((m) => (m === "autoplay" ? "vsLocal" : "autoplay"))
-              }
-            >
-              AI vs AI
-            </button>
-            <button
-              className={` ${mode === "vsComputer" ? "active" : ""} hug`}
-              onClick={() =>
-                setMode((m) =>
-                  m === "vsComputer" ? "vsLocal" : "vsComputer",
-                )
-              }
-            >
-              Player vs AI
-            </button>
-            <button
-              className={` ${mode === "vsLocal" ? "active" : ""} hug`}
-              onClick={() => setMode("vsLocal")}
-            >
-              Player vs Local Player
-            </button>
-            <button
-              className="hug"
-              onClick={async () => {
-                const id = "vs-collaborator-instructions"
-                showDialog({
-                  id,
-                  title: "Player vs Collaborator",
-                  content: (
-                    <>
-                      <p>
-                        To play against an Audiotool project collaborator. In{" "}
-                        <a href={props.projectUrl} target="_blank" rel="noreferrer">
-                          Audiotool
-                        </a>
-                        , add a collaborator to the project.
-                      </p>
-                      <p>
-                        The collaborator options are accessed via the{" "}
-                        <span className="material-symbols">group</span> button on
-                        top right of the Audiotool.
-                      </p>
-                    </>
-                  ),
-                  buttons: [
-                    {
-                      label: "Cancel",
-                      onClick: () => closeDialog(id),
-                    },
-                    {
-                      label: "Done",
-                      variant: "primary",
-                      onClick: async () => {
-                        closeDialog(id)
-                        const switched = await checkCollaboratorMode()
-                        if (switched) {
-                          showShareDialog()
-                        } else {
-                          showDialog({
-                            id: "vs-collaborator-error",
-                            title: "No collaborator found",
-                            content: (
-                              <p>
-                                Make sure a collaborator is added and try again.
-                              </p>
-                            ),
-                            buttons: [
-                              {
-                                label: "OK",
-                                variant: "primary",
-                                onClick: () =>
-                                  closeDialog("vs-collaborator-error"),
-                              },
-                            ],
-                          })
-                        }
+      <div className="column full-width game-controls">
+        <div className="row small-gap wrap center">
+          {!isVsCollaborator && (
+            <>
+              <button
+                className={` ${mode === "autoplay" ? "active" : ""} hug`}
+                onClick={() =>
+                  setMode((m) => (m === "autoplay" ? "vsLocal" : "autoplay"))
+                }
+              >
+                AI vs AI
+              </button>
+              <button
+                className={` ${mode === "vsComputer" ? "active" : ""} hug`}
+                onClick={() =>
+                  setMode((m) =>
+                    m === "vsComputer" ? "vsLocal" : "vsComputer",
+                  )
+                }
+              >
+                Player vs AI
+              </button>
+              <button
+                className={` ${mode === "vsLocal" ? "active" : ""} hug`}
+                onClick={() => setMode("vsLocal")}
+              >
+                Player vs Local Player
+              </button>
+              <button
+                className="hug"
+                onClick={async () => {
+                  const id = "vs-collaborator-instructions"
+                  showDialog({
+                    id,
+                    title: "Player vs Collaborator",
+                    content: (
+                      <>
+                        <p>
+                          To play against an Audiotool project collaborator. In{" "}
+                          <a href={props.projectUrl} target="_blank" rel="noreferrer">
+                            Audiotool
+                          </a>
+                          , add a collaborator to the project.
+                        </p>
+                        <p>
+                          The collaborator options are accessed via the{" "}
+                          <span className="material-symbols">group</span> button on
+                          top right of the Audiotool.
+                        </p>
+                      </>
+                    ),
+                    buttons: [
+                      {
+                        label: "Cancel",
+                        onClick: () => closeDialog(id),
                       },
+                      {
+                        label: "Done",
+                        variant: "primary",
+                        onClick: () => {
+                          closeDialog(id)
+                          void (async () => {
+                            const switched = await checkCollaboratorMode()
+                            if (switched) {
+                              showShareDialog()
+                            } else {
+                              showDialog({
+                                id: "vs-collaborator-error",
+                                title: "No collaborator found",
+                                content: (
+                                  <p>
+                                    Make sure a collaborator is added and try
+                                    again.
+                                  </p>
+                                ),
+                                buttons: [
+                                  {
+                                    label: "OK",
+                                    variant: "primary",
+                                    onClick: () =>
+                                      closeDialog("vs-collaborator-error"),
+                                  },
+                                ],
+                              })
+                            }
+                          })()
+                        },
                     },
                   ],
                 })
-              }}
-            >
-              Player vs Collaborator
+                }}
+              >
+                Player vs Collaborator
+              </button>
+            </>
+          )}
+          {isVsCollaborator && (
+            <button className="hug" onClick={showShareDialog}>
+              <span className="material-symbols">share</span>
+              Share Link
             </button>
-          </>
-        )}
-        {isVsCollaborator && (
-          <button className="hug" onClick={showShareDialog}>
-            <span className="material-symbols">share</span>
-            Share
-          </button>
-        )}
-        {getRestartButton()}
-      </div>
-
-      {!isVsCollaborator && (
-        <div className="row small-gap wrap center">
-          <span>Engine</span>
-          <button
-            className={` ${useStockfish ? "" : "active"} hug`}
-            onClick={() => setUseStockfish(false)}
-            title="Use Stockfish engine via chess-api.com (stronger AI)"
-          >
-            Js Chess Engine
-          </button>
-          <button
-            className={` ${useStockfish ? "active" : ""} hug`}
-            onClick={() => setUseStockfish(true)}
-            title="Use Stockfish engine via chess-api.com (stronger AI)"
-          >
-            Stockfish
-          </button>
+          )}
+          {getRestartButton()}
         </div>
-      )}
+
+        {!isVsCollaborator && (
+          <div className="row small-gap wrap center">
+            <span>Engine</span>
+            <button
+              className={` ${useStockfish ? "" : "active"} hug`}
+              onClick={() => setUseStockfish(false)}
+              title="Use Stockfish engine via chess-api.com (stronger AI)"
+            >
+              Js Chess Engine
+            </button>
+            <button
+              className={` ${useStockfish ? "active" : ""} hug`}
+              onClick={() => setUseStockfish(true)}
+              title="Use Stockfish engine via chess-api.com (stronger AI)"
+            >
+              Stockfish
+            </button>
+          </div>
+        )}
+      </div>
 
       <p>
         Press <span className="material-symbols">play_arrow</span> in{" "}
         <a
-          href={`https://beta.audiotool.com/studio?project=${extractProjectId(props.projectUrl)}`}
+          href={buildAudiotoolUrl(props.projectUrl)}
           target="_blank"
           rel="noreferrer"
         >
-          Audiotool App
+          Audiotool
         </a>{" "}
         to start the music.
       </p>

@@ -7,7 +7,10 @@ import {
 import { useCallback, useEffect, useState } from "react"
 import { ProjectList } from "./ProjectList"
 import "./ProjectSelector.css"
-import { extractProjectId } from "./projectId"
+import {
+  AUDIOTOOL_STUDIO_BASE,
+  extractProjectId,
+} from "./projectId"
 
 type ProjectSelectorProps = {
   loginStatus: LoginStatus | undefined
@@ -82,7 +85,7 @@ export const ProjectSelector = ({
   )
 
   const handleProjectSelected = (projectId: string) => {
-    const projectUrl = `https://beta.audiotool.com/studio?project=${projectId}`
+    const projectUrl = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
     window.open(projectUrl, "_blank")
     void connectToProject(projectUrl)
   }
@@ -140,7 +143,7 @@ export const ProjectSelector = ({
     }
 
     const projectId = response.project.name.replace("projects/", "")
-    const projectUrl = `https://beta.audiotool.com/studio?project=${projectId}`
+    const projectUrl = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
     window.open(projectUrl, "_blank")
     onProjectUrlChange(projectUrl)
     void connectToProject(projectUrl)
@@ -154,7 +157,7 @@ export const ProjectSelector = ({
         empty project is recommended for the best experience.
 
         Once connected, you can start playing chess and the app will automatically update the tonematrix based on the chess game.
-        Press <span className="material-symbols">play_arrow</span> in Audiotool App to start the music.
+        Press <span className="material-symbols">play_arrow</span> in Audiotool to start the music.
       </blockquote>
 
       <div className="column grow full-width">

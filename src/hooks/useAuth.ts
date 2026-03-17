@@ -6,7 +6,7 @@ const CLIENT_ID = "d9c42b96-c08e-4afa-be36-9d3844777012"
 const REDIRECT_URL =
   import.meta.env.MODE === "development"
     ? "http://127.0.0.1:5173/"
-    : import.meta.env.VITE_REDIRECT_URL ||
+    : (import.meta.env.VITE_REDIRECT_URL as string | undefined) ??
       "https://kyrylo-polozyuk.github.io/ambient-chess-restart/"
 const SCOPE = "project:write"
 
@@ -36,11 +36,11 @@ export const useAuth = (): UseAuthReturn => {
     }
     hasInitialized.current = true
     const initializeLoginStatus = async () => {
-      const loginStatusResult: LoginStatus = await getLoginStatus({
+      const loginStatusResult = (await getLoginStatus({
         clientId: CLIENT_ID,
         redirectUrl: REDIRECT_URL,
         scope: SCOPE,
-      })
+      })) as LoginStatus
       setLoginStatus(loginStatusResult)
     }
 
