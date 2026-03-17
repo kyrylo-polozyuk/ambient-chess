@@ -83,6 +83,47 @@ export const Game = (props: {
     void checkCollaboratorMode()
   }, [checkCollaboratorMode])
 
+  const showShareDialog = useCallback(() => {
+    const shareUrl = window.location.href
+    showDialog({
+      id: "vs-collaborator-share-link",
+      title: "Ready to play!",
+      content: (
+        <div className="column small-gap">
+          <p>
+            Your collaborator can jump into this game with this link
+          </p>
+          <div className="row small-gap full-width">
+            <input
+              type="text"
+              readOnly
+              value={shareUrl}
+              className="share-link-input"
+              onClick={(e) =>
+                (e.target as HTMLInputElement).select()
+              }
+            />
+            <button
+              onClick={() =>
+                void navigator.clipboard.writeText(shareUrl)
+              }
+              className="hug"
+            >
+              <span className="material-symbols">content_copy</span>
+            </button>
+          </div>
+        </div>
+      ),
+      buttons: [
+        {
+          label: "Close",
+          variant: "default",
+          onClick: () => closeDialog("vs-collaborator-share-link"),
+        },
+      ],
+    })
+  }, [showDialog, closeDialog])
+
   const getRestartButton = () => (
     <button
       className="hug"
@@ -190,50 +231,7 @@ export const Game = (props: {
                         closeDialog(id)
                         const switched = await checkCollaboratorMode()
                         if (switched) {
-                          const shareUrl = window.location.href
-                          showDialog({
-                            id: "vs-collaborator-share-link",
-                            title: "Ready to play!",
-                            content: (
-                              <div className="column small-gap">
-                                <p>
-                                  All done! Your collaborator can jump into this
-                                  game with this link
-                                </p>
-                                <div className="row small-gap full-width">
-                                  <input
-                                    type="text"
-                                    readOnly
-                                    value={shareUrl}
-                                    className="share-link-input"
-                                    onClick={(e) =>
-                                      (e.target as HTMLInputElement).select()
-                                    }
-                                  />
-                                  <button
-                                    onClick={() =>
-                                      void navigator.clipboard.writeText(
-                                        shareUrl,
-                                      )
-                                    }
-                                    className="hug primary"
-                                  >
-                                    <span className="material-symbols">
-                                      content_copy
-                                    </span>
-                                  </button>
-                                </div>
-                              </div>
-                            ),
-                            buttons: [
-                              {
-                                label: "Close",
-                                variant: "default",
-                                onClick: () =>
-                                  closeDialog("vs-collaborator-share-link"),
-                              },
-                            ],
-                          })
+                          showShareDialog()
                         } else {
                           showDialog({
                             id: "vs-collaborator-error",
@@ -262,6 +260,12 @@ export const Game = (props: {
               Player vs Collaborator
             </button>
           </>
+        )}
+        {isVsCollaborator && (
+          <button className="hug" onClick={showShareDialog}>
+            <span className="material-symbols">share</span>
+            Share
+          </button>
         )}
         {getRestartButton()}
       </div>
