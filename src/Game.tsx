@@ -26,7 +26,6 @@ export const Game = (props: {
   const chessboardRef = useRef<ChessboardRef>(null)
 
   const [mode, setMode] = useState<GameMode>("vsLocal")
-  const [useStockfish, setUseStockfish] = useState(true)
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
   >(undefined)
@@ -169,7 +168,6 @@ export const Game = (props: {
         tonematrix={props.tonematrix}
         autoPlay={mode === "autoplay"}
         computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
-        useStockfish={useStockfish}
         userPlaysAs={userPlaysAs}
         whitePlayerName={whitePlayerName}
         blackPlayerName={blackPlayerName}
@@ -279,26 +277,6 @@ export const Game = (props: {
           )}
           {getRestartButton()}
         </div>
-
-        {!isVsCollaborator && (
-          <div className="row small-gap wrap center">
-            <span>Engine</span>
-            <button
-              className={` ${useStockfish ? "" : "active"} hug`}
-              onClick={() => setUseStockfish(false)}
-              title="Use Stockfish engine via chess-api.com (stronger AI)"
-            >
-              Js Chess Engine
-            </button>
-            <button
-              className={` ${useStockfish ? "active" : ""} hug`}
-              onClick={() => setUseStockfish(true)}
-              title="Use Stockfish engine via chess-api.com (stronger AI)"
-            >
-              Stockfish
-            </button>
-          </div>
-        )}
       </div>
 
       <p>
