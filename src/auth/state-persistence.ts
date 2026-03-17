@@ -25,7 +25,7 @@ export const extractProjectId = (projectUrl: string): string => {
 
     const pathParts = url.pathname.split("/").filter(Boolean);
     const projectIndex = pathParts.findIndex(
-      (part) => part === "studio" || part === "project"
+      (part) => part === "studio" || part === "project",
     );
     if (projectIndex !== -1 && pathParts[projectIndex + 1]) {
       return pathParts[projectIndex + 1];
@@ -34,7 +34,8 @@ export const extractProjectId = (projectUrl: string): string => {
     if (pathParts.length > 0) {
       return pathParts[pathParts.length - 1];
     }
-  } catch {
+  } catch (e) {
+    console.error("Failed to extract project ID from URL:", e);
     return trimmed;
   }
 

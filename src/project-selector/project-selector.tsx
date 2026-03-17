@@ -57,6 +57,7 @@ export const ProjectSelector = ({
         setLoading(false);
       } catch (e) {
         setLoading(false);
+        console.error("Failed to connect to project:", e);
         if (typeof e === "string") {
           setError(e);
         } else if (e instanceof Error) {
@@ -79,6 +80,7 @@ export const ProjectSelector = ({
         });
         setClient(audiotoolClient);
       } catch (e) {
+        console.error("Failed to initialize Audiotool client:", e);
         if (typeof e === "string") {
           setError(e);
         } else if (e instanceof Error) {

@@ -93,8 +93,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           gameRef.current = new Chess(fen);
           boardInstanceRef.current?.setPosition(fen, true);
           updateStatus();
-        } catch {
-          /* invalid FEN, ignore */
+        } catch (e) {
+          console.error("Invalid FEN from Nexus:", e);
         }
       },
       [updateStatus]
@@ -197,8 +197,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
             gameRef.current = new Chess(storedFen);
             boardInstanceRef.current?.setPosition(storedFen);
             updateStatus();
-          } catch {
-            /* invalid FEN, keep default position */
+          } catch (e) {
+            console.error("Invalid stored FEN:", e);
           }
         }
         hasLoadedFromStoredRef.current = true;
@@ -305,8 +305,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         if (boardInstanceRef.current === board) {
           try {
             clearMarkers();
-          } catch {
-            /* board may be tearing down, ignore */
+          } catch (e) {
+            console.error("Error clearing markers:", e);
           }
         }
       };

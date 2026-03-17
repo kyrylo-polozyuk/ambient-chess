@@ -56,7 +56,8 @@ export const getStockfishMove = async (
     }
 
     return move;
-  } catch {
+  } catch (e) {
+    console.error("Stockfish move error:", e);
     return null;
   }
 };

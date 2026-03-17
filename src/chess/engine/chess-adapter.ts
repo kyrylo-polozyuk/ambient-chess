@@ -108,7 +108,8 @@ export class Chess {
         captured: capturedPiece,
         flags: "",
       };
-    } catch {
+    } catch (e) {
+      console.error("Chess move error:", e);
       return null;
     }
   }

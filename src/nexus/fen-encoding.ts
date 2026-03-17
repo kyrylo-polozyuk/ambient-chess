@@ -188,7 +188,8 @@ export const patternsToFen = (
     const fullmove = Math.max(1, getBits(stateBits, 16, 16));
 
     return `${placement} ${turn} ${castling} ${enPassant} ${halfmove} ${fullmove}`;
-  } catch {
+  } catch (e) {
+    console.error("FEN encoding error:", e);
     return null;
   }
 };
