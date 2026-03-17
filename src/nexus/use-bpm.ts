@@ -1,19 +1,20 @@
-import type { SyncedDocument } from "@audiotool/nexus";
 import { Ticks } from "@audiotool/nexus/utils";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AudiotoolContext } from "../context";
 
 const DEFAULT_BPM = 120;
 
 /**
  * Subscribes to the project's BPM (tempo) from the config entity.
  * Creates config + groove if the project doesn't have one yet.
- * Returns the current BPM, or DEFAULT_BPM when no synced document.
+ * Returns the current BPM, or DEFAULT_BPM when no nexus.
  */
-export const useBpm = (syncedDocument: SyncedDocument | undefined): number => {
+export const useBpm = (): number => {
+  const { nexus } = useContext(AudiotoolContext);
   const [bpm, setBpm] = useState(DEFAULT_BPM);
 
   useEffect(() => {
-    if (!syncedDocument) {
+    if (!nexus) {
       setBpm(DEFAULT_BPM);
       return;
     }
@@ -21,7 +22,7 @@ export const useBpm = (syncedDocument: SyncedDocument | undefined): number => {
     let unsubscribe: { terminate: () => void } | undefined;
 
     const setupBpmSubscription = async () => {
-      await syncedDocument.modify((t) => {
+      await nexus.modify((t) => {
         // Ensure config exists (create if project is empty)
         const configs = t.entities.ofTypes("config").get();
         if (configs.length === 0) {
@@ -47,7 +48,7 @@ export const useBpm = (syncedDocument: SyncedDocument | undefined): number => {
           setBpm(tempoBpmField.value);
 
           unsubscribe?.terminate();
-          unsubscribe = syncedDocument.events.onUpdate(
+          unsubscribe = nexus.events.onUpdate(
             tempoBpmField,
             (value) => setBpm(value)
           );
@@ -60,7 +61,7 @@ export const useBpm = (syncedDocument: SyncedDocument | undefined): number => {
     return () => {
       unsubscribe?.terminate();
     };
-  }, [syncedDocument]);
+  }, [nexus]);
 
   return bpm;
 };

@@ -8,7 +8,8 @@ import {
   FEN,
 } from "cm-chessboard/src/Chessboard.js";
 import { MARKER_TYPE, Markers } from "cm-chessboard/src/extensions/markers/Markers.js";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { AudiotoolContext } from "../../context";
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
@@ -26,13 +27,13 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       autoPlay,
       computerPlaysAs,
       useStockfish = true,
-      syncedDocument,
       userPlaysAs,
       whitePlayerName,
       blackPlayerName,
     },
     ref
   ) => {
+    const { nexus } = useContext(AudiotoolContext);
     const boardRef = useRef<HTMLDivElement>(null);
     const boardInstanceRef = useRef<InstanceType<typeof CmChessboard> | null>(null);
     const gameRef = useRef(new Chess());
@@ -44,22 +45,22 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const [ready, setReady] = useState(false);
     const [fenPatternsReady, setFenPatternsReady] = useState(false);
 
-    const bpm = useBpm(syncedDocument);
-    const tonematrix = useCreateTonematrix(syncedDocument);
+    const bpm = useBpm();
+    const tonematrix = useCreateTonematrix();
     const moveDelayMs = 60000 / bpm;
 
     autoPlayRef.current = autoPlay;
 
     const syncBoardToTonematrix = useCallback(() => {
-      if (syncedDocument) {
+      if (nexus) {
         return updateTonematrixFromChessBoard(
-          syncedDocument,
+          nexus,
           gameRef.current.board(),
           gameRef.current.fen(),
         );
       }
       return Promise.resolve();
-    }, [syncedDocument]);
+    }, [nexus]);
 
     const whiteLabel = whitePlayerName
       ? `${whitePlayerName} (white)`
@@ -100,7 +101,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       [updateStatus]
     );
 
-    useFenSyncFromNexus(syncedDocument, handleFenChangeFromNexus, {
+    useFenSyncFromNexus(handleFenChangeFromNexus, {
       patternsReady: fenPatternsReady,
     });
 
@@ -181,17 +182,17 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     }, [updateStatus, userPlaysAs]);
 
     useEffect(() => {
-      if (!ready || !syncedDocument || !tonematrix) return;
+      if (!ready || !nexus || !tonematrix) return;
 
-      if (lastSyncedDocumentRef.current !== syncedDocument) {
-        lastSyncedDocumentRef.current = syncedDocument;
+      if (lastSyncedDocumentRef.current !== nexus) {
+        lastSyncedDocumentRef.current = nexus;
         hasLoadedFromStoredRef.current = false;
         setFenPatternsReady(false);
       }
       if (hasLoadedFromStoredRef.current) return;
 
       const initFromStored = async () => {
-        const storedFen = await getStoredFen(syncedDocument);
+        const storedFen = await getStoredFen(nexus);
         if (storedFen) {
           try {
             gameRef.current = new Chess(storedFen);
@@ -207,7 +208,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       };
 
       void initFromStored();
-    }, [ready, syncedDocument, tonematrix, syncBoardToTonematrix, updateStatus]);
+    }, [ready, nexus, tonematrix, syncBoardToTonematrix, updateStatus]);
 
     useEffect(() => {
       if (ready && autoPlay) {

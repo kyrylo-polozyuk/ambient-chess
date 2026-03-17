@@ -7,9 +7,9 @@ import type { SyncedDocument } from "@audiotool/nexus";
  * Run this only when creating a new project (empty document).
  */
 export const setupNewProject = async (
-  syncedDocument: SyncedDocument,
+  nexus: SyncedDocument,
 ): Promise<void> => {
-  await syncedDocument.modify((t) => {
+  await nexus.modify((t) => {
     t.create("mixerReverbAux", {
       displayParameters: {
         orderAmongStrips: 0,

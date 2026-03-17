@@ -3,6 +3,7 @@ import {
   type SyncedDocument,
 } from "@audiotool/nexus";
 import { useEffect, useRef, useState } from "react";
+import { AudiotoolContext } from "./context";
 import { LoginScreen } from "./auth/login-screen";
 import { extractProjectId } from "./auth/state-persistence";
 import { useAuth } from "./auth/use-auth";
@@ -17,9 +18,7 @@ export const App = () => {
   const { showDialog, closeDialog } = useDialog();
 
   const [client, setClient] = useState<AudiotoolClient | undefined>(undefined);
-  const [syncedDocument, setSyncedDocument] = useState<
-    SyncedDocument | undefined
-  >(undefined);
+  const [nexus, setNexus] = useState<SyncedDocument | undefined>(undefined);
   const [projectUrl, setProjectUrl] = useState<string>("");
   const [mode, setMode] = useState<
     "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
@@ -49,7 +48,7 @@ export const App = () => {
       return;
     }
 
-    setSyncedDocument(undefined);
+    setNexus(undefined);
     setClient(undefined);
     setProjectUrl("");
     setIsCurrentUserOwner(undefined);
@@ -66,7 +65,7 @@ export const App = () => {
     newProjectUrl: string
   ) => {
     setClient(newClient);
-    setSyncedDocument(newDocument);
+    setNexus(newDocument);
     setProjectUrl(newProjectUrl);
 
     const projectId = extractProjectId(newProjectUrl);
@@ -130,7 +129,7 @@ export const App = () => {
       return null;
     }
 
-    if (syncedDocument === undefined) {
+    if (nexus === undefined) {
       return (
         <ProjectSelector
           loginStatus={loginStatus}
@@ -189,7 +188,6 @@ export const App = () => {
           autoPlay={mode === "autoplay"}
           computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
           useStockfish={useStockfish}
-          syncedDocument={syncedDocument}
           userPlaysAs={userPlaysAs}
           whitePlayerName={whitePlayerName}
           blackPlayerName={blackPlayerName}
@@ -382,6 +380,7 @@ export const App = () => {
   };
 
   return (
+    <AudiotoolContext.Provider value={{ client, nexus }}>
     <div className="column app-container">
       <div className="row full-width top-bar">
         <div className="title-container">
@@ -391,7 +390,7 @@ export const App = () => {
         </div>
         {authStatus === "logged-in" && (
           <div className="user-info">
-            {syncedDocument && client && projectUrl && (
+            {nexus && client && projectUrl && (
               <>
                 <button
                   className="hug"
@@ -405,11 +404,11 @@ export const App = () => {
                       "",
                       `${window.location.pathname}?${params.toString()}`
                     );
-                    if (syncedDocument !== undefined) {
-                      await syncedDocument.stop();
+                    if (nexus !== undefined) {
+                      await nexus.stop();
                     }
                     setClient(undefined);
-                    setSyncedDocument(undefined);
+                    setNexus(undefined);
                     setIsCurrentUserOwner(undefined);
                     setWhitePlayerName(undefined);
                     setBlackPlayerName(undefined);
@@ -454,5 +453,6 @@ export const App = () => {
         <p>Powered by <a href="https://developer.audiotool.com/" target="_blank">Audiotool SDK</a>, <a href="https://github.com/shaack/cm-chessboard" target="_blank">cm-chessboard</a>, <a href="https://chess-api.com/" target="_blank">chess-api.com</a> and <a href="https://github.com/josefjadrny/js-chess-engine" target="_blank">js-chess-engine</a></p>
       </div>
     </div >
+    </AudiotoolContext.Provider>
   );
 };

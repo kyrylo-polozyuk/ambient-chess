@@ -43,17 +43,17 @@ export const ProjectSelector = ({
       );
 
       try {
-        const syncedDocument = await client.createSyncedDocument({
+        const nexus = await client.createSyncedDocument({
           project: projectId,
         });
 
-        await syncedDocument.start();
+        await nexus.start();
 
         if (isNewProject) {
-          await setupNewProject(syncedDocument);
+          await setupNewProject(nexus);
         }
 
-        onProjectConnected(client, syncedDocument, currentUrl.trim());
+        onProjectConnected(client, nexus, currentUrl.trim());
         setLoading(false);
       } catch (e) {
         setLoading(false);

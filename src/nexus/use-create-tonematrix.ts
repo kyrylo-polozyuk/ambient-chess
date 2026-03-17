@@ -1,31 +1,31 @@
 import type { SyncedDocument } from "@audiotool/nexus";
 import type { NexusEntity } from "@audiotool/nexus/document";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AudiotoolContext } from "../context";
 
 /**
  * Gets or creates a tonematrix named "Ambient Chess" with a blank pattern once the project is connected.
  * Returns the tonematrix entity (existing or newly created).
  */
-export const useCreateTonematrix = (
-  syncedDocument: SyncedDocument | undefined,
-): NexusEntity<"tonematrix"> | undefined => {
+export const useCreateTonematrix = (): NexusEntity<"tonematrix"> | undefined => {
+  const { nexus } = useContext(AudiotoolContext);
   const [tonematrix, setTonematrix] = useState<
     NexusEntity<"tonematrix"> | undefined
   >(undefined);
   const createdForDocument = useRef<SyncedDocument | null>(null);
 
   useEffect(() => {
-    if (!syncedDocument) {
+    if (!nexus) {
       setTonematrix(undefined);
       createdForDocument.current = null;
       return;
     }
-    if (createdForDocument.current === syncedDocument) {
+    if (createdForDocument.current === nexus) {
       return;
     }
 
     const getOrCreateTonematrix = async () => {
-      const result = await syncedDocument.modify((t) => {
+      const result = await nexus.modify((t) => {
         const allTonematrices = t.entities.ofTypes("tonematrix").get();
         let tonematrix = allTonematrices.find(
           (tm) => tm.fields.displayName.value === "Ambient Chess",
@@ -107,11 +107,11 @@ export const useCreateTonematrix = (
       });
 
       setTonematrix(result);
-      createdForDocument.current = syncedDocument;
+      createdForDocument.current = nexus;
     };
 
     void getOrCreateTonematrix();
-  }, [syncedDocument]);
+  }, [nexus]);
 
   return tonematrix;
 };

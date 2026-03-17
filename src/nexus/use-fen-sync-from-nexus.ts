@@ -1,5 +1,5 @@
-import type { SyncedDocument } from "@audiotool/nexus";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { AudiotoolContext } from "../context";
 import { getStoredFen } from "./update-tonematrix-from-chess";
 
 const DEBOUNCE_MS = 100;
@@ -9,22 +9,22 @@ const DEBOUNCE_MS = 100;
  * invokes onFenChange when the stored FEN is updated (e.g. from another tab/device).
  */
 export const useFenSyncFromNexus = (
-  syncedDocument: SyncedDocument | undefined,
   onFenChange: (fen: string | null) => void,
   options?: { patternsReady?: boolean }
 ): void => {
+  const { nexus } = useContext(AudiotoolContext);
   const onFenChangeRef = useRef(onFenChange);
   onFenChangeRef.current = onFenChange;
 
   useEffect(() => {
-    if (!syncedDocument || options?.patternsReady === false) return;
+    if (!nexus || options?.patternsReady === false) return;
 
     let debounceTimer: ReturnType<typeof setTimeout> | undefined;
     const terminations: { terminate: () => void }[] = [];
 
     const syncFromStored = () => {
       debounceTimer = undefined;
-      void getStoredFen(syncedDocument).then((fen) => {
+      void getStoredFen(nexus).then((fen) => {
         onFenChangeRef.current(fen);
       });
     };
@@ -34,7 +34,7 @@ export const useFenSyncFromNexus = (
       debounceTimer = setTimeout(syncFromStored, DEBOUNCE_MS);
     };
 
-    void syncedDocument.modify((t) => {
+    void nexus.modify((t) => {
       const tonematrix = t.entities
         .ofTypes("tonematrix")
         .get()
@@ -68,7 +68,7 @@ export const useFenSyncFromNexus = (
       ];
 
       for (const field of fieldsToWatch) {
-        const term = syncedDocument.events.onUpdate(field, () => scheduleSync());
+        const term = nexus.events.onUpdate(field, () => scheduleSync());
         terminations.push(term);
       }
     });
@@ -79,5 +79,5 @@ export const useFenSyncFromNexus = (
         term.terminate();
       }
     };
-  }, [syncedDocument, options?.patternsReady]);
+  }, [nexus, options?.patternsReady]);
 };

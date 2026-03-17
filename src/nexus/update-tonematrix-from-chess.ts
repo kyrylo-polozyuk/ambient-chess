@@ -7,10 +7,10 @@ import { fenToPatterns, patternsToFen } from "./fen-encoding";
  * Reads the stored FEN from tonematrix pattern slots 1 and 2.
  */
 export const getStoredFen = async (
-  syncedDocument: SyncedDocument,
+  nexus: SyncedDocument,
 ): Promise<string | null> => {
   let result: string | null = null;
-  await syncedDocument.modify((t) => {
+  await nexus.modify((t) => {
     const tonematrix = t.entities
       .ofTypes("tonematrix")
       .get()
@@ -72,14 +72,14 @@ const blankSteps = () => {
  * Slot 0: visual board. Slots 1-2: binary FEN encoding for persistence.
  */
 export const updateTonematrixFromChessBoard = async (
-  syncedDocument: SyncedDocument,
+  nexus: SyncedDocument,
   board: ChessBoard,
   fen: string,
 ): Promise<void> => {
   const grid = chessBoardToTonematrixPattern(board);
   const [fenPattern1, fenPattern2] = fenToPatterns(fen);
 
-  await syncedDocument.modify((t) => {
+  await nexus.modify((t) => {
     const tonematrix = t.entities
       .ofTypes("tonematrix")
       .get()

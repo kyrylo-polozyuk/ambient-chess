@@ -28,7 +28,7 @@ export type ProjectSelectorProps = {
   loginStatus: LoginStatus | undefined;
   onProjectConnected: (
     client: AudiotoolClient,
-    syncedDocument: SyncedDocument,
+    nexus: SyncedDocument,
     projectUrl: string,
   ) => void;
   projectUrl?: string;
