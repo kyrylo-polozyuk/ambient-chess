@@ -376,9 +376,6 @@ export const App = () => {
           </div>
         )}
 
-        {isVsCollaborator && (<div className="row small-gap">
-          {getRestartButton()}
-        </div>)}
         <p>Press <span className="material-symbols">play_arrow</span> in <a href={`https://beta.audiotool.com/studio?project=${extractProjectId(projectUrl)}`} target="_blank">Audiotool App</a> to start the music.</p>
       </div>
     );
