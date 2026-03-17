@@ -158,7 +158,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       const initialFen = game.fen();
       const board = new CmChessboard(boardRef.current, {
         position: initialFen,
-        assetsUrl: "/chessboard-assets/",
+        assetsUrl: `${import.meta.env.BASE_URL}chessboard-assets/`,
         orientation: userPlaysAs === "b" ? COLOR.black : COLOR.white,
         style: {
           borderType: BORDER_TYPE.none,
