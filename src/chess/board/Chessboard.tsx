@@ -37,10 +37,10 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       tonematrix,
       autoPlay,
       computerPlaysAs,
-      useStockfish = true,
       userPlaysAs,
       whitePlayerName,
       blackPlayerName,
+      onStatusChange,
     },
     ref,
   ) => {
@@ -54,7 +54,6 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const autoPlayRef = useRef(autoPlay)
     const hasLoadedFromStoredRef = useRef(false)
     const lastSyncedDocumentRef = useRef<SyncedDocument | undefined>(undefined)
-    const [status, setStatus] = useState("White to move")
     const [ready, setReady] = useState(false)
     const [fenPatternsReady, setFenPatternsReady] = useState(false)
 
@@ -84,17 +83,17 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const updateStatus = useCallback(() => {
       const game = gameRef.current
       if (game.isCheckmate()) {
-        setStatus(
+        onStatusChange(
           game.turn() === "w"
             ? `${blackLabel} wins by checkmate!`
             : `${whiteLabel} wins by checkmate!`,
         )
       } else if (game.isDraw()) {
-        setStatus("Game drawn!")
+        onStatusChange("Game drawn!")
       } else if (game.isStalemate()) {
-        setStatus("Stalemate!")
+        onStatusChange("Stalemate!")
       } else {
-        setStatus(`${game.turn() === "w" ? whiteLabel : blackLabel} to move`)
+        onStatusChange(`${game.turn() === "w" ? whiteLabel : blackLabel} to move`)
       }
     }, [whiteLabel, blackLabel])
 
@@ -135,12 +134,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
         let bestMove: import("../engine/chessAdapter").VerboseMove | null
 
-        if (useStockfish) {
-          bestMove = await getStockfishMove(game.fen())
-          if (!bestMove) {
-            bestMove = game.getAiMove(4)
-          }
-        } else {
+        bestMove = await getStockfishMove(game.fen())
+        if (!bestMove) {
           bestMove = game.getAiMove(4)
         }
 
@@ -162,7 +157,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           )
         }
       },
-      [updateStatus, syncBoardToTonematrix, useStockfish],
+      [updateStatus, syncBoardToTonematrix],
     )
 
     useImperativeHandle(ref, () => ({ restart }), [restart])
@@ -353,12 +348,9 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     ])
 
     return (
-      <>
-        <div className="board-wrapper">
-          <div ref={boardRef} className="board-container" />
-        </div>
-        <div className="game-status">{status}</div>
-      </>
+      <div className="board-wrapper">
+        <div ref={boardRef} className="board-container" />
+      </div>
     )
   },
 )

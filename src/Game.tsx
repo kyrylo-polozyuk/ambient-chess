@@ -9,10 +9,10 @@ import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
 } from "./ProjectSelector/projectId"
+import { trimUsername } from "./utils/username"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
-import { trimUsername } from "./utils/username"
 
 type GameMode = "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
 
@@ -26,6 +26,7 @@ export const Game = (props: {
   const chessboardRef = useRef<ChessboardRef>(null)
 
   const [mode, setMode] = useState<GameMode>("vsLocal")
+  const [status, setStatus] = useState<string>("")
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
   >(undefined)
@@ -171,12 +172,25 @@ export const Game = (props: {
         userPlaysAs={userPlaysAs}
         whitePlayerName={whitePlayerName}
         blackPlayerName={blackPlayerName}
+        onStatusChange={setStatus}
       />
 
       <div className="column full-width game-controls">
         <div className="row small-gap wrap center">
+          <div className="game-status">{status}</div>
+          {isVsCollaborator && (
+            <button className="hug" onClick={showShareDialog}>
+              <span className="material-symbols">share</span>
+              Share Link
+            </button>
+          )}
+          {getRestartButton()}
+        </div>
+
+        <div className="row small-gap wrap center">
           {!isVsCollaborator && (
             <>
+              Mode:
               <button
                 className={` ${mode === "autoplay" ? "active" : ""} hug`}
                 onClick={() =>
@@ -260,23 +274,17 @@ export const Game = (props: {
                             }
                           })()
                         },
-                    },
-                  ],
-                })
+                      },
+                    ],
+                  })
                 }}
               >
                 Player vs Collaborator
               </button>
             </>
           )}
-          {isVsCollaborator && (
-            <button className="hug" onClick={showShareDialog}>
-              <span className="material-symbols">share</span>
-              Share Link
-            </button>
-          )}
-          {getRestartButton()}
         </div>
+
       </div>
 
       <p>

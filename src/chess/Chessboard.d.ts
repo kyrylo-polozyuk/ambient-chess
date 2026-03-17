@@ -13,8 +13,8 @@ import type { NexusEntity } from "@audiotool/nexus/document"
 export type ChessboardProps = {
   tonematrix: NexusEntity<"tonematrix">
   autoPlay: boolean
+  onStatusChange: (status: string) => void
   computerPlaysAs?: "w" | "b"
-  useStockfish?: boolean
   /** When set, user can only move pieces of this color (e.g. vsCollaborator mode). */
   userPlaysAs?: "w" | "b"
   /** Display names for white/black (e.g. in vsCollaborator mode). Format: "name (white)" / "name (black)". */
