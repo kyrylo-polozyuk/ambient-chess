@@ -228,7 +228,7 @@ export const Game = (props: {
                             buttons: [
                               {
                                 label: "Close",
-                                variant: "primary",
+                                variant: "default",
                                 onClick: () =>
                                   closeDialog("vs-collaborator-share-link"),
                               },
