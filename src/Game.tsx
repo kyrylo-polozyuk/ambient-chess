@@ -109,7 +109,7 @@ export const Game = (props: {
               }
               className="hug"
             >
-              <span className="material-symbols">content_copy</span>
+              <span className="material-symbols">content_copy</span> Copy
             </button>
           </div>
         </div>
