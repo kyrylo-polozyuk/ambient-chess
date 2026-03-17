@@ -11,11 +11,13 @@ export const ProjectList = ({
 }: ProjectListProps) => {
   const [projects, setProjects] = useState<ProjectListItemType[]>([]);
   const [nextPageToken, setNextPageToken] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
   const fetchProjects = useCallback(
     async (pageToken: string = "") => {
       if (!client) return;
 
+      if (!pageToken) setLoading(true);
       try {
         const request = {
           pageSize: 10,
@@ -56,6 +58,8 @@ export const ProjectList = ({
         setNextPageToken(response.nextPageToken || "");
       } catch (e) {
         console.error("Failed to fetch projects:", e);
+      } finally {
+        if (!pageToken) setLoading(false);
       }
     },
     [client]
@@ -98,6 +102,8 @@ export const ProjectList = ({
             )}
           </div>
         </>
+      ) : loading ? (
+        <p className="secondary-text">Loading…</p>
       ) : (
         <p className="secondary-text">No projects found</p>
       )}
