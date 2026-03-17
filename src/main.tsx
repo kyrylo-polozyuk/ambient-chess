@@ -1,13 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { App } from "./app";
-import { DialogProvider } from "./dialog/dialog-context";
-import "./style.css";
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import { App } from "./App.tsx"
+import "./css/index.css"
+import "./css/typography.css"
+import "./css/layout.css"
+import "./css/buttons.css"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <DialogProvider>
-      <App />
-    </DialogProvider>
-  </StrictMode>,
-);
+    <App>
+    </App>
+  </StrictMode>
+)

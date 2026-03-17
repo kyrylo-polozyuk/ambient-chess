@@ -62,30 +62,30 @@ export type Square =
   | "e1"
   | "f1"
   | "g1"
-  | "h1";
+  | "h1"
 
-export type PieceSymbol = "p" | "n" | "b" | "r" | "q" | "k";
+export type PieceSymbol = "p" | "n" | "b" | "r" | "q" | "k"
 
 export type VerboseMove = {
-  from: string;
-  to: string;
-  piece: PieceSymbol;
-  color: "w" | "b";
-  captured?: PieceSymbol;
-  promotion?: PieceSymbol;
-  flags: string;
-};
+  from: string
+  to: string
+  piece: PieceSymbol
+  color: "w" | "b"
+  captured?: PieceSymbol
+  promotion?: PieceSymbol
+  flags: string
+}
 
-export type ChessBoardRow = ({ type: PieceSymbol; color: "w" | "b" } | null)[];
-export type ChessBoard = ChessBoardRow[];
+export type ChessBoardRow = ({ type: PieceSymbol; color: "w" | "b" } | null)[]
+export type ChessBoard = ChessBoardRow[]
 
 export type ChessApiResponse = {
-  move?: string;
-  from?: string;
-  to?: string;
-  piece?: string;
-  turn?: "w" | "b";
-  promotion?: string;
-  flags?: string;
-  captured?: string;
-};
+  move?: string
+  from?: string
+  to?: string
+  piece?: string
+  turn?: "w" | "b"
+  promotion?: string
+  flags?: string
+  captured?: string
+}

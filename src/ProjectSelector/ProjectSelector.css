@@ -1,0 +1,50 @@
+.project-selector-container {
+  max-width: 600px;
+  padding: 24px;
+}
+
+.project-selector-intro {
+  text-align: center;
+}
+
+.project-list-item {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  min-height: 32px;
+}
+
+.project-list-item-content {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-list-item-collaborators {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.project-list-item-icon {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.project-list-container {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.project-list-container.column {
+  gap: 0;
+}
+
+.project-list-container button:not(.project-list-item) {
+  margin-top: 16px;
+}

@@ -1,0 +1,22 @@
+:root {
+  --accent-0: #4a5c52;
+  --accent-1: #7a8d82;
+  --accent-2: #c2d1c8;
+  --accent-3: #e8f2ed;
+
+  --color-bg: #2d2b36;
+  --color-bg-raised: #383642;
+  --color-text: var(--accent-2);
+  --color-text-muted: var(--accent-1);
+  --color-text-link: var(--accent-3);
+  --color-heading: var(--color-text);
+
+  /* Buttons */
+  --btn-bg: #3f3c4a;
+  --btn-hover: var(--accent-0);
+  --btn-secondary-bg: var(--color-bg-raised);
+
+  /* Chess (for future use) */
+  --chess-board-bg-dark: #b58863;
+  --chess-board-bg-light: #f0d9b5;
+}

@@ -1,0 +1,52 @@
+.board-wrapper {
+  flex: 1 1 0;
+  min-height: 200px;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  container-type: size;
+}
+
+.board-container {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.board-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.game-status {
+  font-size: 1.1rem;
+  padding: 0.6rem 0;
+  min-height: 2.6rem;
+  display: flex;
+}
+
+/* Chessboard ambient theme - matches app dark theme */
+.cm-chessboard.ambient .board .square.white {
+  fill: var(--chess-board-bg-light);
+}
+
+.cm-chessboard.ambient .board .square.black {
+  fill: var(--chess-board-bg-dark);
+}
+
+.cm-chessboard.ambient .coordinates .coordinate.black {
+  fill: var(--chess-board-bg-light);
+}
+
+.cm-chessboard.ambient .coordinates .coordinate.white {
+  fill: var(--chess-board-bg-dark);
+}
