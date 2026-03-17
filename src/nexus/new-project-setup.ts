@@ -275,7 +275,6 @@ export const setupNewProject = async (
       glideTimeMs: 0,
       tuneSemitones: 0,
       playModeIndex: 2,
-      microTuning: undefined,
       isActive: true,
     });
     const pulsar_0 = t.create("pulsar", {
