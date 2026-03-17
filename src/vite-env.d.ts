@@ -7,6 +7,7 @@ declare module "cm-chessboard/src/Chessboard.js" {
   export class Chessboard {
     constructor(context: HTMLElement, props?: Record<string, unknown>)
     setPosition(fen: string, animated?: boolean): Promise<void>
+    setOrientation(color: "w" | "b", animated?: boolean): Promise<void>
     destroy(): void
     addMarker(type: { class: string; slice: string }, square: string): void
     removeMarkers(type?: { class: string; slice: string }, square?: string): void

@@ -1,5 +1,5 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
-import { useCallback, useContext, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { Chessboard } from "./chess/board/Chessboard"
 import type { ChessboardRef } from "./chess/Chessboard"
 import { AudiotoolContext } from "./context"
@@ -77,6 +77,11 @@ export const Game = (props: {
     }
     return false
   }, [client, loginStatus, props.projectUrl])
+
+  // Auto-detect vsCollaborator when opening shared link (so black player sees flipped board)
+  useEffect(() => {
+    void checkCollaboratorMode()
+  }, [checkCollaboratorMode])
 
   const getRestartButton = () => (
     <button
