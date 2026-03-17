@@ -8,7 +8,7 @@ import {
   QUEEN,
   ROOK,
   WHITE,
-} from "../chess/engine/chess-adapter"
+} from "../chess/engine/chessAdapter"
 
 /** Empty square pattern (all 0s) */
 const EMPTY_PATTERN: [[number, number], [number, number]] = [

@@ -11,7 +11,7 @@ export type { PieceSymbol, Square, VerboseMove } from "../chess"
 
 const { Game } = jsChessEngine
 
-// Re-export constants for chess-to-pattern (matches chess.js)
+// Re-export constants for chessToPattern (matches chess.js)
 export const WHITE = "w"
 export const BLACK = "b"
 export const PAWN = "p"

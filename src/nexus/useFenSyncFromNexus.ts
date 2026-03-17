@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef } from "react"
 import { AudiotoolContext } from "../context"
-import { getStoredFen } from "./update-tonematrix-from-chess"
+import { getStoredFen } from "./updateTonematrixFromChess"
 
 const DEBOUNCE_MS = 100
 

@@ -4,7 +4,7 @@
  */
 
 import type { ChessApiResponse } from "../chess"
-import type { PieceSymbol, VerboseMove } from "./chess-adapter"
+import type { PieceSymbol, VerboseMove } from "./chessAdapter"
 
 const CHESS_API_URL = "https://chess-api.com/v1"
 

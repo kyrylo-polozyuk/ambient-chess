@@ -1,7 +1,7 @@
 import type { SyncedDocument } from "@audiotool/nexus"
 import type { ChessBoard } from "../chess/chess"
-import { chessBoardToTonematrixPattern } from "./chess-to-pattern"
-import { fenToPatterns, patternsToFen } from "./fen-encoding"
+import { chessBoardToTonematrixPattern } from "./chessToPattern"
+import { fenToPatterns, patternsToFen } from "./fenEncoding"
 
 /**
  * Reads the stored FEN from tonematrix pattern slots 1 and 2.

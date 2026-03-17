@@ -24,12 +24,12 @@ import { AudiotoolContext } from "../../context"
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
-} from "../../nexus/update-tonematrix-from-chess"
-import { useBpm } from "../../nexus/use-bpm"
-import { useFenSyncFromNexus } from "../../nexus/use-fen-sync-from-nexus"
-import type { ChessboardProps, ChessboardRef } from "../chessboard"
-import { Chess, type Square } from "../engine/chess-adapter"
-import { getStockfishMove } from "../engine/chess-api"
+} from "../../nexus/updateTonematrixFromChess"
+import { useBpm } from "../../nexus/useBpm"
+import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
+import type { ChessboardProps, ChessboardRef } from "../Chessboard"
+import { Chess, type Square } from "../engine/chessAdapter"
+import { getStockfishMove } from "../engine/chessApi"
 
 export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
   (
@@ -133,7 +133,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           return
         }
 
-        let bestMove: import("../engine/chess-adapter").VerboseMove | null
+        let bestMove: import("../engine/chessAdapter").VerboseMove | null
 
         if (useStockfish) {
           bestMove = await getStockfishMove(game.fen())
