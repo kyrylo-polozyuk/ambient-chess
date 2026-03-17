@@ -196,6 +196,15 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       }
     }, [updateStatus, userPlaysAs])
 
+    // Update orientation when userPlaysAs changes (vsCollaborator: black player).
+    // Uses setOrientation instead of recreating to avoid ResizeObserver race after destroy.
+    useEffect(() => {
+      if (!ready || !boardInstanceRef.current) return
+      const orientation =
+        userPlaysAs === "b" ? COLOR.black : COLOR.white
+      void boardInstanceRef.current.setOrientation(orientation, false)
+    }, [ready, userPlaysAs])
+
     useEffect(() => {
       if (!ready || !nexus || !tonematrix) return
 
