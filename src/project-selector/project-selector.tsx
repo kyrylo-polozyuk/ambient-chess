@@ -9,7 +9,6 @@ import "./project-selector.css";
 export const ProjectSelector = ({
   loginStatus,
   onProjectConnected,
-  onProjectUrlChange,
   projectUrl,
 }: ProjectSelectorProps) => {
   const [loading, setLoading] = useState<boolean>(false);

@@ -136,7 +136,6 @@ export const App = () => {
           loginStatus={loginStatus}
           onProjectConnected={handleProjectConnected}
           projectUrl={projectUrl}
-          onProjectUrlChange={setProjectUrl}
         />
       );
     }

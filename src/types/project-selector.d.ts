@@ -31,6 +31,5 @@ export type ProjectSelectorProps = {
     syncedDocument: SyncedDocument,
     projectUrl: string,
   ) => void;
-  onProjectUrlChange: (projectUrl: string) => void;
   projectUrl?: string;
 };
