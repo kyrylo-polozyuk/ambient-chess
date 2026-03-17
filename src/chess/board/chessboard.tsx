@@ -301,7 +301,14 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       container.addEventListener("click", handleClick);
       return () => {
         container.removeEventListener("click", handleClick);
-        clearMarkers();
+        // Only clear markers if board is still active (not destroyed by userPlaysAs change)
+        if (boardInstanceRef.current === board) {
+          try {
+            clearMarkers();
+          } catch {
+            /* board may be tearing down, ignore */
+          }
+        }
       };
     }, [ready, autoPlay, computerPlaysAs, userPlaysAs, updateStatus, syncBoardToTonematrix, makeAiMove, moveDelayMs]);
 
