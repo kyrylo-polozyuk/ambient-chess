@@ -5,12 +5,12 @@ import type { AuthStatus, UseAuthReturn } from "./auth";
 export type { AuthStatus } from "./auth";
 
 // OIDC Configuration - same client as technoract for Audiotool ecosystem
-const CLIENT_ID = "dbf1d2d6-c267-4bc3-adbd-5aca2d43e6f5";
+const CLIENT_ID = "d9c42b96-c08e-4afa-be36-9d3844777012";
 const REDIRECT_URL =
   import.meta.env.MODE === "development"
     ? "http://127.0.0.1:5173/"
-    : (import.meta.env.VITE_REDIRECT_URL ||
-        "https://kyrylo-polozyuk.github.io/ambient-chess/");
+    : import.meta.env.VITE_REDIRECT_URL ||
+      "https://kyrylo-polozyuk.github.io/ambient-chess/";
 const SCOPE = "project:write";
 
 export const useAuth = (): UseAuthReturn => {
