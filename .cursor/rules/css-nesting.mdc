@@ -1,0 +1,58 @@
+---
+description: Nest CSS selectors with & for better structure
+globs: "**/*.css"
+alwaysApply: false
+---
+
+# CSS Nesting with &
+
+Use the `&` parent selector to nest related styles. This keeps selectors grouped and reduces repetition.
+
+## Examples
+
+```css
+/* ❌ BAD - flat, repetitive */
+.button {
+  padding: 0.5rem 1rem;
+}
+.button:hover {
+  background: #333;
+}
+.button.active {
+  box-shadow: 0 0 0 2px #444;
+}
+.button.secondary {
+  background: #222;
+}
+.button.secondary:hover {
+  background: #333;
+}
+
+/* ✅ GOOD - nested with & */
+.button {
+  padding: 0.5rem 1rem;
+
+  &:hover {
+    background: #333;
+  }
+
+  &.active {
+    box-shadow: 0 0 0 2px #444;
+  }
+
+  &.secondary {
+    background: #222;
+
+    &:hover {
+      background: #333;
+    }
+  }
+}
+```
+
+## Guidelines
+
+- Nest pseudo-classes (`:hover`, `:focus`, `:disabled`) under their parent with `&`
+- Nest modifier classes (`.active`, `.secondary`) with `&.modifier`
+- Nest descendant selectors when they only apply in that context
+- Keep nesting shallow (2–3 levels max) to avoid deep specificity
