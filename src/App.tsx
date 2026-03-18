@@ -1,6 +1,7 @@
 import { type AudiotoolClient, type SyncedDocument } from "@audiotool/nexus"
 import { useEffect, useState } from "react"
 import { useShowAboutDialog } from "./about"
+import { Footer } from "./components/Footer"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { DialogProvider } from "./dialog/DialogContext"
@@ -152,6 +153,7 @@ const AppContent = () => {
               />
               {getAppContents()}
             </div>
+            <Footer />
           </div>
     </AudiotoolContext.Provider>
   )

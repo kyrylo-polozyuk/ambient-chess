@@ -72,11 +72,11 @@ trackService: TrackService // ✅
 
 ## CSS
 
+- **Always nest CSS with `&`** – Never use flat selectors like `.parent .child` when you can nest `.child` inside `.parent` with `&`. Prefer nested blocks for pseudo-classes (`&:hover`), modifiers (`&.active`), and descendants (`& a`).
 - Try to avoid using `z-index` . Layering problems can usually be solved by container positioning and element ordering.
   If z-index is inevitable, make sure you put it into a [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context).
 - Try to use predefined variables from `imported-vars.css` as much as possible. This allows us to easily replace sizes and colors everywhere in the app at once.
 - Use classes from `typography.css` to style text.
-- Use nesting for easier readability. Especially the selector: "&".
 
 ## Prettier
 
