@@ -12,6 +12,7 @@ import "./ProjectSelector.css"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
+  openAudiotoolInWindow,
 } from "./projectId"
 
 type ProjectSelectorProps = {
@@ -88,7 +89,7 @@ export const ProjectSelector = ({
 
   const handleProjectSelected = (projectId: string) => {
     const projectUrl = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
-    window.open(projectUrl, "_blank")
+    openAudiotoolInWindow(projectUrl)
     void connectToProject(projectUrl)
   }
 
@@ -146,7 +147,7 @@ export const ProjectSelector = ({
 
     const projectId = response.project.name.replace("projects/", "")
     const projectUrl = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
-    window.open(projectUrl, "_blank")
+    openAudiotoolInWindow(projectUrl)
     onProjectUrlChange(projectUrl)
     void connectToProject(projectUrl)
   }

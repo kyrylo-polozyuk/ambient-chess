@@ -1,5 +1,6 @@
 import { Icons } from "../components/Icon"
 import { useDialog } from "../dialog/useDialog"
+import { openAudiotoolInWindow } from "../ProjectSelector/projectId"
 import {
   type GameMode,
   type GameModeIconKey,
@@ -61,7 +62,10 @@ export const GameModeButton = ({
                             To play against an Audiotool project collaborator. In{" "}
                             <a
                               href={projectUrl}
-                              target="_blank"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                openAudiotoolInWindow(projectUrl)
+                              }}
                               rel="noreferrer"
                             >
                               Audiotool

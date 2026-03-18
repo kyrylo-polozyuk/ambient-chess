@@ -9,6 +9,7 @@ import { useAuth } from "../hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
+  openAudiotoolInWindow,
 } from "../ProjectSelector/projectId"
 import type { Settings } from "../settings/settings-context"
 import { SettingsDialogContent } from "../settings/SettingsDialogContent"
@@ -291,7 +292,10 @@ export const Game = (props: {
             Press <Icons.Play /> in{" "}
             <a
               href={buildAudiotoolUrl(props.projectUrl)}
-              target="_blank"
+              onClick={(e) => {
+                e.preventDefault()
+                openAudiotoolInWindow(buildAudiotoolUrl(props.projectUrl))
+              }}
               rel="noreferrer"
             >
               Audiotool

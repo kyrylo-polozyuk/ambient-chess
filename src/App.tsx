@@ -9,6 +9,7 @@ import { LoginScreen } from "./LoginScreen"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
+  openAudiotoolInWindow,
 } from "./ProjectSelector/projectId"
 import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
@@ -124,13 +125,11 @@ export const App = () => {
                 client &&
                 projectUrl && (
                   <button
-                    className="hug"
+                    className="hug primary"
                     onClick={() => {
                       const projectId = extractProjectId(projectUrl)
-                      window.open(
-                        `${AUDIOTOOL_STUDIO_BASE}${projectId}`,
-                        "_blank",
-                      )
+                      const url = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
+                      openAudiotoolInWindow(url)
                     }}
                   >
                     <Icons.Play />
