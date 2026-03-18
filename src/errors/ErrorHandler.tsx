@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { useDialog } from "./dialog/useDialog"
+import { useDialog } from "../dialog/useDialog"
 
 // Component to handle uncaught errors and show uncloseable dialog
 export const ErrorHandler = () => {

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { Settings } from "./settings-context"
+import type { Settings } from "./settings-context.ts"
 
 export const SettingsDialogContent = (props: {
   initialValue: Settings

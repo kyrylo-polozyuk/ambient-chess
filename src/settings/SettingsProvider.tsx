@@ -1,14 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from "react"
-import { AudiotoolContext } from "./context"
+import { AudiotoolContext } from "../context"
+import {
+  getStoredSettings,
+  updateStoredSettings,
+} from "../nexus/updateTonematrixFromChess"
 import {
   DEFAULT_SETTINGS,
   type Settings,
   SettingsContext,
-} from "./settings-context"
-import {
-  getStoredSettings,
-  updateStoredSettings,
-} from "./nexus/updateTonematrixFromChess"
+} from "./settings-context.ts"
 
 export const SettingsProvider = (props: { children: React.ReactNode }) => {
   const { nexus } = useContext(AudiotoolContext)

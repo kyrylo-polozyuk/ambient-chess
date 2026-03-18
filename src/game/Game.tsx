@@ -1,23 +1,21 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
-import { Chessboard } from "./chess/board/Chessboard"
-import type { ChessboardRef } from "./chess/Chessboard"
-import { Icons } from "./components/Icon"
-import { AudiotoolContext } from "./context"
-import { useDialog } from "./dialog/useDialog"
-import {
-  type GameMode,
-  GameModeButton,
-} from "./GameModeButton"
-import { useAuth } from "./hooks/useAuth"
+import { Chessboard } from "../chess/board/Chessboard"
+import type { ChessboardRef } from "../chess/Chessboard"
+import { Icons } from "../components/Icon"
+import { AudiotoolContext } from "../context"
+import { useDialog } from "../dialog/useDialog"
+import { useAuth } from "../hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
-} from "./ProjectSelector/projectId"
-import type { Settings } from "./settings-context"
-import { SettingsDialogContent } from "./SettingsDialogContent"
-import { useSettings } from "./useSettings"
-import { trimUsername } from "./utils/username"
+} from "../ProjectSelector/projectId"
+import type { Settings } from "../settings/settings-context"
+import { SettingsDialogContent } from "../settings/SettingsDialogContent"
+import { useSettings } from "../settings/useSettings"
+import { trimUsername } from "../utils/username"
+import { type GameMode } from "./gameMode"
+import { GameModeButton } from "./GameModeButton"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`

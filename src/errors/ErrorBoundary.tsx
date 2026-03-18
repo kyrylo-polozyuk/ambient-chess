@@ -1,5 +1,5 @@
 import React, { Component, type ReactNode } from "react"
-import { useDialogContext } from "./dialog/useDialogContext"
+import { useDialogContext } from "../dialog/useDialogContext"
 
 type ErrorBoundaryProps = {
   children: ReactNode

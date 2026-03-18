@@ -1,21 +1,10 @@
-import { Icons } from "./components/Icon"
-import { useDialog } from "./dialog/useDialog"
-
-export type GameMode = "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
-
-export const GAME_MODE_LABELS: Record<GameMode, string> = {
-  autoplay: "AI vs AI",
-  vsComputer: "Player vs AI",
-  vsLocal: "Player vs Local Player",
-  vsCollaborator: "Player vs Collaborator",
-}
-
-const MODES: GameMode[] = [
-  "autoplay",
-  "vsComputer",
-  "vsLocal",
-  "vsCollaborator",
-]
+import { Icons } from "../components/Icon"
+import { useDialog } from "../dialog/useDialog"
+import {
+  type GameMode,
+  GAME_MODE_LABELS,
+  GAME_MODES,
+} from "./gameMode"
 
 type GameModeButtonProps = {
   mode: GameMode
@@ -41,7 +30,7 @@ export const GameModeButton = ({
       title: "Mode",
       content: (
         <div className="row wrap center small-gap">
-          {MODES.map((m) => (
+          {GAME_MODES.map((m) => (
             <button
               key={m}
               className={`hug full-width ${mode === m ? "active" : ""}`}

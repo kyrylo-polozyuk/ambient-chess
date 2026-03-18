@@ -1,7 +1,7 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useContext, useEffect, useState } from "react"
 import { AudiotoolContext } from "./context"
-import { Game } from "./Game"
+import { Game } from "./game/Game"
 import { setupProject } from "./nexus/projectSetup"
 
 export const ProjectSyncedComponent = (props: {

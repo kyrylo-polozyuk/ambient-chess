@@ -4,10 +4,9 @@ import { Footer } from "./components/Footer"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { DialogProvider } from "./dialog/DialogContext"
-import { SettingsProvider } from "./SettingsProvider"
 import { useDialog } from "./dialog/useDialog"
-import { ErrorBoundary } from "./ErrorBoundary"
-import { ErrorHandler } from "./ErrorHandler"
+import { ErrorBoundary } from "./errors/ErrorBoundary"
+import { ErrorHandler } from "./errors/ErrorHandler"
 import { useAuth } from "./hooks/useAuth"
 import { LoginScreen } from "./LoginScreen"
 import {
@@ -16,6 +15,7 @@ import {
 } from "./ProjectSelector/projectId"
 import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
+import { SettingsProvider } from "./settings/SettingsProvider"
 
 const AppContent = () => {
   const { loginStatus, authStatus, loading, authError, handleLogin } = useAuth()

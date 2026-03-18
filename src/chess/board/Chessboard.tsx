@@ -12,7 +12,6 @@ import {
 import { Chessboard as ReactChessboard } from "react-chessboard"
 import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
-import { useSettings } from "../../useSettings"
 import { useDialog } from "../../dialog/useDialog"
 import {
   getStoredFen,
@@ -20,6 +19,7 @@ import {
 } from "../../nexus/updateTonematrixFromChess"
 import { useBpm } from "../../nexus/useBpm"
 import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
+import { useSettings } from "../../settings/useSettings"
 import {
   chessLastMoveHighlight,
   chessLegalMoveHighlight,
