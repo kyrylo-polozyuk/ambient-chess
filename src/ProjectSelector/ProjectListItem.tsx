@@ -1,4 +1,5 @@
 import type { ProjectListItemType } from "./ProjectList"
+import { Icons } from "../components/Icon"
 import { trimUsername } from "../utils/username"
 import "./ProjectListItem.css"
 
@@ -34,14 +35,14 @@ export const ProjectListItem = ({
       </span>
       {hasMultipleUsers && (
         <span
-          className="material-symbols project-list-item-icon"
+          className="project-list-item-icon"
           title={
             collaboratorNames
               ? `Multiple collaborators: ${collaboratorNames}`
               : "Multiple collaborators"
           }
         >
-          group
+          <Icons.Users />
         </span>
       )}
     </button>

@@ -1,4 +1,5 @@
 import type { LoginStatus } from "@audiotool/nexus"
+import { Icons } from "./components/Icon"
 import { type AuthStatus } from "./hooks/useAuth"
 
 type LoginScreenProps = {
@@ -24,7 +25,7 @@ export const LoginScreen = ({
   if (loading && authStatus === "checking") {
     return (
       <div className="column center small-gap">
-        <span className="material-symbols loading-spinner">progress_activity</span>
+        <Icons.Loader className="loading-spinner" />
         <p>Checking authentication...</p>
       </div>
     )
@@ -40,9 +41,11 @@ export const LoginScreen = ({
           onClick={handleLogin}
           disabled={loading}
         >
-          <span className="material-symbols">
-            {loading ? "progress_activity" : "login"}
-          </span>
+          {loading ? (
+            <Icons.Loader className="loading-spinner" />
+          ) : (
+            <Icons.LogIn />
+          )}
           {loading ? "Redirecting..." : "Log in with Audiotool"}
         </button>
         {authError && <p className="error">{authError}</p>}

@@ -1,6 +1,7 @@
 import { type AudiotoolClient, type SyncedDocument } from "@audiotool/nexus"
 import { useEffect, useState } from "react"
 import { useShowAboutDialog } from "./about"
+import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { DialogProvider } from "./dialog/DialogContext"
 import { ErrorBoundary } from "./ErrorBoundary"
@@ -112,7 +113,7 @@ const AppContent = () => {
                   title="About Ambient Chess"
                   onClick={() => showAboutDialog()}
                 >
-                  <span className="material-symbols">chess_queen</span>
+                  <Icons.ChessQueen />
                   <span>Ambient Chess</span>
                 </button>
               </div>
@@ -130,15 +131,13 @@ const AppContent = () => {
                           )
                         }}
                       >
-                        <span className="material-symbols">
-                          play_arrow
-                        </span>
+                        <Icons.Play />
                         <span>Open Studio</span>
                       </button>
                     </>
                   )}
                   <button className="hug responsive" onClick={handleLogout}>
-                    <span className="material-symbols">logout</span>
+                    <Icons.LogOut />
                     <span>Log out</span>
                   </button>
                 </div>

@@ -1,4 +1,5 @@
 import type { LoginStatus } from "@audiotool/nexus"
+import { Icons } from "../components/Icon"
 import {
   createAudiotoolClient,
   type AudiotoolClient,
@@ -157,7 +158,7 @@ export const ProjectSelector = ({
         empty project is recommended for the best experience.
 
         Once connected, you can start playing chess and the app will automatically update the tonematrix based on the chess game.
-        Press <span className="material-symbols">play_arrow</span> in Audiotool to start the music.
+        Press <Icons.Play /> in Audiotool to start the music.
       </blockquote>
 
       <div className="column grow full-width">
@@ -169,9 +170,11 @@ export const ProjectSelector = ({
             }}
             disabled={loading || !client}
           >
-            <span className="material-symbols">
-              {loading ? "progress_activity" : "add"}
-            </span>
+            {loading ? (
+              <Icons.Loader className="loading-spinner" />
+            ) : (
+              <Icons.Add />
+            )}
             {loading ? "Connecting" : "New Project"}
           </button>
           {!showProjectList && (
@@ -180,7 +183,7 @@ export const ProjectSelector = ({
               onClick={() => setShowProjectList(true)}
               disabled={loading || !client}
             >
-              <span className="material-symbols">arrow_forward</span>
+              <Icons.ArrowForward />
               Existing project
             </button>
           )}

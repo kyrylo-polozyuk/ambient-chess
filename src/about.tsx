@@ -1,5 +1,9 @@
 import { useCallback } from "react"
+import { LuGlobe } from "react-icons/lu"
+import { SiBandcamp, SiGithub, SiInstagram, SiSoundcloud } from "react-icons/si"
 import { useDialog } from "./dialog/useDialog"
+
+const SOCIAL_ICON_SIZE = 20
 
 const ABOUT_DIALOG_ID = "about"
 
@@ -69,14 +73,37 @@ export const useShowAboutDialog = () => {
           </ul>
           <br></br>
           <p>You can find, connect and show support for my work here:</p>
-          <ul>
+          <ul className="social-links">
             <li>
-              <a href="https://www.instagram.com/kooscha.music" target="_blank" rel="noreferrer">Instagram</a>
+              <a href="https://www.instagram.com/kooscha.music" target="_blank" rel="noreferrer">
+                <SiInstagram size={SOCIAL_ICON_SIZE} className="icon" />
+                Instagram
+              </a>
             </li>
-            <li><a href="https://kooscha.bandcamp.com" target="_blank" rel="noreferrer">Bandcamp</a></li>
-            <li><a href="https://www.soundcloud.com/kooscha" target="_blank" rel="noreferrer">Soundcloud</a></li>
-            <li><a href="https://www.audiotool.com/user/kepz/music" target="_blank" rel="noreferrer">Audiotool</a></li>
-            <li><a href="https://github.com/kyrylo-polozyuk" target="_blank" rel="noreferrer">GitHub</a></li>
+            <li>
+              <a href="https://www.soundcloud.com/kooscha" target="_blank" rel="noreferrer">
+                <SiSoundcloud size={SOCIAL_ICON_SIZE} className="icon" />
+                Soundcloud
+              </a>
+            </li>
+            <li>
+              <a href="https://kooscha.bandcamp.com" target="_blank" rel="noreferrer">
+                <SiBandcamp size={SOCIAL_ICON_SIZE} className="icon" />
+                Bandcamp
+              </a>
+            </li>
+            <li>
+              <a href="https://www.audiotool.com/user/kepz/music" target="_blank" rel="noreferrer">
+                <LuGlobe size={SOCIAL_ICON_SIZE} className="icon" />
+                Audiotool
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/kyrylo-polozyuk" target="_blank" rel="noreferrer">
+                <SiGithub size={SOCIAL_ICON_SIZE} className="icon" />
+                GitHub
+              </a>
+            </li>
           </ul>
         </div>
       ),

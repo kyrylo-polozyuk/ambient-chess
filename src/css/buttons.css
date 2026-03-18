@@ -15,8 +15,9 @@ button {
   transition: background 0.2s;
   white-space: nowrap;
 
-  & .material-symbols {
-    font-size: 1em;
+  & .icon {
+    width: 1em;
+    height: 1em;
   }
 
   &:hover {
@@ -60,7 +61,7 @@ button {
     }
   }
 
-  &.loading .material-symbols {
+  &.loading .icon {
     animation: rotate 1s linear infinite;
   }
 
@@ -72,8 +73,9 @@ button {
     @media (max-width: 800px) {
       font-size: 0;
       gap: 0;
-      & .material-symbols {
-        font-size: 1.25rem;
+      & .icon {
+        width: 1.25rem;
+        height: 1.25rem;
       }
     }
   }

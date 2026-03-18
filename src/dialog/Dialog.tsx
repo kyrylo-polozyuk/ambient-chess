@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { Icons } from "../components/Icon"
 import "./Dialog.css"
 
 export type DialogButton = {
@@ -71,7 +72,7 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
                 onClick={handleCloseClick}
                 aria-label="Close dialog"
               >
-                <span className="material-symbols">close</span>
+                <Icons.Close />
               </button>
             )}
           </div>

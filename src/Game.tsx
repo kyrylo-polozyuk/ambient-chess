@@ -1,5 +1,6 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
+import { Icons } from "./components/Icon"
 import { Chessboard } from "./chess/board/Chessboard"
 import type { ChessboardRef } from "./chess/Chessboard"
 import { AudiotoolContext } from "./context"
@@ -116,7 +117,7 @@ export const Game = (props: {
               }
               className="hug"
             >
-              <span className="material-symbols">content_copy</span> Copy
+              <Icons.Copy /> Copy
             </button>
           </div>
         </div>
@@ -158,7 +159,7 @@ export const Game = (props: {
         })
       }}
     >
-      <span className="material-symbols">refresh</span>
+      <Icons.Refresh />
       Restart
     </button>
   )
@@ -182,13 +183,13 @@ export const Game = (props: {
           <div className="row small-gap">
             {isVsCollaborator && (
               <button className="hug responsive" onClick={showShareDialog}>
-                <span className="material-symbols">share</span>
+                <Icons.Share />
                 Share Link
               </button>
             )}
             {getRestartButton()}
             <button className="hug responsive" onClick={() => void props.onExit()}>
-              <span className="material-symbols">close</span>
+              <Icons.Close />
               Exit
             </button>
           </div>
@@ -239,7 +240,7 @@ export const Game = (props: {
                         </p>
                         <p>
                           The collaborator options are accessed via the{" "}
-                          <span className="material-symbols">group</span> button on
+                          <Icons.Users /> button on
                           top right of the Audiotool.
                         </p>
                       </>
@@ -294,7 +295,7 @@ export const Game = (props: {
 
       <div className="grow">
         <p>
-          Press <span className="material-symbols">play_arrow</span> in{" "}
+          Press <Icons.Play /> in{" "}
           <a
             href={buildAudiotoolUrl(props.projectUrl)}
             target="_blank"

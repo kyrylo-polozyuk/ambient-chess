@@ -1,7 +1,5 @@
 :root {
-  *:not(.material-symbols) {
-    font-family: "Alan Sans", system-ui, sans-serif;
-  }
+  font-family: "Alan Sans", system-ui, sans-serif;
 }
 
 h1 {

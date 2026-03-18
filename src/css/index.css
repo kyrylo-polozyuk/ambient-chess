@@ -1,19 +1,13 @@
 @import "./variables.css";
 @import "./chessboard-theme.css";
 
-.material-symbols {
-  font-family: "Material Symbols";
-  font-style: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
+.icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   vertical-align: -0.25em;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
+  width: 1em;
+  height: 1em;
 }
 
 *,
@@ -79,8 +73,9 @@ body {
 
     @media (max-width: 800px) {
       font-size: 0;
-      & .material-symbols {
-        font-size: 1.5rem;
+      & .icon {
+        width: 1.5rem;
+        height: 1.5rem;
       }
     }
   }
