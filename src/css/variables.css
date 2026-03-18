@@ -18,7 +18,11 @@
   --btn-hover: var(--accent-0);
   --btn-secondary-bg: var(--color-bg-raised);
 
-  /* Chess (for future use) */
+  /* Chess */
   --chess-board-bg-dark: #b58863;
   --chess-board-bg-light: #f0d9b5;
+  --chess-piece-white: white;
+  --chess-piece-black: black;
+  --promotion-btn-bg-dark: var(--chess-board-bg-light);
+  --promotion-btn-bg-light: var(--color-bg-raised);
 }

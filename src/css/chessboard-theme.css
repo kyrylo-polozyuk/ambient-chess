@@ -47,20 +47,39 @@
   transition: background-color 0.15s;
 }
 
-.promotion-choice:hover {
-  background-color: var(--color-bg-raised);
+/* White promoting: dark background for white piece contrast */
+.promotion-choices-w {
+  & .promotion-choice {
+    background-color: var(--promotion-btn-bg-dark);
+
+    &:hover {
+      background-color: #4d6274;
+    }
+  }
+
+  & .white-piece {
+    color: var(--chess-piece-white);
+    text-shadow: 0 0 1px var(--chess-piece-black);
+  }
+}
+
+/* Black promoting: light background for black piece contrast */
+.promotion-choices-b {
+  & .promotion-choice {
+    background-color: var(--promotion-btn-bg-light);
+
+    &:hover {
+      background-color: #c5d4e0;
+    }
+  }
+
+  & .black-piece {
+    color: var(--chess-piece-black);
+    text-shadow: 0 0 1px var(--chess-piece-white);
+  }
 }
 
 .promotion-piece-icon {
   line-height: 1;
 }
 
-.promotion-piece-icon.white-piece {
-  color: var(--chess-board-bg-light);
-  text-shadow: 0 0 1px var(--chess-board-bg-dark);
-}
-
-.promotion-piece-icon.black-piece {
-  color: var(--chess-board-bg-dark);
-  text-shadow: 0 0 1px var(--chess-board-bg-light);
-}

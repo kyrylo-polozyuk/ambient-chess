@@ -210,7 +210,9 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           id,
           title: "Promotion",
           content: (
-            <div className="row small-gap promotion-choices">
+            <div
+              className={`row small-gap promotion-choices promotion-choices-${color}`}
+            >
               {PROMOTION_PIECES.map((piece) => (
                 <button
                   key={piece}
