@@ -23,7 +23,7 @@ export const useShowAboutDialog = () => {
             </a>
           </p>
           <p>
-            Powered by:
+            Powered by
           </p>
           <ul>
             <li>
@@ -66,6 +66,17 @@ export const useShowAboutDialog = () => {
               </a>
               : Fallback chess engine for when the API endpoint is not available
             </li>
+          </ul>
+          <br></br>
+          <p>You can find, connect and show support for my work here:</p>
+          <ul>
+            <li>
+              <a href="https://www.instagram.com/kooscha.music" target="_blank" rel="noreferrer">Instagram</a>
+            </li>
+            <li><a href="https://kooscha.bandcamp.com" target="_blank" rel="noreferrer">Bandcamp</a></li>
+            <li><a href="https://www.soundcloud.com/kooscha" target="_blank" rel="noreferrer">Soundcloud</a></li>
+            <li><a href="https://www.audiotool.com/user/kepz/music" target="_blank" rel="noreferrer">Audiotool</a></li>
+            <li><a href="https://github.com/kyrylo-polozyuk" target="_blank" rel="noreferrer">GitHub</a></li>
           </ul>
         </div>
       ),
