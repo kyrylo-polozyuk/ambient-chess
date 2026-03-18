@@ -65,6 +65,16 @@ button.active {
   box-shadow: 0 0 0 2px var(--btn-hover);
 }
 
+button.responsive {
+  @media (max-width: 800px) {
+    font-size: 0;
+    gap: 0;
+    & .material-symbols {
+      font-size: 1.25rem;
+    }
+  }
+}
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);

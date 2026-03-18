@@ -61,7 +61,7 @@ body {
 
 #root {
   width: 100%;
-  max-width: 800px;
+  max-width: var(--content-max-width);
   height: 100vh;
   overflow: auto;
   padding: 0.5rem;

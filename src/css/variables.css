@@ -1,4 +1,6 @@
 :root {
+  --content-max-width: 800px;
+
   --accent-0: #4a5c52;
   --accent-1: #7a8d82;
   --accent-2: #c2d1c8;

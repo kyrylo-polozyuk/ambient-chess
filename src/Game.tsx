@@ -133,7 +133,7 @@ export const Game = (props: {
 
   const getRestartButton = () => (
     <button
-      className="hug"
+      className="hug responsive"
       onClick={() => {
         const id = "restart-confirmation"
         showDialog({
@@ -180,13 +180,13 @@ export const Game = (props: {
         <div className="row small-gap wrap center">
           <div className="game-status">{status}</div>
           {isVsCollaborator && (
-            <button className="hug" onClick={showShareDialog}>
+            <button className="hug responsive" onClick={showShareDialog}>
               <span className="material-symbols">share</span>
               Share Link
             </button>
           )}
           {getRestartButton()}
-          <button className="hug" onClick={() => void props.onExit()}>
+          <button className="hug responsive" onClick={() => void props.onExit()}>
             <span className="material-symbols">close</span>
             Exit
           </button>

@@ -132,7 +132,7 @@ export const App = () => {
                       </button>
                     </>
                   )}
-                  <button className="hug" onClick={handleLogout}>
+                  <button className="hug responsive" onClick={handleLogout}>
                     <span className="material-symbols">logout</span>
                     <span>Log out</span>
                   </button>
