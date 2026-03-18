@@ -12,6 +12,7 @@ import {
 import { Chessboard as ReactChessboard } from "react-chessboard"
 import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
+import { useSettings } from "../../useSettings"
 import { useDialog } from "../../dialog/useDialog"
 import {
   getStoredFen,
@@ -62,6 +63,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     ref,
   ) => {
     const { nexus } = useContext(AudiotoolContext)
+    const { piecesSoundAfterMoveOnly } = useSettings()
     const gameRef = useRef(new Chess())
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
     const autoPlayRef = useRef(autoPlay)
@@ -83,14 +85,19 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const syncBoardToTonematrix = useCallback(() => {
       if (nexus) {
+        const game = gameRef.current
         return updateTonematrixFromChessBoard(
           nexus,
-          gameRef.current.board(),
-          gameRef.current.fen(),
+          game.board(),
+          game.fen(),
+          {
+            piecesSoundAfterMoveOnly,
+            moveHistory: game.getHistory(),
+          },
         )
       }
       return Promise.resolve()
-    }, [nexus])
+    }, [nexus, piecesSoundAfterMoveOnly])
 
     const whiteLabel = whitePlayerName
       ? `${whitePlayerName} (white)`

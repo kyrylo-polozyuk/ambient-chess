@@ -20,17 +20,34 @@ const EMPTY_PATTERN: [[number, number], [number, number]] = [
  * Converts an 8x8 chess board to a 16x16 tonematrix pattern.
  * Each chess square maps to a 2x2 block using the piece's pattern from CHESS_PIECE_TO_PATTERN.
  * Returns a 16x16 grid as [col][row] to match tonematrix steps (columns) and notes (rows).
+ * When piecesSoundAfterMoveOnly is true, only pieces that have moved from their starting square
+ * contribute to the pattern (squaresWithMovedPieces should be the set of such squares).
  */
 export const chessBoardToTonematrixPattern = (
   board: ChessBoard,
+  options?: {
+    piecesSoundAfterMoveOnly?: boolean
+    squaresWithMovedPieces?: Set<string>
+  },
 ): boolean[][] & { length: 16 }[] => {
   const grid: boolean[][] = Array.from({ length: 16 }, () =>
     Array.from({ length: 16 }, () => false),
   )
 
+  const excludeUnmoved =
+    options?.piecesSoundAfterMoveOnly && options?.squaresWithMovedPieces
+
   for (let cr = 0; cr < 8; cr++) {
     for (let cc = 0; cc < 8; cc++) {
       const piece = board[cr]?.[cc]
+      const rank = 8 - cr
+      const file = String.fromCharCode(97 + cc)
+      const square = `${file}${rank}`
+
+      if (excludeUnmoved && piece && !options.squaresWithMovedPieces!.has(square)) {
+        continue
+      }
+
       const pattern = piece
         ? (CHESS_PIECE_TO_PATTERN[piece.color]?.[piece.type] ?? EMPTY_PATTERN)
         : EMPTY_PATTERN

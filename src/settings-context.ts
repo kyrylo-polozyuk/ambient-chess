@@ -5,7 +5,7 @@ export type Settings = {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  piecesSoundAfterMoveOnly: false,
+  piecesSoundAfterMoveOnly: true,
 }
 
 export type SettingsContextType = Settings & {

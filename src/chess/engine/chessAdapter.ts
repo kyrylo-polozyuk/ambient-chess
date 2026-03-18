@@ -211,6 +211,18 @@ export class Chess {
    * Does not apply the move; call move() to apply it.
    * Uses level 4 (Advanced) by default for stronger play.
    */
+  /**
+   * Get move history. Returns empty array when game was loaded from FEN
+   * (position-only load, no move history).
+   */
+  getHistory(): Array<{ from: string; to: string }> {
+    const history = this.game.getHistory()
+    return history.map((entry) => {
+      const [from, to] = Object.entries(entry.move)[0] ?? ["", ""]
+      return { from: from.toLowerCase(), to: to.toLowerCase() }
+    })
+  }
+
   getAiMove(level: number = 4): VerboseMove | null {
     const result = this.game.ai({ level, play: false, randomness: 30 })
     if (!result?.move) return null

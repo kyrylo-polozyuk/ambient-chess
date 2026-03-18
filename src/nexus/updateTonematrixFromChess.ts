@@ -2,6 +2,7 @@ import type { SyncedDocument } from "@audiotool/nexus"
 import type { ChessBoard } from "../chess/chess"
 import { chessBoardToTonematrixPattern } from "./chessToPattern"
 import { fenToPatterns, patternsToFen } from "./fenEncoding"
+import { getSquaresWithMovedPieces } from "./piecesMovedFromStart"
 
 /** Slot index for settings pattern (separate from FEN slots 0-2) */
 const SETTINGS_SLOT_INDEX = 3
@@ -172,16 +173,35 @@ const blankSteps = () => {
   }[] & { length: 16 }
 }
 
+export type UpdateTonematrixOptions = {
+  piecesSoundAfterMoveOnly?: boolean
+  moveHistory?: Array<{ from: string; to: string }>
+}
+
 /**
  * Updates the "Ambient Chess" tonematrix pattern to reflect the current chess board.
  * Slot 0: visual board. Slots 1-2: binary FEN encoding. Slot 3: settings (separate).
+ * When piecesSoundAfterMoveOnly is true, only pieces that have moved from their
+ * starting square contribute to the pattern (requires moveHistory).
  */
 export const updateTonematrixFromChessBoard = async (
   nexus: SyncedDocument,
   board: ChessBoard,
   fen: string,
+  options?: UpdateTonematrixOptions,
 ): Promise<void> => {
-  const grid = chessBoardToTonematrixPattern(board)
+  const squaresWithMovedPieces =
+    options?.piecesSoundAfterMoveOnly
+      ? getSquaresWithMovedPieces(
+          options.moveHistory ?? [],
+          options.moveHistory?.length === 0 ? board : undefined,
+        )
+      : undefined
+
+  const grid = chessBoardToTonematrixPattern(board, {
+    piecesSoundAfterMoveOnly: options?.piecesSoundAfterMoveOnly,
+    squaresWithMovedPieces,
+  })
   const [fenPattern1, fenPattern2] = fenToPatterns(fen)
 
   await nexus.modify((t) => {
