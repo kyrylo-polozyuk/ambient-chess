@@ -99,22 +99,39 @@ export class Chess {
     return piece === piece.toUpperCase() ? "w" : "b"
   }
 
+  /** Returns the piece type at the square (e.g. "p", "n"), or null if empty. */
+  getPieceTypeAt(square: string): PieceSymbol | null {
+    const config = this.game.exportJson()
+    const piece = config.pieces?.[square.toUpperCase()]
+    if (!piece) return null
+    return (FEN_TO_TYPE[piece] ?? "p") as PieceSymbol
+  }
+
   move(
-    move: string | { from: string; to: string; promotion?: string },
+    move: string | { from: string; to: string; promotion?: PieceSymbol },
   ): VerboseMove | null {
     const from = typeof move === "string" ? move.slice(0, 2) : move.from
     const to = typeof move === "string" ? move.slice(2, 4) : move.to
+    const promotion = typeof move === "object" ? move.promotion : undefined
     const config = this.game.exportJson()
     const piece = getPieceAt(config, from)
+    const color = config.turn === "white" ? "w" : "b"
 
     try {
       this.game.move(from, to)
+      if (promotion && promotion !== "q") {
+        const fenPiece =
+          color === "w"
+            ? (promotion.toUpperCase() as "Q" | "R" | "B" | "N")
+            : (promotion.toLowerCase() as "q" | "r" | "b" | "n")
+        this.game.setPiece(to, fenPiece)
+      }
       const capturedPiece = getCapturedPiece(config.pieces, to)
       return {
         from: from.toLowerCase(),
         to: to.toLowerCase(),
         piece,
-        color: config.turn === "white" ? "w" : "b",
+        color,
         captured: capturedPiece,
         flags: "",
       }

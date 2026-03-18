@@ -29,3 +29,38 @@
 
 /* Chessboard ambient theme - react-chessboard uses inline styles for squares;
    coordinate colors can be overridden via darkSquareNotationStyle/lightSquareNotationStyle in options */
+
+.promotion-choices {
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.promotion-choice {
+  font-size: 2rem;
+  padding: 0.5rem;
+  min-width: 3rem;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.promotion-choice:hover {
+  background-color: var(--color-bg-raised);
+}
+
+.promotion-piece-icon {
+  line-height: 1;
+}
+
+.promotion-piece-icon.white-piece {
+  color: var(--chess-board-bg-light);
+  text-shadow: 0 0 1px var(--chess-board-bg-dark);
+}
+
+.promotion-piece-icon.black-piece {
+  color: var(--chess-board-bg-dark);
+  text-shadow: 0 0 1px var(--chess-board-bg-light);
+}

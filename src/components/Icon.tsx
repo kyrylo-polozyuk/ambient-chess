@@ -1,4 +1,11 @@
-import { GiChessQueen } from "react-icons/gi"
+import {
+  GiChessBishop,
+  GiChessKing,
+  GiChessKnight,
+  GiChessPawn,
+  GiChessQueen,
+  GiChessRook,
+} from "react-icons/gi"
 import {
   LuArrowRight,
   LuCopy,
@@ -16,8 +23,33 @@ import {
 
 const ICON_SIZE = 20
 
+const CHESS_PIECE_SIZE = 24
+
+export const ChessPieceIcons = {
+  p: GiChessPawn,
+  n: GiChessKnight,
+  b: GiChessBishop,
+  r: GiChessRook,
+  q: GiChessQueen,
+  k: GiChessKing,
+} as const
+
 export const Icons = {
   ChessQueen: () => <GiChessQueen size={ICON_SIZE} className="icon" />,
+  ChessPiece: (props: {
+    piece: keyof typeof ChessPieceIcons
+    color: "w" | "b"
+    size?: number
+    className?: string
+  }) => {
+    const IconComponent = ChessPieceIcons[props.piece]
+    return (
+      <IconComponent
+        size={props.size ?? CHESS_PIECE_SIZE}
+        className={`${props.color === "w" ? "white-piece" : "black-piece"} ${props.className ?? ""}`}
+      />
+    )
+  },
   Play: () => <LuPlay size={ICON_SIZE} className="icon" />,
   LogOut: () => <LuLogOut size={ICON_SIZE} className="icon" />,
   Close: () => <LuX size={ICON_SIZE} className="icon" />,

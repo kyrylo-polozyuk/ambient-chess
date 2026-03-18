@@ -10,7 +10,9 @@ import {
   useState,
 } from "react"
 import { Chessboard as ReactChessboard } from "react-chessboard"
+import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
+import { useDialog } from "../../dialog/useDialog"
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
@@ -23,11 +25,28 @@ import {
   chessSelectedSquareHighlight,
 } from "../../theme"
 import type { ChessboardProps, ChessboardRef } from "../Chessboard"
+import type { PieceSymbol } from "../chess"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
 
 const FEN_START =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+const PROMOTION_PIECES: PieceSymbol[] = ["q", "r", "n", "b"]
+
+const squareToBoardIndices = (sq: string): [number, number] => {
+  const file = sq.charCodeAt(0) - 97
+  const rank = parseInt(sq[1], 10)
+  return [8 - rank, file]
+}
+
+const isPromotionMove = (game: Chess, from: string, to: string): boolean => {
+  const [row, col] = squareToBoardIndices(from)
+  const piece = game.board()[row]?.[col]
+  if (!piece || piece.type !== "p") return false
+  const toRank = to[1]
+  return toRank === "1" || toRank === "8"
+}
 
 export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
   (
@@ -97,10 +116,12 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       }
     }, [whiteLabel, blackLabel, onStatusChange])
 
+    const { showDialog, closeDialog } = useDialog()
+
     const applyMove = useCallback(
-      (from: string, to: string) => {
+      (from: string, to: string, promotion?: PieceSymbol) => {
         const game = gameRef.current
-        const result = game.move({ from, to })
+        const result = game.move({ from, to, promotion })
         if (result) {
           setPosition(game.fen())
           setLastMove({ from, to })
@@ -178,6 +199,51 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         }
       },
       [updateStatus, syncBoardToTonematrix],
+    )
+
+    const applyMoveWithPromotionChoice = useCallback(
+      (from: string, to: string) => {
+        const game = gameRef.current
+        const color = game.turn()
+        const id = "promotion-choice"
+        showDialog({
+          id,
+          title: "Promotion",
+          content: (
+            <div className="row small-gap promotion-choices">
+              {PROMOTION_PIECES.map((piece) => (
+                <button
+                  key={piece}
+                  className="promotion-choice hug"
+                  onClick={() => {
+                    closeDialog(id)
+                    applyMove(from, to, piece)
+                    if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
+                      setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+                    }
+                  }}
+                  title={
+                    piece === "q"
+                      ? "Queen"
+                      : piece === "r"
+                        ? "Rook"
+                        : piece === "n"
+                          ? "Knight"
+                          : "Bishop"
+                  }
+                >
+                  <span className="promotion-piece-icon">
+                    <Icons.ChessPiece piece={piece} color={color} size={28} />
+                  </span>
+                </button>
+              ))}
+            </div>
+          ),
+          dismissible: true,
+          closeOnBackdropClick: false,
+        })
+      },
+      [showDialog, closeDialog, applyMove, computerPlaysAs, makeAiMove, moveDelayMs],
     )
 
     useImperativeHandle(ref, () => ({ restart }), [restart])
@@ -301,9 +367,13 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         if (!targetSquare || sourceSquare === targetSquare || !canInteract) return false
         const pieceColor = gameRef.current.getPieceColorAt(sourceSquare)
         if (pieceColor !== gameRef.current.turn()) return false
+        if (isPromotionMove(gameRef.current, sourceSquare, targetSquare)) {
+          applyMoveWithPromotionChoice(sourceSquare, targetSquare)
+          return false
+        }
         return applyMove(sourceSquare, targetSquare)
       },
-      [canInteract, applyMove],
+      [canInteract, applyMove, applyMoveWithPromotionChoice],
     )
 
     const handleSquareClick = useCallback(
@@ -320,9 +390,13 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         const moveToLegal = legalMoves.find((m) => m.to === square)
 
         if (moveToLegal && selectedSquare) {
-          applyMove(selectedSquare, square)
-          if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
-            setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+          if (isPromotionMove(gameRef.current, selectedSquare, square)) {
+            applyMoveWithPromotionChoice(selectedSquare, square)
+          } else {
+            applyMove(selectedSquare, square)
+            if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
+              setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+            }
           }
           return
         }
@@ -342,6 +416,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         computerPlaysAs,
         userPlaysAs,
         applyMove,
+        applyMoveWithPromotionChoice,
         makeAiMove,
         moveDelayMs,
       ],
