@@ -156,7 +156,7 @@ export const App = () => {
             </div>
             <div className="full-width footer">
               <p>Created by <a href="https://www.audiotool.com/user/kepz" target="_blank">Kyrylo Polozyuk</a></p>
-              <p>Powered by <a href="https://developer.audiotool.com/" target="_blank">Audiotool SDK</a>, <a href="https://github.com/shaack/cm-chessboard" target="_blank">cm-chessboard</a>, <a href="https://chess-api.com/" target="_blank">chess-api.com</a> and <a href="https://github.com/josefjadrny/js-chess-engine" target="_blank">js-chess-engine</a></p>
+              <p>Powered by <a href="https://developer.audiotool.com/" target="_blank">Audiotool SDK</a>, <a href="https://github.com/Clariity/react-chessboard" target="_blank">react-chessboard</a>, <a href="https://chess-api.com/" target="_blank">chess-api.com</a> and <a href="https://github.com/josefjadrny/js-chess-engine" target="_blank">js-chess-engine</a></p>
             </div>
           </div>
         </AudiotoolContext.Provider>

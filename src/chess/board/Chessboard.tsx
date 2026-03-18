@@ -1,25 +1,15 @@
 import type { SyncedDocument } from "@audiotool/nexus"
-import "cm-chessboard/assets/chessboard.css"
-import "cm-chessboard/assets/extensions/markers/markers.css"
-import {
-  BORDER_TYPE,
-  Chessboard as CmChessboard,
-  COLOR,
-  FEN,
-} from "cm-chessboard/src/Chessboard.js"
-import {
-  MARKER_TYPE,
-  Markers,
-} from "cm-chessboard/src/extensions/markers/Markers.js"
 import {
   forwardRef,
   useCallback,
   useContext,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react"
+import { Chessboard as ReactChessboard } from "react-chessboard"
 import { AudiotoolContext } from "../../context"
 import {
   getStoredFen,
@@ -30,6 +20,9 @@ import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
 import type { ChessboardProps, ChessboardRef } from "../Chessboard"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
+
+const FEN_START =
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
   (
@@ -45,15 +38,14 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     ref,
   ) => {
     const { nexus } = useContext(AudiotoolContext)
-    const boardRef = useRef<HTMLDivElement>(null)
-    const boardInstanceRef = useRef<InstanceType<typeof CmChessboard> | null>(
-      null,
-    )
     const gameRef = useRef(new Chess())
     const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
     const autoPlayRef = useRef(autoPlay)
     const hasLoadedFromStoredRef = useRef(false)
     const lastSyncedDocumentRef = useRef<SyncedDocument | undefined>(undefined)
+
+    const [position, setPosition] = useState(FEN_START)
+    const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
     const [ready, setReady] = useState(false)
     const [fenPatternsReady, setFenPatternsReady] = useState(false)
 
@@ -95,15 +87,32 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       } else {
         onStatusChange(`${game.turn() === "w" ? whiteLabel : blackLabel} to move`)
       }
-    }, [whiteLabel, blackLabel])
+    }, [whiteLabel, blackLabel, onStatusChange])
+
+    const applyMove = useCallback(
+      (from: string, to: string) => {
+        const game = gameRef.current
+        const result = game.move({ from, to })
+        if (result) {
+          setPosition(game.fen())
+          updateStatus()
+          syncBoardToTonematrix()
+          setSelectedSquare(null)
+          return true
+        }
+        return false
+      },
+      [updateStatus, syncBoardToTonematrix],
+    )
 
     const handleFenChangeFromNexus = useCallback(
       (fen: string | null) => {
         if (!fen) return
-        if (gameRef.current.fen() === fen) return // avoid redundant update when we're the source
+        if (gameRef.current.fen() === fen) return
         try {
           gameRef.current = new Chess(fen)
-          boardInstanceRef.current?.setPosition(fen, true)
+          setPosition(fen)
+          setSelectedSquare(null)
           updateStatus()
         } catch (e) {
           console.error("Invalid FEN from Nexus:", e)
@@ -118,7 +127,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const restart = useCallback(() => {
       gameRef.current = new Chess()
-      boardInstanceRef.current?.setPosition(FEN.start)
+      setPosition(FEN_START)
+      setSelectedSquare(null)
       updateStatus()
       syncBoardToTonematrix()
     }, [updateStatus, syncBoardToTonematrix])
@@ -126,8 +136,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const makeAiMove = useCallback(
       async (delayMs: number) => {
         const game = gameRef.current
-        const board = boardInstanceRef.current
-        if (!board || game.isGameOver()) {
+        if (game.isGameOver()) {
           updateStatus()
           return
         }
@@ -145,8 +154,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         }
 
         game.move(bestMove)
-
-        void board.setPosition(game.fen(), true)
+        setPosition(game.fen())
         updateStatus()
         syncBoardToTonematrix()
 
@@ -163,42 +171,10 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     useImperativeHandle(ref, () => ({ restart }), [restart])
 
     useEffect(() => {
-      if (!boardRef.current) return
-
-      const game = gameRef.current
-      const initialFen = game.fen()
-      const board = new CmChessboard(boardRef.current, {
-        position: initialFen,
-        assetsUrl: `${import.meta.env.BASE_URL}chessboard-assets/`,
-        orientation: userPlaysAs === "b" ? COLOR.black : COLOR.white,
-        style: {
-          borderType: BORDER_TYPE.none,
-          pieces: { file: "pieces/standard.svg" },
-          animationDuration: 300,
-          cssClass: "ambient",
-        },
-        extensions: [{ class: Markers }],
-      })
-      boardInstanceRef.current = board
-
       updateStatus()
       setReady(true)
-
-      return () => {
-        board.destroy()
-        boardInstanceRef.current = null
-        clearTimeout(timerRef.current)
-      }
-    }, [updateStatus, userPlaysAs])
-
-    // Update orientation when userPlaysAs changes (vsCollaborator: black player).
-    // Uses setOrientation instead of recreating to avoid ResizeObserver race after destroy.
-    useEffect(() => {
-      if (!ready || !boardInstanceRef.current) return
-      const orientation =
-        userPlaysAs === "b" ? COLOR.black : COLOR.white
-      void boardInstanceRef.current.setOrientation(orientation, false)
-    }, [ready, userPlaysAs])
+      return () => clearTimeout(timerRef.current)
+    }, [updateStatus])
 
     useEffect(() => {
       if (!ready || !nexus || !tonematrix) return
@@ -215,7 +191,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         if (storedFen) {
           try {
             gameRef.current = new Chess(storedFen)
-            boardInstanceRef.current?.setPosition(storedFen)
+            setPosition(storedFen)
+            setSelectedSquare(null)
             updateStatus()
           } catch (e) {
             console.error("Invalid stored FEN:", e)
@@ -251,105 +228,118 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       }
     }, [ready, autoPlay, computerPlaysAs, makeAiMove, moveDelayMs])
 
-    // When not autoplay: our own click handling (avoids cm-chessboard movePiece race)
+    const canInteract =
+      !autoPlay &&
+      (!computerPlaysAs || gameRef.current?.turn() !== computerPlaysAs) &&
+      (!userPlaysAs || gameRef.current?.turn() === userPlaysAs)
+
     useEffect(() => {
-      if (
-        !ready ||
-        autoPlay ||
-        !boardRef.current ||
-        !boardInstanceRef.current
-      )
-        return
+      if (!canInteract) setSelectedSquare(null)
+    }, [canInteract])
 
-      const container = boardRef.current
-      const board = boardInstanceRef.current
-      let selectedSquare: string | null = null
+    const squareStyles = useMemo(() => {
+      const styles: Record<string, React.CSSProperties> = {}
+      if (!selectedSquare || !canInteract) return styles
 
-      const clearMarkers = () => {
-        board.removeLegalMovesMarkers()
-        board.removeMarkers(MARKER_TYPE.square)
-        selectedSquare = null
+      const game = gameRef.current
+      const legalMoves = game.moves({
+        square: selectedSquare as Square,
+        verbose: true,
+      }) as { from: string; to: string }[]
+
+      styles[selectedSquare] = {
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
       }
+      for (const m of legalMoves) {
+        styles[m.to] = {
+          backgroundColor: "rgba(255, 255, 255, 0.15)",
+        }
+      }
+      return styles
+    }, [selectedSquare, canInteract])
 
-      const handleClick = (evt: MouseEvent) => {
+    const handlePieceDrop = useCallback(
+      ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }) => {
+        if (!targetSquare || !canInteract) return false
+        return applyMove(sourceSquare, targetSquare)
+      },
+      [canInteract, applyMove],
+    )
+
+    const handleSquareClick = useCallback(
+      ({ piece, square }: { piece: { pieceType: string } | null; square: string }) => {
+        if (!canInteract) return
+
         const game = gameRef.current
-        const squareEl = (evt.target as Element).closest?.(
-          "[data-square]",
-        ) as HTMLElement | null
-        if (!squareEl) return
-
-        const square = squareEl.getAttribute("data-square")
-        if (!square || !/^[a-h][1-8]$/.test(square)) return
-
         if (game.isGameOver()) return
-        if (computerPlaysAs && game.turn() === computerPlaysAs) return
-        if (userPlaysAs && game.turn() !== userPlaysAs) return
 
-        const position = game.board()
-        const row = 8 - parseInt(square[1], 10)
-        const col = square.charCodeAt(0) - 97
-        const piece = position[row]?.[col]
-
-        // Click on legal move destination: make the move
         const legalMoves = game.moves({
           square: selectedSquare as Square,
           verbose: true,
         }) as { from: string; to: string }[]
         const moveToLegal = legalMoves.find((m) => m.to === square)
+
         if (moveToLegal && selectedSquare) {
-          game.move({ from: selectedSquare, to: square })
-          void board.setPosition(gameRef.current.fen(), true)
-          updateStatus()
-          syncBoardToTonematrix()
-          clearMarkers()
-          if (computerPlaysAs && game.turn() === computerPlaysAs) {
+          applyMove(selectedSquare, square)
+          if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
             setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
           }
           return
         }
 
-        clearMarkers()
+        setSelectedSquare(null)
 
         if (!piece) return
-        const pieceColor = piece.color === "w" ? "w" : "b"
+        const pieceColor = piece.pieceType.startsWith("w") ? "w" : "b"
         if (pieceColor !== game.turn()) return
         if (userPlaysAs && pieceColor !== userPlaysAs) return
 
-        selectedSquare = square
-        board.addMarker(MARKER_TYPE.square, square)
-        const moves = game.moves({
-          square: square as Square,
-          verbose: true,
-        }) as { from: string; to: string }[]
-        board.addLegalMovesMarkers(moves)
-      }
+        setSelectedSquare(square)
+      },
+      [
+        canInteract,
+        selectedSquare,
+        computerPlaysAs,
+        userPlaysAs,
+        applyMove,
+        makeAiMove,
+        moveDelayMs,
+      ],
+    )
 
-      container.addEventListener("click", handleClick)
-      return () => {
-        container.removeEventListener("click", handleClick)
-        // Only clear markers if board is still active (not destroyed by userPlaysAs change)
-        if (boardInstanceRef.current === board) {
-          try {
-            clearMarkers()
-          } catch (e) {
-            console.error("Error clearing markers:", e)
-          }
-        }
-      }
-    }, [
-      ready,
-      autoPlay,
-      computerPlaysAs,
-      userPlaysAs,
-      updateStatus,
-      syncBoardToTonematrix,
-      makeAiMove,
-      moveDelayMs,
-    ])
+    const boardOrientation: "white" | "black" =
+      userPlaysAs === "b" ? "black" : "white"
+
+    const chessboardOptions = useMemo(
+      () => ({
+        position,
+        boardOrientation,
+        allowDragging: canInteract,
+        onPieceDrop: handlePieceDrop,
+        onSquareClick: handleSquareClick,
+        squareStyles,
+        darkSquareStyle: { backgroundColor: "var(--chess-board-bg-dark)" },
+        lightSquareStyle: { backgroundColor: "var(--chess-board-bg-light)" },
+        darkSquareNotationStyle: { color: "var(--chess-board-bg-light)" },
+        lightSquareNotationStyle: { color: "var(--chess-board-bg-dark)" },
+        showNotation: true,
+        animationDurationInMs: 300,
+      }),
+      [
+        position,
+        boardOrientation,
+        canInteract,
+        handlePieceDrop,
+        handleSquareClick,
+        squareStyles,
+      ],
+    )
 
     return (
       <div className="board-wrapper">
-        <div ref={boardRef} className="board-container" />
+        <div className="board-container">
+          <ReactChessboard options={chessboardOptions} />
+        </div>
       </div>
     )
   },

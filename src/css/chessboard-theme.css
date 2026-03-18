@@ -27,19 +27,5 @@
   display: block;
 }
 
-/* Chessboard ambient theme - matches app dark theme */
-.cm-chessboard.ambient .board .square.white {
-  fill: var(--chess-board-bg-light);
-}
-
-.cm-chessboard.ambient .board .square.black {
-  fill: var(--chess-board-bg-dark);
-}
-
-.cm-chessboard.ambient .coordinates .coordinate.black {
-  fill: var(--chess-board-bg-light);
-}
-
-.cm-chessboard.ambient .coordinates .coordinate.white {
-  fill: var(--chess-board-bg-dark);
-}
+/* Chessboard ambient theme - react-chessboard uses inline styles for squares;
+   coordinate colors can be overridden via darkSquareNotationStyle/lightSquareNotationStyle in options */
