@@ -17,13 +17,13 @@ import {
 } from "../../nexus/updateTonematrixFromChess"
 import { useBpm } from "../../nexus/useBpm"
 import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
-import type { ChessboardProps, ChessboardRef } from "../Chessboard"
-import { Chess, type Square } from "../engine/chessAdapter"
 import {
   chessLastMoveHighlight,
   chessLegalMoveHighlight,
   chessSelectedSquareHighlight,
 } from "../../theme"
+import type { ChessboardProps, ChessboardRef } from "../Chessboard"
+import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
 
 const FEN_START =

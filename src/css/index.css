@@ -76,6 +76,13 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+
+    @media (max-width: 800px) {
+      font-size: 0;
+      & .material-symbols {
+        font-size: 1.5rem;
+      }
+    }
   }
 }
 
@@ -102,10 +109,6 @@ body {
 
 .game-component {
   width: 100%;
-}
-
-.game-controls {
-  height: 96px;
 }
 
 .footer {

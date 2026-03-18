@@ -176,25 +176,26 @@ export const Game = (props: {
         onStatusChange={setStatus}
       />
 
-      <div className="column full-width game-controls">
+      <div className="column full-width">
         <div className="row small-gap wrap center">
           <div className="game-status">{status}</div>
-          {isVsCollaborator && (
-            <button className="hug responsive" onClick={showShareDialog}>
-              <span className="material-symbols">share</span>
-              Share Link
+          <div className="row small-gap">
+            {isVsCollaborator && (
+              <button className="hug responsive" onClick={showShareDialog}>
+                <span className="material-symbols">share</span>
+                Share Link
+              </button>
+            )}
+            {getRestartButton()}
+            <button className="hug responsive" onClick={() => void props.onExit()}>
+              <span className="material-symbols">close</span>
+              Exit
             </button>
-          )}
-          {getRestartButton()}
-          <button className="hug responsive" onClick={() => void props.onExit()}>
-            <span className="material-symbols">close</span>
-            Exit
-          </button>
+          </div>
         </div>
-
-        <div className="row small-gap wrap center">
-          {!isVsCollaborator && (
-            <>
+        {!isVsCollaborator && (
+          <>
+            <div className="row small-gap wrap center">
               Mode:
               <button
                 className={` ${mode === "autoplay" ? "active" : ""} hug`}
@@ -286,23 +287,24 @@ export const Game = (props: {
               >
                 Player vs Collaborator
               </button>
-            </>
-          )}
-        </div>
-
+            </div>
+          </>
+        )}
       </div>
 
-      <p>
-        Press <span className="material-symbols">play_arrow</span> in{" "}
-        <a
-          href={buildAudiotoolUrl(props.projectUrl)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Audiotool
-        </a>{" "}
-        to start the music.
-      </p>
+      <div className="grow">
+        <p>
+          Press <span className="material-symbols">play_arrow</span> in{" "}
+          <a
+            href={buildAudiotoolUrl(props.projectUrl)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Audiotool
+          </a>{" "}
+          to start the music.
+        </p>
+      </div>
     </div>
   )
 }
