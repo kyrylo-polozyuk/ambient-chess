@@ -5,7 +5,6 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  vertical-align: -0.25em;
   width: 1em;
   height: 1em;
 }
@@ -70,6 +69,10 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+
+    .icon {
+      margin-top: -0.33rem;
+    }
 
     @media (max-width: 800px) {
       font-size: 0;

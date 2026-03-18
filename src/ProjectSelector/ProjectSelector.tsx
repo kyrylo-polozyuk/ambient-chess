@@ -1,11 +1,11 @@
 import type { LoginStatus } from "@audiotool/nexus"
-import { Icons } from "../components/Icon"
 import {
   createAudiotoolClient,
   type AudiotoolClient,
   type SyncedDocument,
 } from "@audiotool/nexus"
 import { useCallback, useEffect, useState } from "react"
+import { Icons } from "../components/Icon"
 import { ProjectList } from "./ProjectList"
 import "./ProjectSelector.css"
 import {
@@ -175,7 +175,7 @@ export const ProjectSelector = ({
             ) : (
               <Icons.Add />
             )}
-            {loading ? "Connecting" : "New Project"}
+            {loading ? "Connecting" : "New Game & Project"}
           </button>
           {!showProjectList && (
             <button
