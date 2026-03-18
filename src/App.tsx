@@ -136,7 +136,13 @@ const AppContent = () => {
                 )}
                 <button
                   className={`hug responsive ${loading ? "loading" : ""}`}
-                  onClick={authStatus === "logged-in" ? handleLogout : handleLogin}
+                  onClick={() => {
+                    if (authStatus === "logged-in") {
+                      void handleLogout()
+                    } else {
+                      handleLogin()
+                    }
+                  }}
                   disabled={loading}
                 >
                   {authStatus === "logged-in" ? (

@@ -37,11 +37,11 @@ export const useAuth = (): UseAuthReturn => {
     }
     hasInitialized.current = true
     const initializeLoginStatus = async () => {
-      const loginStatusResult = (await getLoginStatus({
+      const loginStatusResult = await getLoginStatus({
         clientId: CLIENT_ID,
         redirectUrl: REDIRECT_URL,
         scope: SCOPE,
-      })) as LoginStatus
+      })
       setLoginStatus(loginStatusResult)
     }
 
