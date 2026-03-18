@@ -27,7 +27,7 @@ export const Game = (props: {
   const { showDialog, closeDialog } = useDialog()
   const chessboardRef = useRef<ChessboardRef>(null)
 
-  const [mode, setMode] = useState<GameMode>("vsLocal")
+  const [mode, setMode] = useState<GameMode | undefined>(undefined)
   const [status, setStatus] = useState<string>("")
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
@@ -88,8 +88,15 @@ export const Game = (props: {
 
   // Auto-detect vsCollaborator when opening shared link (so black player sees flipped board)
   useEffect(() => {
-    void checkCollaboratorMode()
-  }, [checkCollaboratorMode])
+    if (loginStatus === undefined) return // Still loading auth - wait before deciding
+    if (!client || !loginStatus.loggedIn) {
+      setMode("vsLocal")
+      return
+    }
+    void checkCollaboratorMode().finally(() => {
+      setMode((m) => (m === undefined ? "vsLocal" : m))
+    })
+  }, [checkCollaboratorMode, client, loginStatus])
 
   const showShareDialog = useCallback(() => {
     const shareUrl = window.location.href
@@ -164,8 +171,25 @@ export const Game = (props: {
     </button>
   )
 
+  const isFullyReady = mode !== undefined
+  const [showContent, setShowContent] = useState(false)
+
+  useEffect(() => {
+    if (!isFullyReady) {
+      setShowContent(false)
+      return
+    }
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setShowContent(true))
+    })
+    return () => cancelAnimationFrame(id)
+  }, [isFullyReady])
+
   return (
     <div className="column center grow game-component">
+      <div
+        className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
+      >
       <Chessboard
         ref={chessboardRef}
         tonematrix={props.tonematrix}
@@ -194,10 +218,9 @@ export const Game = (props: {
             </button>
           </div>
         </div>
-        {!isVsCollaborator && (
-          <>
-            <div className="row small-gap wrap center">
-              Mode:
+        {mode !== undefined && !isVsCollaborator && (
+          <div className="row small-gap wrap center">
+            Mode:
               <button
                 className={` ${mode === "autoplay" ? "active" : ""} hug`}
                 onClick={() =>
@@ -289,7 +312,6 @@ export const Game = (props: {
                 Player vs Collaborator
               </button>
             </div>
-          </>
         )}
       </div>
 
@@ -305,6 +327,7 @@ export const Game = (props: {
           </a>{" "}
           to start the music.
         </p>
+      </div>
       </div>
     </div>
   )

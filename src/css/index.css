@@ -5,6 +5,7 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
+  vertical-align: middle;
   width: 1em;
   height: 1em;
 }
@@ -109,7 +110,18 @@ body {
   width: 100%;
 }
 
+/* Hidden until ready - lets board complete layout/resize before reveal */
+.game-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.game-content.ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .clickable {
   cursor: pointer;
 }
-

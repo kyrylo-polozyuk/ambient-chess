@@ -189,7 +189,11 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     }, [updateStatus])
 
     useEffect(() => {
-      if (!ready || !nexus || !tonematrix) return
+      if (!ready || !tonematrix) return
+      if (!nexus) {
+        setFenPatternsReady(true)
+        return
+      }
 
       if (lastSyncedDocumentRef.current !== nexus) {
         lastSyncedDocumentRef.current = nexus
