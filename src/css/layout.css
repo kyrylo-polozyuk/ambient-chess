@@ -6,6 +6,11 @@
   width: 100%;
 }
 
+.fit-content {
+  min-width: fit-content;
+  min-height: fit-content;
+}
+
 .column {
   display: flex;
   align-items: center;

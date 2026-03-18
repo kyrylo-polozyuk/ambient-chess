@@ -313,7 +313,7 @@ export const Game = (props: {
           )}
         </div>
 
-        <div className="grow">
+        <div className="grow fit-content">
           <p>
             Press <Icons.Play /> in{" "}
             <a
