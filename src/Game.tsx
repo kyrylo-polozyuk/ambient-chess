@@ -211,7 +211,31 @@ export const Game = (props: {
               </button>
             )}
             {getRestartButton()}
-            <button className="hug responsive" onClick={() => void props.onExit()}>
+            <button
+              className="hug responsive"
+              onClick={() => {
+                const id = "exit-confirmation"
+                showDialog({
+                  id,
+                  title: "Exit game",
+                  content: <p>Are you sure?</p>,
+                  buttons: [
+                    {
+                      label: "Cancel",
+                      onClick: () => closeDialog(id),
+                    },
+                    {
+                      label: "Exit",
+                      variant: "primary",
+                      onClick: () => {
+                        closeDialog(id)
+                        void props.onExit()
+                      },
+                    },
+                  ],
+                })
+              }}
+            >
               <Icons.Close />
               Exit
             </button>

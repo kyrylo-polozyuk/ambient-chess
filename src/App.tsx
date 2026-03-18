@@ -1,6 +1,5 @@
 import { type AudiotoolClient, type SyncedDocument } from "@audiotool/nexus"
-import { useEffect, useState } from "react"
-import { useShowAboutDialog } from "./about"
+import { useCallback, useEffect, useState } from "react"
 import { Footer } from "./components/Footer"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
@@ -18,7 +17,6 @@ import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
 
 const AppContent = () => {
   const { loginStatus, authStatus, loading, authError, handleLogin } = useAuth()
-  const showAboutDialog = useShowAboutDialog()
 
   const [client, setClient] = useState<AudiotoolClient | undefined>(undefined)
   const [syncedDocument, setSyncedDocument] = useState<
@@ -63,6 +61,23 @@ const AppContent = () => {
     setProjectUrl(projectUrl)
   }
 
+  const handleCloseProject = useCallback(async () => {
+    const params = new URLSearchParams(window.location.search)
+    params.delete("projectUrl")
+    window.history.replaceState(
+      {},
+      "",
+      params.toString()
+        ? `${window.location.pathname}?${params.toString()}`
+        : window.location.pathname,
+    )
+    if (syncedDocument !== undefined) {
+      await syncedDocument.stop()
+    }
+    setClient(undefined)
+    setSyncedDocument(undefined)
+  }, [syncedDocument])
+
   const getAppContents = (): React.ReactNode => {
     // Don't show project connection if not logged in (LoginScreen handles that)
     if (authStatus !== "logged-in") {
@@ -85,95 +100,83 @@ const AppContent = () => {
     return (
       <ProjectSyncedComponent
         projectUrl={projectUrl}
-        onClose={async () => {
-          const params = new URLSearchParams(window.location.search)
-          params.delete("projectUrl")
-          window.history.replaceState(
-            {},
-            "",
-            `${window.location.pathname}?${params.toString()}`,
-          )
-          if (syncedDocument !== undefined) {
-            await syncedDocument.stop()
-          }
-          setClient(undefined)
-          setSyncedDocument(undefined)
-        }}
+        onClose={handleCloseProject}
       />
     )
   }
 
   return (
     <AudiotoolContext.Provider value={{ client, nexus: syncedDocument }}>
-          <div className="column app-container">
-            <div className="row full-width top-bar">
-              <div className="title-container">
-                <button
-                  type="button"
-                  className="title hug tertiary"
-                  title="About Ambient Chess"
-                  onClick={() => showAboutDialog()}
-                >
-                  <Icons.ChessQueen />
-                  <span>Ambient Chess</span>
-                </button>
-              </div>
-              <div className="user-info">
-                {authStatus === "logged-in" && syncedDocument && client && projectUrl && (
-                  <button
-                    className="hug"
-                    onClick={() => {
-                      const projectId = extractProjectId(projectUrl)
-                      window.open(
-                        `${AUDIOTOOL_STUDIO_BASE}${projectId}`,
-                        "_blank",
-                      )
-                    }}
-                  >
-                    <Icons.Play />
-                    <span>Open Studio</span>
-                  </button>
-                )}
-                <button
-                  className={`hug responsive ${loading ? "loading" : ""}`}
-                  onClick={() => {
-                    if (authStatus === "logged-in") {
-                      void handleLogout()
-                    } else {
-                      handleLogin()
-                    }
-                  }}
-                  disabled={loading}
-                >
-                  {authStatus === "logged-in" ? (
-                    <>
-                      <Icons.LogOut />
-                      <span>Log out</span>
-                    </>
-                  ) : (
-                    <>
-                      {loading ? (
-                        <Icons.Loader className="loading-spinner" />
-                      ) : (
-                        <Icons.LogIn />
-                      )}
-                      <span>{loading ? "Redirecting..." : "Log in"}</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-            <div className="column grow full-width">
-              <LoginScreen
-                authStatus={authStatus}
-                loading={loading}
-                authError={authError}
-                handleLogin={handleLogin}
-              />
-              {getAppContents()}
-            </div>
-            <Footer />
+      <div className="column app-container">
+        <div className="row full-width top-bar">
+          <div className="title-container">
+            <button
+              type="button"
+              className="title hug tertiary"
+              onClick={() => {
+                void handleCloseProject()
+              }}
+            >
+              <Icons.ChessQueen />
+              <span>Ambient Chess</span>
+            </button>
           </div>
+          <div className="user-info">
+            {authStatus === "logged-in" && syncedDocument && client && projectUrl && (
+              <button
+                className="hug"
+                onClick={() => {
+                  const projectId = extractProjectId(projectUrl)
+                  window.open(
+                    `${AUDIOTOOL_STUDIO_BASE}${projectId}`,
+                    "_blank",
+                  )
+                }}
+              >
+                <Icons.Play />
+                <span>Open Studio</span>
+              </button>
+            )}
+            <button
+              className={`hug responsive ${loading ? "loading" : ""}`}
+              onClick={() => {
+                if (authStatus === "logged-in") {
+                  void handleLogout()
+                } else {
+                  handleLogin()
+                }
+              }}
+              disabled={loading}
+            >
+              {authStatus === "logged-in" ? (
+                <>
+                  <Icons.LogOut />
+                  <span>Log out</span>
+                </>
+              ) : (
+                <>
+                  {loading ? (
+                    <Icons.Loader className="loading-spinner" />
+                  ) : (
+                    <Icons.LogIn />
+                  )}
+                  <span>{loading ? "Redirecting..." : "Log in"}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="column grow full-width">
+          <LoginScreen
+            authStatus={authStatus}
+            loading={loading}
+            authError={authError}
+            handleLogin={handleLogin}
+          />
+          {getAppContents()}
+        </div>
+        <Footer />
+      </div>
     </AudiotoolContext.Provider>
   )
 }
