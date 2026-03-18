@@ -109,17 +109,22 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const updateStatus = useCallback(() => {
       const game = gameRef.current
       if (game.isCheckmate()) {
-        onStatusChange(
-          game.turn() === "w"
-            ? `${blackLabel} wins by checkmate!`
-            : `${whiteLabel} wins by checkmate!`,
-        )
+        onStatusChange({
+          message:
+            game.turn() === "w"
+              ? `${blackLabel} wins by checkmate!`
+              : `${whiteLabel} wins by checkmate!`,
+          phase: "finished",
+        })
       } else if (game.isDraw()) {
-        onStatusChange("Game drawn!")
+        onStatusChange({ message: "Game drawn!", phase: "finished" })
       } else if (game.isStalemate()) {
-        onStatusChange("Stalemate!")
+        onStatusChange({ message: "Stalemate!", phase: "finished" })
       } else {
-        onStatusChange(`${game.turn() === "w" ? whiteLabel : blackLabel} to move`)
+        onStatusChange({
+          message: `${game.turn() === "w" ? whiteLabel : blackLabel} to move`,
+          phase: "ongoing",
+        })
       }
     }, [whiteLabel, blackLabel, onStatusChange])
 

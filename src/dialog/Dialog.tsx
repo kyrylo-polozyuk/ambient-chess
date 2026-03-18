@@ -5,7 +5,7 @@ import "./Dialog.css"
 export type DialogButton = {
   label: string
   onClick: () => void
-  variant?: "primary" | "default"
+  variant?: "primary" | "default" | "warning" | "tertiary"
 }
 
 export type DialogConfig = {
@@ -83,7 +83,7 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
             {config.buttons.map((button, index) => (
               <button
                 key={index}
-                className={`hug ${button.variant === "primary" ? "primary" : "tertiary"}`}
+                className={`hug ${button.variant !== undefined ? button.variant : "tertiary"}`}
                 onClick={button.onClick}
               >
                 {button.label}

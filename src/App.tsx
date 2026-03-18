@@ -93,7 +93,6 @@ export const App = () => {
               <button
                 type="button"
                 className="title hug tertiary"
-                title="Exit game"
                 onClick={() => {
                   if (nexus === undefined) return
                   const id = "exit-confirmation"
@@ -105,7 +104,7 @@ export const App = () => {
                       { label: "Cancel", onClick: () => closeDialog(id) },
                       {
                         label: "Exit",
-                        variant: "primary",
+                        variant: "warning",
                         onClick: () => {
                           closeDialog(id)
                           void handleCloseProject()

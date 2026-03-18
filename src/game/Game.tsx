@@ -1,7 +1,7 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { Chessboard } from "../chess/board/Chessboard"
-import type { ChessboardRef } from "../chess/Chessboard"
+import type { ChessboardRef, GameStatus } from "../chess/Chessboard"
 import { Icons } from "../components/Icon"
 import { AudiotoolContext } from "../context"
 import { useDialog } from "../dialog/useDialog"
@@ -27,7 +27,7 @@ export const Game = (props: {
 }) => {
   const { client } = useContext(AudiotoolContext)
   const { loginStatus } = useAuth()
-  const { showDialog, closeDialog } = useDialog()
+  const { showDialog, closeDialog, showConfirmation } = useDialog()
   const {
     piecesSoundAfterMoveOnly,
     setPiecesSoundAfterMoveOnly,
@@ -35,7 +35,10 @@ export const Game = (props: {
   const chessboardRef = useRef<ChessboardRef>(null)
 
   const [mode, setMode] = useState<GameMode | undefined>(undefined)
-  const [status, setStatus] = useState<string>("")
+  const [status, setStatus] = useState<GameStatus>({
+    message: "",
+    phase: "ongoing",
+  })
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
   >(undefined)
@@ -186,40 +189,6 @@ export const Game = (props: {
     setPiecesSoundAfterMoveOnly,
   ])
 
-  const getRestartButton = () => (
-    <button
-      className="hug responsive"
-      onClick={() => {
-        const id = "restart-confirmation"
-        showDialog({
-          id,
-          title: "Restart game",
-          content: <p>Are you sure you want to restart the game?</p>,
-          buttons: [
-            {
-              label: "Cancel",
-              onClick: () => closeDialog(id),
-            },
-            {
-              label: "Restart",
-              variant: "primary",
-              onClick: () => {
-                if (mode !== "autoplay" && !isVsCollaborator) {
-                  setMode(DEFAULT_GAME_MODE)
-                }
-                chessboardRef.current?.restart()
-                closeDialog(id)
-              },
-            },
-          ],
-        })
-      }}
-    >
-      <Icons.Refresh />
-      Restart
-    </button>
-  )
-
   const isFullyReady = mode !== undefined
   const [showContent, setShowContent] = useState(false)
 
@@ -251,7 +220,7 @@ export const Game = (props: {
         />
 
         <div className="column full-width">
-          <div className="game-status">{status}</div>
+          <div className="game-status">{status.message}</div>
           <div className="row small-gap">
             {mode !== undefined && !isVsCollaborator && (
               <GameModeButton
@@ -260,6 +229,7 @@ export const Game = (props: {
                 projectUrl={props.projectUrl}
                 onCheckCollaborator={checkCollaboratorMode}
                 onShareDialog={showShareDialog}
+                variant={status.phase !== "finished" ? "primary" : ""}
               />
             )}
             {isVsCollaborator && (
@@ -275,29 +245,38 @@ export const Game = (props: {
               <Icons.Settings />
               Settings
             </button>
-            {getRestartButton()}
+            <button
+              className={`hug responsive${status.phase === "finished" ? " primary" : ""}`}
+              onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
+                showConfirmation({
+                  id: "restart-confirmation",
+                  title: "Restart game",
+                  content: <p>Are you sure you want to restart the game?</p>,
+                  confirmLabel: "Restart",
+                  confirmVariant: "primary",
+                  onConfirm: () => {
+                    if (mode !== "autoplay" && !isVsCollaborator) {
+                      setMode(DEFAULT_GAME_MODE)
+                    }
+                    chessboardRef.current?.restart()
+                  },
+                })
+              }}
+            >
+              <Icons.Refresh />
+              Restart
+            </button>
             <button
               className="hug responsive"
               onClick={() => {
-                const id = "exit-confirmation"
-                showDialog({
-                  id,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
+                showConfirmation({
+                  id: "exit-confirmation",
                   title: "Exit game",
-                  content: <p>Are you sure?</p>,
-                  buttons: [
-                    {
-                      label: "Cancel",
-                      onClick: () => closeDialog(id),
-                    },
-                    {
-                      label: "Exit",
-                      variant: "primary",
-                      onClick: () => {
-                        closeDialog(id)
-                        void props.onExit()
-                      },
-                    },
-                  ],
+                  confirmLabel: "Exit",
+                  confirmVariant: "warning",
+                  onConfirm: () => props.onExit(),
                 })
               }}
             >

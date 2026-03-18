@@ -17,6 +17,8 @@
   --btn-bg: #3f3c4a;
   --btn-hover: var(--accent-0);
   --btn-secondary-bg: var(--color-bg-raised);
+  --btn-warning-bg: #6b3a3a;
+  --btn-warning-hover: #8b4a4a;
 
   /* Chess */
   --chess-board-bg-dark: #b58863;

@@ -10,10 +10,17 @@ export type ChessboardFactory = (
 
 import type { NexusEntity } from "@audiotool/nexus/document"
 
+export type GameStatusPhase = "ongoing" | "finished"
+
+export type GameStatus = {
+  message: string
+  phase: GameStatusPhase
+}
+
 export type ChessboardProps = {
   tonematrix: NexusEntity<"tonematrix">
   autoPlay: boolean
-  onStatusChange: (status: string) => void
+  onStatusChange: (status: GameStatus) => void
   computerPlaysAs?: "w" | "b"
   /** When set, user can only move pieces of this color (e.g. vsCollaborator mode). */
   userPlaysAs?: "w" | "b"

@@ -61,6 +61,14 @@ button {
     }
   }
 
+  &.warning {
+    background: var(--btn-warning-bg);
+
+    &:hover {
+      background: var(--btn-warning-hover);
+    }
+  }
+
   &.loading .icon {
     animation: rotate 1s linear infinite;
   }

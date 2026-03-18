@@ -22,6 +22,7 @@ type GameModeButtonProps = {
   projectUrl: string
   onCheckCollaborator: () => Promise<boolean | undefined>
   onShareDialog: () => void
+  variant?: "primary" | "default" | "warning" | "tertiary" | ""
 }
 
 export const GameModeButton = ({
@@ -30,6 +31,7 @@ export const GameModeButton = ({
   projectUrl,
   onCheckCollaborator,
   onShareDialog,
+  variant,
 }: GameModeButtonProps) => {
   const { showDialog, closeDialog } = useDialog()
 
@@ -130,7 +132,7 @@ export const GameModeButton = ({
   const ModeIcon = ICON_MAP[GAME_MODE_ICONS[mode]]
 
   return (
-    <button className="primary hug" onClick={handleClick}>
+    <button className={`${variant} hug`} onClick={handleClick}>
       <ModeIcon />
       {GAME_MODE_LABELS[mode]}
     </button>
