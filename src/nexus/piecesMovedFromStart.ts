@@ -34,6 +34,7 @@ const boardIndicesToSquare = (row: number, col: number): string => {
  * starting square. Uses move history to track piece identity when available.
  * When history is empty (e.g. loaded from FEN), only treats pieces on their
  * starting square as unmoved; pieces elsewhere are assumed to have moved.
+ * Board is used when history is empty to infer moved pieces from position.
  */
 export const getSquaresWithMovedPieces = (
   history: Array<{ from: string; to: string }>,
@@ -57,7 +58,7 @@ export const getSquaresWithMovedPieces = (
     return result
   }
 
-  // Standard starting position: map square -> piece id
+  // Replay from standard position: map square -> piece id for tracking
   const START_POSITION: Record<string, string> = {
     a1: "R1",
     b1: "N1",

@@ -174,7 +174,9 @@ const blankSteps = () => {
 }
 
 export type UpdateTonematrixOptions = {
+  /** When true, only pieces that have moved from their starting square add sound. */
   piecesSoundAfterMoveOnly?: boolean
+  /** Move history for tracking piece identity. When empty, position is used to infer. */
   moveHistory?: Array<{ from: string; to: string }>
 }
 
@@ -182,7 +184,9 @@ export type UpdateTonematrixOptions = {
  * Updates the "Ambient Chess" tonematrix pattern to reflect the current chess board.
  * Slot 0: visual board. Slots 1-2: binary FEN encoding. Slot 3: settings (separate).
  * When piecesSoundAfterMoveOnly is true, only pieces that have moved from their
- * starting square contribute to the pattern (requires moveHistory).
+ * starting square contribute to the pattern. Uses move history when available;
+ * when history is empty (e.g. loaded from FEN), infers from position (pieces not
+ * on their starting square are assumed to have moved).
  */
 export const updateTonematrixFromChessBoard = async (
   nexus: SyncedDocument,

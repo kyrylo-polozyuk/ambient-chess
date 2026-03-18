@@ -21,7 +21,7 @@ const EMPTY_PATTERN: [[number, number], [number, number]] = [
  * Each chess square maps to a 2x2 block using the piece's pattern from CHESS_PIECE_TO_PATTERN.
  * Returns a 16x16 grid as [col][row] to match tonematrix steps (columns) and notes (rows).
  * When piecesSoundAfterMoveOnly is true, only pieces that have moved from their starting square
- * contribute to the pattern (squaresWithMovedPieces should be the set of such squares).
+ * contribute to the pattern; squaresWithMovedPieces is the set of squares containing such pieces.
  */
 export const chessBoardToTonematrixPattern = (
   board: ChessBoard,

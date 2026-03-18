@@ -207,11 +207,6 @@ export class Chess {
   }
 
   /**
-   * Get AI move using js-chess-engine. Returns move in chess.js format.
-   * Does not apply the move; call move() to apply it.
-   * Uses level 4 (Advanced) by default for stronger play.
-   */
-  /**
    * Get move history. Returns empty array when game was loaded from FEN
    * (position-only load, no move history).
    */
@@ -223,6 +218,11 @@ export class Chess {
     })
   }
 
+  /**
+   * Get AI move using js-chess-engine. Returns move in chess.js format.
+   * Does not apply the move; call move() to apply it.
+   * Uses level 4 (Advanced) by default for stronger play.
+   */
   getAiMove(level: number = 4): VerboseMove | null {
     const result = this.game.ai({ level, play: false, randomness: 30 })
     if (!result?.move) return null
