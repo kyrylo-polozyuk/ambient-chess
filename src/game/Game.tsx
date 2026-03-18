@@ -14,7 +14,7 @@ import type { Settings } from "../settings/settings-context"
 import { SettingsDialogContent } from "../settings/SettingsDialogContent"
 import { useSettings } from "../settings/useSettings"
 import { trimUsername } from "../utils/username"
-import { type GameMode } from "./gameMode"
+import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
 import { GameModeButton } from "./GameModeButton"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
@@ -97,11 +97,11 @@ export const Game = (props: {
   useEffect(() => {
     if (loginStatus === undefined) return // Still loading auth - wait before deciding
     if (!client || !loginStatus.loggedIn) {
-      setMode("vsLocal")
+      setMode(DEFAULT_GAME_MODE)
       return
     }
     void checkCollaboratorMode().finally(() => {
-      setMode((m) => (m === undefined ? "vsLocal" : m))
+      setMode((m) => (m === undefined ? DEFAULT_GAME_MODE : m))
     })
   }, [checkCollaboratorMode, client, loginStatus])
 
@@ -204,7 +204,9 @@ export const Game = (props: {
               label: "Restart",
               variant: "primary",
               onClick: () => {
-                if (!isVsCollaborator) setMode("vsLocal")
+                if (mode !== "autoplay" && !isVsCollaborator) {
+                  setMode(DEFAULT_GAME_MODE)
+                }
                 chessboardRef.current?.restart()
                 closeDialog(id)
               },

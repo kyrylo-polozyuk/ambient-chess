@@ -7,17 +7,20 @@ import {
   GiChessRook,
 } from "react-icons/gi"
 import {
-  LuArrowRight,
+  LuBot,
   LuCopy,
+  LuGlobe,
   LuList,
   LuLoaderCircle,
   LuLogIn,
   LuLogOut,
   LuPlay,
   LuPlus,
+  LuPopcorn,
   LuRefreshCw,
   LuSettings,
   LuShare,
+  LuUser,
   LuUsers,
   LuX,
 } from "react-icons/lu"
@@ -52,6 +55,8 @@ export const Icons = {
     )
   },
   Play: () => <LuPlay size={ICON_SIZE} className="icon" />,
+  Bot: () => <LuBot size={ICON_SIZE} className="icon" />,
+  User: () => <LuUser size={ICON_SIZE} className="icon" />,
   LogOut: () => <LuLogOut size={ICON_SIZE} className="icon" />,
   Close: () => <LuX size={ICON_SIZE} className="icon" />,
   Copy: () => <LuCopy size={ICON_SIZE} className="icon" />,
@@ -59,8 +64,9 @@ export const Icons = {
   Settings: () => <LuSettings size={ICON_SIZE} className="icon" />,
   Share: () => <LuShare size={ICON_SIZE} className="icon" />,
   Users: () => <LuUsers size={ICON_SIZE} className="icon" />,
+  Popcorn: () => <LuPopcorn size={ICON_SIZE} className="icon" />,
+  Globe: () => <LuGlobe size={ICON_SIZE} className="icon" />,
   Add: () => <LuPlus size={ICON_SIZE} className="icon" />,
-  ArrowForward: () => <LuArrowRight size={ICON_SIZE} className="icon" />,
   LogIn: () => <LuLogIn size={ICON_SIZE} className="icon" />,
   Loader: (props: { className?: string }) => (
     <LuLoaderCircle
