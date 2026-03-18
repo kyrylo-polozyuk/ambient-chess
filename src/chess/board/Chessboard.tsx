@@ -287,9 +287,20 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       return styles
     }, [lastMove, selectedSquare, canInteract])
 
+    const canDragPiece = useCallback(
+      ({ piece }: { piece: { pieceType: string } }) => {
+        if (!canInteract) return false
+        const pieceColor = piece.pieceType.startsWith("w") ? "w" : "b"
+        return pieceColor === gameRef.current.turn()
+      },
+      [canInteract],
+    )
+
     const handlePieceDrop = useCallback(
       ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }) => {
-        if (!targetSquare || !canInteract) return false
+        if (!targetSquare || sourceSquare === targetSquare || !canInteract) return false
+        const pieceColor = gameRef.current.getPieceColorAt(sourceSquare)
+        if (pieceColor !== gameRef.current.turn()) return false
         return applyMove(sourceSquare, targetSquare)
       },
       [canInteract, applyMove],
@@ -344,6 +355,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         position,
         boardOrientation,
         allowDragging: canInteract,
+        canDragPiece,
         onPieceDrop: handlePieceDrop,
         onSquareClick: handleSquareClick,
         squareStyles,
@@ -358,6 +370,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         position,
         boardOrientation,
         canInteract,
+        canDragPiece,
         handlePieceDrop,
         handleSquareClick,
         squareStyles,

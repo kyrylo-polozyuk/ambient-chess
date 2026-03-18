@@ -91,6 +91,14 @@ export class Chess {
     return config.turn === "white" ? "w" : "b"
   }
 
+  /** Returns the color of the piece at the square, or null if empty. */
+  getPieceColorAt(square: string): "w" | "b" | null {
+    const config = this.game.exportJson()
+    const piece = config.pieces?.[square.toUpperCase()]
+    if (!piece) return null
+    return piece === piece.toUpperCase() ? "w" : "b"
+  }
+
   move(
     move: string | { from: string; to: string; promotion?: string },
   ): VerboseMove | null {

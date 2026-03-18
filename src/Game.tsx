@@ -1,8 +1,8 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
-import { Icons } from "./components/Icon"
 import { Chessboard } from "./chess/board/Chessboard"
 import type { ChessboardRef } from "./chess/Chessboard"
+import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { useDialog } from "./dialog/useDialog"
 import { useAuth } from "./hooks/useAuth"
@@ -190,19 +190,18 @@ export const Game = (props: {
       <div
         className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
       >
-      <Chessboard
-        ref={chessboardRef}
-        tonematrix={props.tonematrix}
-        autoPlay={mode === "autoplay"}
-        computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
-        userPlaysAs={userPlaysAs}
-        whitePlayerName={whitePlayerName}
-        blackPlayerName={blackPlayerName}
-        onStatusChange={setStatus}
-      />
+        <Chessboard
+          ref={chessboardRef}
+          tonematrix={props.tonematrix}
+          autoPlay={mode === "autoplay"}
+          computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
+          userPlaysAs={userPlaysAs}
+          whitePlayerName={whitePlayerName}
+          blackPlayerName={blackPlayerName}
+          onStatusChange={setStatus}
+        />
 
-      <div className="column full-width">
-        <div className="row small-gap wrap center">
+        <div className="column full-width">
           <div className="game-status">{status}</div>
           <div className="row small-gap">
             {isVsCollaborator && (
@@ -217,10 +216,9 @@ export const Game = (props: {
               Exit
             </button>
           </div>
-        </div>
-        {mode !== undefined && !isVsCollaborator && (
-          <div className="row small-gap wrap center">
-            Mode:
+          {mode !== undefined && !isVsCollaborator && (
+            <div className="row small-gap wrap center">
+              Mode:
               <button
                 className={` ${mode === "autoplay" ? "active" : ""} hug`}
                 onClick={() =>
@@ -312,22 +310,22 @@ export const Game = (props: {
                 Player vs Collaborator
               </button>
             </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <div className="grow">
-        <p>
-          Press <Icons.Play /> in{" "}
-          <a
-            href={buildAudiotoolUrl(props.projectUrl)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Audiotool
-          </a>{" "}
-          to start the music.
-        </p>
-      </div>
+        <div className="grow">
+          <p>
+            Press <Icons.Play /> in{" "}
+            <a
+              href={buildAudiotoolUrl(props.projectUrl)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Audiotool
+            </a>{" "}
+            to start the music.
+          </p>
+        </div>
       </div>
     </div>
   )
