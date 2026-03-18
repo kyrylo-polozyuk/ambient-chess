@@ -36,6 +36,88 @@ li {
   }
 }
 
+.intro-tagline {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  text-align: center;
+  margin: 0 0 1rem;
+
+  & strong {
+    color: var(--color-text-link);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+}
+
+blockquote {
+  text-align: center;
+  position: relative;
+  padding: 1.25rem 1.5rem;
+  margin: 0 0 1.5rem;
+  border: 1px dashed var(--accent-1);
+  background: linear-gradient(
+    135deg,
+    rgba(194, 209, 200, 0.08) 0%,
+    rgba(74, 92, 82, 0.06) 50%,
+    transparent 100%
+  );
+  border-radius: 16px;
+  animation: blockquote-fade 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  & ol {
+    text-align: left;
+    display: block;
+    padding-left: 2em;
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+  }
+
+  & li {
+    padding-left: 0.5em;
+    animation: blockquote-step 0.4s ease-out both;
+  }
+
+  & li:nth-child(1) {
+    animation-delay: 0.15s;
+  }
+
+  & li:nth-child(2) {
+    animation-delay: 0.25s;
+  }
+
+  & li:nth-child(3) {
+    animation-delay: 0.35s;
+  }
+
+  & li + li {
+    margin-top: 0.5em;
+  }
+}
+
+@keyframes blockquote-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes blockquote-step {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .error,
 .secondary-text {
   color: var(--color-text-muted);
