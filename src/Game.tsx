@@ -5,12 +5,14 @@ import type { ChessboardRef } from "./chess/Chessboard"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { useDialog } from "./dialog/useDialog"
-import { SettingsDialogContent } from "./SettingsDialogContent"
 import { useAuth } from "./hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
 } from "./ProjectSelector/projectId"
+import type { Settings } from "./settings-context"
+import { SettingsDialogContent } from "./SettingsDialogContent"
+import { useSettings } from "./useSettings"
 import { trimUsername } from "./utils/username"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
@@ -26,6 +28,10 @@ export const Game = (props: {
   const { client } = useContext(AudiotoolContext)
   const { loginStatus } = useAuth()
   const { showDialog, closeDialog } = useDialog()
+  const {
+    piecesSoundAfterMoveOnly,
+    setPiecesSoundAfterMoveOnly,
+  } = useSettings()
   const chessboardRef = useRef<ChessboardRef>(null)
 
   const [mode, setMode] = useState<GameMode | undefined>(undefined)
@@ -142,19 +148,43 @@ export const Game = (props: {
 
   const showSettingsDialog = useCallback(() => {
     const id = "settings"
+    const pendingSettings: { current: Settings } = {
+      current: { piecesSoundAfterMoveOnly },
+    }
     showDialog({
       id,
       title: "Settings",
-      content: <SettingsDialogContent />,
+      content: (
+        <SettingsDialogContent
+          initialValue={{ piecesSoundAfterMoveOnly }}
+          onChange={(v: Settings) => {
+            pendingSettings.current = v
+          }}
+        />
+      ),
       buttons: [
         {
-          label: "Close",
-          variant: "default",
+          label: "Cancel",
           onClick: () => closeDialog(id),
+        },
+        {
+          label: "Save",
+          variant: "primary",
+          onClick: () => {
+            setPiecesSoundAfterMoveOnly(
+              pendingSettings.current.piecesSoundAfterMoveOnly,
+            )
+            closeDialog(id)
+          },
         },
       ],
     })
-  }, [showDialog, closeDialog])
+  }, [
+    showDialog,
+    closeDialog,
+    piecesSoundAfterMoveOnly,
+    setPiecesSoundAfterMoveOnly,
+  ])
 
   const getRestartButton = () => (
     <button

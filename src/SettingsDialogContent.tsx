@@ -1,7 +1,18 @@
-import { useSettings } from "./useSettings"
+import { useState } from "react"
+import type { Settings } from "./settings-context"
 
-export const SettingsDialogContent = () => {
-  const { piecesSoundAfterMoveOnly, setPiecesSoundAfterMoveOnly } = useSettings()
+export const SettingsDialogContent = (props: {
+  initialValue: Settings
+  onChange: (value: Settings) => void
+}) => {
+  const [piecesSoundAfterMoveOnly, setPiecesSoundAfterMoveOnly] = useState(
+    props.initialValue.piecesSoundAfterMoveOnly,
+  )
+
+  const handleChange = (checked: boolean) => {
+    setPiecesSoundAfterMoveOnly(checked)
+    props.onChange({ piecesSoundAfterMoveOnly: checked })
+  }
 
   return (
     <div className="column small-gap">
@@ -9,7 +20,7 @@ export const SettingsDialogContent = () => {
         <input
           type="checkbox"
           checked={piecesSoundAfterMoveOnly}
-          onChange={(e) => setPiecesSoundAfterMoveOnly(e.target.checked)}
+          onChange={(e) => handleChange(e.target.checked)}
         />
         <span>Pieces only make a sound after moving</span>
       </label>
