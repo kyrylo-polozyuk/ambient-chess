@@ -19,6 +19,11 @@ import { useBpm } from "../../nexus/useBpm"
 import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
 import type { ChessboardProps, ChessboardRef } from "../Chessboard"
 import { Chess, type Square } from "../engine/chessAdapter"
+import {
+  chessLastMoveHighlight,
+  chessLegalMoveHighlight,
+  chessSelectedSquareHighlight,
+} from "../../theme"
 import { getStockfishMove } from "../engine/chessApi"
 
 const FEN_START =
@@ -46,6 +51,9 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const [position, setPosition] = useState(FEN_START)
     const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
+    const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(
+      null,
+    )
     const [ready, setReady] = useState(false)
     const [fenPatternsReady, setFenPatternsReady] = useState(false)
 
@@ -95,6 +103,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         const result = game.move({ from, to })
         if (result) {
           setPosition(game.fen())
+          setLastMove({ from, to })
           updateStatus()
           syncBoardToTonematrix()
           setSelectedSquare(null)
@@ -113,6 +122,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           gameRef.current = new Chess(fen)
           setPosition(fen)
           setSelectedSquare(null)
+          setLastMove(null)
           updateStatus()
         } catch (e) {
           console.error("Invalid FEN from Nexus:", e)
@@ -129,6 +139,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       gameRef.current = new Chess()
       setPosition(FEN_START)
       setSelectedSquare(null)
+      setLastMove(null)
       updateStatus()
       syncBoardToTonematrix()
     }, [updateStatus, syncBoardToTonematrix])
@@ -155,6 +166,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
         game.move(bestMove)
         setPosition(game.fen())
+        setLastMove({ from: bestMove.from, to: bestMove.to })
         updateStatus()
         syncBoardToTonematrix()
 
@@ -193,6 +205,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
             gameRef.current = new Chess(storedFen)
             setPosition(storedFen)
             setSelectedSquare(null)
+            setLastMove(null)
             updateStatus()
           } catch (e) {
             console.error("Invalid stored FEN:", e)
@@ -239,24 +252,36 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const squareStyles = useMemo(() => {
       const styles: Record<string, React.CSSProperties> = {}
-      if (!selectedSquare || !canInteract) return styles
 
-      const game = gameRef.current
-      const legalMoves = game.moves({
-        square: selectedSquare as Square,
-        verbose: true,
-      }) as { from: string; to: string }[]
-
-      styles[selectedSquare] = {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+      // Last move highlight
+      if (lastMove) {
+        styles[lastMove.from] = {
+          backgroundColor: chessLastMoveHighlight,
+        }
+        styles[lastMove.to] = {
+          backgroundColor: chessLastMoveHighlight,
+        }
       }
-      for (const m of legalMoves) {
-        styles[m.to] = {
-          backgroundColor: "rgba(255, 255, 255, 0.15)",
+
+      // Selected square and legal moves
+      if (selectedSquare && canInteract) {
+        const game = gameRef.current
+        const legalMoves = game.moves({
+          square: selectedSquare as Square,
+          verbose: true,
+        }) as { from: string; to: string }[]
+
+        styles[selectedSquare] = {
+          backgroundColor: chessSelectedSquareHighlight,
+        }
+        for (const m of legalMoves) {
+          styles[m.to] = {
+            backgroundColor: chessLegalMoveHighlight,
+          }
         }
       }
       return styles
-    }, [selectedSquare, canInteract])
+    }, [lastMove, selectedSquare, canInteract])
 
     const handlePieceDrop = useCallback(
       ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }) => {
