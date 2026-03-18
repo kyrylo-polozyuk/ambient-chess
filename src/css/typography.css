@@ -12,7 +12,11 @@ h1 {
 }
 
 p {
-  margin: 0;
+  margin: 0 0 0.75em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 a {
@@ -22,7 +26,16 @@ a {
 
 ul,
 ol {
-  margin: 0;
+  margin: 0 0 0.75em;
+  padding-inline-start: 1.5em;
+}
+
+li {
+  margin-bottom: 0.25em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .error,

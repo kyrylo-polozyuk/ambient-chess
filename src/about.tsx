@@ -33,15 +33,19 @@ export const useShowAboutDialog = () => {
                 rel="noreferrer"
               >
                 Audiotool SDK
-              </a>: Enabling the connection between the chessboard and the Audiotool DAW
+              </a>
+              : Enabling the connection between the chessboard and the Audiotool DAW
             </li>
-            <a
-              href="https://github.com/Clariity/react-chessboard"
-              target="_blank"
-              rel="noreferrer"
-            >
-              react-chessboard
-            </a>
+            <li>
+              <a
+                href="https://github.com/Clariity/react-chessboard"
+                target="_blank"
+                rel="noreferrer"
+              >
+                react-chessboard
+              </a>
+              : React UI library with a chessboard component
+            </li>
             <li>
               <a
                 href="https://chess-api.com/"
@@ -49,7 +53,8 @@ export const useShowAboutDialog = () => {
                 rel="noreferrer"
               >
                 chess-api.com
-              </a>: Providing an API endpoint for Stockfish chess engine
+              </a>
+              : Providing an API endpoint for Stockfish chess engine
             </li>
             <li>
               <a
@@ -58,7 +63,8 @@ export const useShowAboutDialog = () => {
                 rel="noreferrer"
               >
                 js-chess-engine
-              </a>: Fallback chess engine for when the API endpoint is not available
+              </a>
+              : Fallback chess engine for when the API endpoint is not available
             </li>
           </ul>
         </div>
