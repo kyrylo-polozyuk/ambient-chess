@@ -162,7 +162,7 @@ export const ProjectSelector = ({
       </blockquote>
 
       <div className="column grow full-width">
-        <div className="column full-width small-gap">
+        <div className="row full-width small-gap center">
           <button
             className={`primary ${loading ? "loading" : ""}`}
             onClick={() => {
@@ -179,12 +179,12 @@ export const ProjectSelector = ({
           </button>
           {!showProjectList && (
             <button
-              className="secondary"
+              className="secondary hug"
               onClick={() => setShowProjectList(true)}
               disabled={loading || !client}
             >
-              <Icons.ArrowForward />
-              Existing project
+              <Icons.List />
+              Existing
             </button>
           )}
         </div>

@@ -2,6 +2,7 @@ import { GiChessQueen } from "react-icons/gi"
 import {
   LuArrowRight,
   LuCopy,
+  LuList,
   LuLoaderCircle,
   LuLogIn,
   LuLogOut,
@@ -33,4 +34,5 @@ export const Icons = {
       className={props.className ? `icon ${props.className}` : "icon"}
     />
   ),
+  List: () => <LuList size={ICON_SIZE} className="icon" />,
 } as const

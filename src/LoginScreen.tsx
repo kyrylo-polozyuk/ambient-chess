@@ -1,26 +1,19 @@
-import type { LoginStatus } from "@audiotool/nexus"
 import { Icons } from "./components/Icon"
 import { type AuthStatus } from "./hooks/useAuth"
 
 type LoginScreenProps = {
-  loginStatus: LoginStatus | undefined
   authStatus: AuthStatus
   loading: boolean
   authError: string | undefined
+  handleLogin: () => void
 }
 
 export const LoginScreen = ({
-  loginStatus,
   authStatus,
   loading,
   authError,
+  handleLogin,
 }: LoginScreenProps) => {
-  const handleLogin = () => {
-    if (loginStatus?.loggedIn === false) {
-      loginStatus.login()
-    }
-  }
-
   // Show loading state while checking auth
   if (loading && authStatus === "checking") {
     return (

@@ -1,5 +1,5 @@
 import { getLoginStatus, type LoginStatus } from "@audiotool/nexus"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 // OIDC Configuration - same client as ambient-chess for Audiotool ecosystem
 const CLIENT_ID = "d9c42b96-c08e-4afa-be36-9d3844777012"
@@ -17,6 +17,7 @@ type UseAuthReturn = {
   authStatus: AuthStatus
   loading: boolean
   authError: string | undefined
+  handleLogin: () => void
 }
 
 export const useAuth = (): UseAuthReturn => {
@@ -68,10 +69,17 @@ export const useAuth = (): UseAuthReturn => {
     checkAuth()
   }, [loginStatus])
 
+  const handleLogin = useCallback(() => {
+    if (loginStatus?.loggedIn === false) {
+      loginStatus.login()
+    }
+  }, [loginStatus])
+
   return {
     loginStatus,
     authStatus,
     loading,
     authError,
+    handleLogin,
   }
 }

@@ -17,7 +17,7 @@ import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
 
 const AppContent = () => {
-  const { loginStatus, authStatus, loading, authError } = useAuth()
+  const { loginStatus, authStatus, loading, authError, handleLogin } = useAuth()
   const showAboutDialog = useShowAboutDialog()
 
   const [client, setClient] = useState<AudiotoolClient | undefined>(undefined)
@@ -118,38 +118,51 @@ const AppContent = () => {
                   <span>Ambient Chess</span>
                 </button>
               </div>
-              {authStatus === "logged-in" && (
-                <div className="user-info">
-                  {syncedDocument && client && projectUrl && (
+              <div className="user-info">
+                {authStatus === "logged-in" && syncedDocument && client && projectUrl && (
+                  <button
+                    className="hug"
+                    onClick={() => {
+                      const projectId = extractProjectId(projectUrl)
+                      window.open(
+                        `${AUDIOTOOL_STUDIO_BASE}${projectId}`,
+                        "_blank",
+                      )
+                    }}
+                  >
+                    <Icons.Play />
+                    <span>Open Studio</span>
+                  </button>
+                )}
+                <button
+                  className={`hug responsive ${loading ? "loading" : ""}`}
+                  onClick={authStatus === "logged-in" ? handleLogout : handleLogin}
+                  disabled={loading}
+                >
+                  {authStatus === "logged-in" ? (
                     <>
-                      <button
-                        className="hug"
-                        onClick={() => {
-                          const projectId = extractProjectId(projectUrl)
-                          window.open(
-                            `${AUDIOTOOL_STUDIO_BASE}${projectId}`,
-                            "_blank",
-                          )
-                        }}
-                      >
-                        <Icons.Play />
-                        <span>Open Studio</span>
-                      </button>
+                      <Icons.LogOut />
+                      <span>Log out</span>
+                    </>
+                  ) : (
+                    <>
+                      {loading ? (
+                        <Icons.Loader className="loading-spinner" />
+                      ) : (
+                        <Icons.LogIn />
+                      )}
+                      <span>{loading ? "Redirecting..." : "Log in"}</span>
                     </>
                   )}
-                  <button className="hug responsive" onClick={handleLogout}>
-                    <Icons.LogOut />
-                    <span>Log out</span>
-                  </button>
-                </div>
-              )}
+                </button>
+              </div>
             </div>
             <div className="column grow full-width">
               <LoginScreen
-                loginStatus={loginStatus}
                 authStatus={authStatus}
                 loading={loading}
                 authError={authError}
+                handleLogin={handleLogin}
               />
               {getAppContents()}
             </div>
