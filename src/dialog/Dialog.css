@@ -12,8 +12,8 @@
 }
 
 .dialog-container {
-  background: var(--btn-bg);
-  border: 1px solid var(--btn-hover);
+  background: var(--color-bg);
+  border: 1px solid var(--color-bg-raised);
   border-radius: 8px;
   min-width: 320px;
   max-width: 90vw;
@@ -29,7 +29,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--btn-hover);
+  border-bottom: 1px solid var(--color-bg-raised);
   gap: 16px;
 }
 
@@ -61,7 +61,7 @@
   display: flex;
   gap: 12px;
   padding: 16px 20px;
-  border-top: 1px solid var(--btn-hover);
+  border-top: 1px solid var(--color-bg-raised);
   justify-content: flex-end;
 }
 

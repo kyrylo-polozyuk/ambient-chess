@@ -68,7 +68,7 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
             {config.title && <h3 className="dialog-title">{config.title}</h3>}
             {config.dismissible !== false && (
               <button
-                className="dialog-close-button"
+                className="dialog-close-button tertiary"
                 onClick={handleCloseClick}
                 aria-label="Close dialog"
               >
@@ -83,7 +83,7 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
             {config.buttons.map((button, index) => (
               <button
                 key={index}
-                className={`hug ${button.variant === "primary" ? "primary" : ""}`}
+                className={`hug ${button.variant === "primary" ? "primary" : "tertiary"}`}
                 onClick={button.onClick}
               >
                 {button.label}
