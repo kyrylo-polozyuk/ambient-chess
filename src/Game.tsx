@@ -5,6 +5,10 @@ import type { ChessboardRef } from "./chess/Chessboard"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { useDialog } from "./dialog/useDialog"
+import {
+  type GameMode,
+  GameModeButton,
+} from "./GameModeButton"
 import { useAuth } from "./hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
@@ -17,15 +21,6 @@ import { trimUsername } from "./utils/username"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
-
-type GameMode = "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
-
-const GAME_MODE_LABELS: Record<GameMode, string> = {
-  autoplay: "AI vs AI",
-  vsComputer: "Player vs AI",
-  vsLocal: "Player vs Local Player",
-  vsCollaborator: "Player vs Collaborator",
-}
 
 export const Game = (props: {
   projectUrl: string
@@ -258,6 +253,15 @@ export const Game = (props: {
         <div className="column full-width">
           <div className="game-status">{status}</div>
           <div className="row small-gap">
+            {mode !== undefined && !isVsCollaborator && (
+              <GameModeButton
+                mode={mode}
+                onModeChange={setMode}
+                projectUrl={props.projectUrl}
+                onCheckCollaborator={checkCollaboratorMode}
+                onShareDialog={showShareDialog}
+              />
+            )}
             {isVsCollaborator && (
               <button className="hug responsive" onClick={showShareDialog}>
                 <Icons.Share />
@@ -301,116 +305,6 @@ export const Game = (props: {
               Exit
             </button>
           </div>
-          {mode !== undefined && !isVsCollaborator && (
-            <div className="row small-gap wrap center">
-              <button
-                className="primary hug"
-                onClick={() => {
-                  const id = "game-mode-select"
-                  showDialog({
-                    id,
-                    title: "Mode",
-                    content: (
-                      <div className="row wrap center small-gap">
-                        {(
-                          [
-                            "autoplay",
-                            "vsComputer",
-                            "vsLocal",
-                            "vsCollaborator",
-                          ] as const
-                        ).map((m) => (
-                          <button
-                            key={m}
-                            className={`hug full-width ${mode === m ? "active" : ""}`}
-                            onClick={() => {
-                              closeDialog(id)
-                              if (m === "vsCollaborator") {
-                                const collabId = "vs-collaborator-instructions"
-                                showDialog({
-                                  id: collabId,
-                                  title: "Player vs Collaborator",
-                                  content: (
-                                    <>
-                                      <p>
-                                        To play against an Audiotool project
-                                        collaborator. In{" "}
-                                        <a
-                                          href={props.projectUrl}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                        >
-                                          Audiotool
-                                        </a>
-                                        , add a collaborator to the project.
-                                      </p>
-                                      <p>
-                                        The collaborator options are accessed
-                                        via the <Icons.Users /> button on top
-                                        right of the Audiotool.
-                                      </p>
-                                    </>
-                                  ),
-                                  buttons: [
-                                    {
-                                      label: "Cancel",
-                                      onClick: () => closeDialog(collabId),
-                                    },
-                                    {
-                                      label: "Done",
-                                      variant: "primary",
-                                      onClick: () => {
-                                        closeDialog(collabId)
-                                        void (async () => {
-                                          const switched =
-                                            await checkCollaboratorMode()
-                                          if (switched) {
-                                            showShareDialog()
-                                          } else {
-                                            showDialog({
-                                              id: "vs-collaborator-error",
-                                              title: "No collaborator found",
-                                              content: (
-                                                <p>
-                                                  Make sure a collaborator is
-                                                  added and try again.
-                                                </p>
-                                              ),
-                                              buttons: [
-                                                {
-                                                  label: "OK",
-                                                  variant: "primary",
-                                                  onClick: () =>
-                                                    closeDialog(
-                                                      "vs-collaborator-error",
-                                                    ),
-                                                },
-                                              ],
-                                            })
-                                          }
-                                        })()
-                                      },
-                                    },
-                                  ],
-                                })
-                              } else {
-                                setMode(m)
-                              }
-                            }}
-                          >
-                            {GAME_MODE_LABELS[m]}
-                          </button>
-                        ))}
-                      </div>
-                    ),
-                    dismissible: true,
-                  })
-                }}
-              >
-                {GAME_MODE_LABELS[mode]}
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="grow fit-content">
