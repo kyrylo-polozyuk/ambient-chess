@@ -3,10 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { Footer } from "./components/Footer"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
-import { DialogProvider } from "./dialog/DialogContext"
 import { useDialog } from "./dialog/useDialog"
-import { ErrorBoundary } from "./errors/ErrorBoundary"
-import { ErrorHandler } from "./errors/ErrorHandler"
 import { useAuth } from "./hooks/useAuth"
 import { LoginScreen } from "./LoginScreen"
 import {
@@ -17,7 +14,7 @@ import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
 import { SettingsProvider } from "./settings/SettingsProvider"
 
-const AppContent = () => {
+export const App = () => {
   const { loginStatus, authStatus, loading, authError, handleLogin } = useAuth()
   const { showDialog, closeDialog } = useDialog()
 
@@ -184,12 +181,3 @@ const AppContent = () => {
     </AudiotoolContext.Provider>
   )
 }
-
-export const App = () => (
-  <DialogProvider>
-    <ErrorHandler />
-    <ErrorBoundary>
-      <AppContent />
-    </ErrorBoundary>
-  </DialogProvider>
-)
