@@ -165,7 +165,7 @@ export const App = () => {
               </button>
             </div>
           </div>
-          <div className="column grow full-width">
+          <div className="column grow full-width app-content">
             <LoginScreen
               authStatus={authStatus}
               loading={loading}
