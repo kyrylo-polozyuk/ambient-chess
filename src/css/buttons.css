@@ -14,65 +14,73 @@ button {
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
-}
 
-button .material-symbols {
-  font-size: 1em;
-}
+  & .material-symbols {
+    font-size: 1em;
+  }
 
-button:hover {
-  background: var(--btn-hover);
-}
+  &:hover {
+    background: var(--btn-hover);
+  }
 
-button:focus {
-  outline: none;
-}
+  &:focus {
+    outline: none;
+  }
 
-button:disabled {
-  opacity: 0.5;
-}
+  &:disabled {
+    opacity: 0.5;
+  }
 
-button.hug {
-  min-width: auto;
-  width: auto;
-}
+  &.hug {
+    min-width: auto;
+    width: auto;
+  }
 
-button.primary {
-  background: var(--btn-hover);
-}
+  &.primary {
+    background: var(--btn-hover);
 
-button.primary:hover {
-  background: var(--accent-1);
-}
+    &:hover {
+      background: var(--accent-1);
+    }
+  }
 
-button.secondary {
-  background: var(--btn-secondary-bg);
-}
+  &.secondary {
+    background: var(--btn-secondary-bg);
 
-button.secondary:hover {
-  background: var(--btn-bg);
-}
+    &:hover {
+      background: var(--btn-bg);
+    }
+  }
 
-button.loading .material-symbols {
-  animation: rotate 1s linear infinite;
+  &.tertiary {
+    background: transparent;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  &.loading .material-symbols {
+    animation: rotate 1s linear infinite;
+  }
+
+  &.active {
+    box-shadow: 0 0 0 2px var(--btn-hover);
+  }
+
+  &.responsive {
+    @media (max-width: 800px) {
+      font-size: 0;
+      gap: 0;
+      & .material-symbols {
+        font-size: 1.25rem;
+      }
+    }
+  }
 }
 
 .loading-spinner {
   animation: rotate 1s linear infinite;
-}
-
-button.active {
-  box-shadow: 0 0 0 2px var(--btn-hover);
-}
-
-button.responsive {
-  @media (max-width: 800px) {
-    font-size: 0;
-    gap: 0;
-    & .material-symbols {
-      font-size: 1.25rem;
-    }
-  }
 }
 
 @keyframes rotate {

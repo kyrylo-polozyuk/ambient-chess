@@ -67,7 +67,7 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
             {config.title && <h3 className="dialog-title">{config.title}</h3>}
             {config.dismissible !== false && (
               <button
-                className="dialog-close-button hug"
+                className="dialog-close-button"
                 onClick={handleCloseClick}
                 aria-label="Close dialog"
               >

@@ -1,5 +1,6 @@
 import { type AudiotoolClient, type SyncedDocument } from "@audiotool/nexus"
 import { useEffect, useState } from "react"
+import { useShowAboutDialog } from "./about"
 import { AudiotoolContext } from "./context"
 import { DialogProvider } from "./dialog/DialogContext"
 import { ErrorBoundary } from "./ErrorBoundary"
@@ -13,8 +14,9 @@ import {
 import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
 
-export const App = () => {
+const AppContent = () => {
   const { loginStatus, authStatus, loading, authError } = useAuth()
+  const showAboutDialog = useShowAboutDialog()
 
   const [client, setClient] = useState<AudiotoolClient | undefined>(undefined)
   const [syncedDocument, setSyncedDocument] = useState<
@@ -100,16 +102,19 @@ export const App = () => {
   }
 
   return (
-    <DialogProvider>
-      <ErrorHandler />
-      <ErrorBoundary>
-        <AudiotoolContext.Provider value={{ client, nexus: syncedDocument }}>
+    <AudiotoolContext.Provider value={{ client, nexus: syncedDocument }}>
           <div className="column app-container">
             <div className="row full-width top-bar">
               <div className="title-container">
-                <p className="title"><span className="material-symbols">
-                  chess_queen
-                </span> <span>Ambient Chess</span></p>
+                <button
+                  type="button"
+                  className="title hug tertiary"
+                  title="About Ambient Chess"
+                  onClick={() => showAboutDialog()}
+                >
+                  <span className="material-symbols">chess_queen</span>
+                  <span>Ambient Chess</span>
+                </button>
               </div>
               {authStatus === "logged-in" && (
                 <div className="user-info">
@@ -148,13 +153,16 @@ export const App = () => {
               />
               {getAppContents()}
             </div>
-            <div className="full-width footer">
-              <p>Created by <a href="https://www.audiotool.com/user/kepz" target="_blank">Kyrylo Polozyuk</a></p>
-              <p>Powered by <a href="https://developer.audiotool.com/" target="_blank">Audiotool SDK</a>, <a href="https://github.com/Clariity/react-chessboard" target="_blank">react-chessboard</a>, <a href="https://chess-api.com/" target="_blank">chess-api.com</a> and <a href="https://github.com/josefjadrny/js-chess-engine" target="_blank">js-chess-engine</a></p>
-            </div>
           </div>
-        </AudiotoolContext.Provider>
-      </ErrorBoundary>
-    </DialogProvider>
+    </AudiotoolContext.Provider>
   )
 }
+
+export const App = () => (
+  <DialogProvider>
+    <ErrorHandler />
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  </DialogProvider>
+)
