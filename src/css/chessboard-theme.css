@@ -8,6 +8,8 @@
   align-items: center;
   width: 100%;
   container-type: size;
+  overflow: hidden;
+  border-radius: 4px;
 }
 
 .board-container {
@@ -19,12 +21,12 @@
   max-height: 100%;
   border-radius: 4px;
   overflow: visible;
-}
 
-.board-container svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 }
 
 /* Chessboard ambient theme - react-chessboard uses inline styles for squares;
@@ -82,4 +84,3 @@
 .promotion-piece-icon {
   line-height: 1;
 }
-
