@@ -19,6 +19,7 @@ type GameMode = "autoplay" | "vsComputer" | "vsLocal" | "vsCollaborator"
 export const Game = (props: {
   projectUrl: string
   tonematrix: NexusEntity<"tonematrix">
+  onExit: () => void | Promise<void>
 }) => {
   const { client } = useContext(AudiotoolContext)
   const { loginStatus } = useAuth()
@@ -185,6 +186,10 @@ export const Game = (props: {
             </button>
           )}
           {getRestartButton()}
+          <button className="hug" onClick={() => void props.onExit()}>
+            <span className="material-symbols">close</span>
+            Exit
+          </button>
         </div>
 
         <div className="row small-gap wrap center">

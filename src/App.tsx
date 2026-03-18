@@ -78,7 +78,25 @@ export const App = () => {
     }
 
     // connected to a project, start the generator
-    return <ProjectSyncedComponent projectUrl={projectUrl} ></ProjectSyncedComponent >
+    return (
+      <ProjectSyncedComponent
+        projectUrl={projectUrl}
+        onClose={async () => {
+          const params = new URLSearchParams(window.location.search)
+          params.delete("projectUrl")
+          window.history.replaceState(
+            {},
+            "",
+            `${window.location.pathname}?${params.toString()}`,
+          )
+          if (syncedDocument !== undefined) {
+            await syncedDocument.stop()
+          }
+          setClient(undefined)
+          setSyncedDocument(undefined)
+        }}
+      />
+    )
   }
 
   return (
@@ -97,30 +115,6 @@ export const App = () => {
                 <div className="user-info">
                   {syncedDocument && client && projectUrl && (
                     <>
-                      <button
-                        className="hug"
-                        onClick={async () => {
-                          const params = new URLSearchParams(
-                            window.location.search,
-                          )
-                          params.delete("projectUrl")
-                          window.history.replaceState(
-                            {},
-                            "",
-                            `${window.location.pathname}?${params.toString()}`,
-                          )
-                          if (syncedDocument !== undefined) {
-                            await syncedDocument.stop()
-                          }
-                          setClient(undefined)
-                          setSyncedDocument(undefined)
-                        }}
-                      >
-                        <span className="material-symbols">
-                          arrow_back
-                        </span>
-                        <span>Change Project</span>
-                      </button>
                       <button
                         className="hug"
                         onClick={() => {

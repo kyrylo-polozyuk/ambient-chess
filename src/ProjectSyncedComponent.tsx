@@ -6,6 +6,7 @@ import { setupProject } from "./nexus/projectSetup"
 
 export const ProjectSyncedComponent = (props: {
   projectUrl: string
+  onClose: () => void | Promise<void>
 }) => {
   const context = useContext(AudiotoolContext)
   const [tonematrix, setTonematrix] = useState<
@@ -22,7 +23,11 @@ export const ProjectSyncedComponent = (props: {
 
   return (
     <div className="column grow full-width">
-      <Game projectUrl={props.projectUrl} tonematrix={tonematrix} />
+      <Game
+        projectUrl={props.projectUrl}
+        tonematrix={tonematrix}
+        onExit={props.onClose}
+      />
     </div>
   )
 }
