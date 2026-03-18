@@ -21,27 +21,9 @@
 
 .column,
 .row {
-  gap: 24px;
+  gap: 1rem;
   flex-wrap: nowrap;
-}
 
-.column.center,
-.row.center {
-  justify-content: center;
-}
-
-.column.end,
-.row.end {
-  justify-content: flex-end;
-}
-
-.column.start,
-.row.start {
-  justify-content: flex-start;
-}
-
-.column,
-.row {
   .grow {
     flex-grow: 1;
     min-height: 0;
@@ -57,8 +39,20 @@
     overflow: hidden;
   }
 
+  &.start {
+    justify-content: flex-start;
+  }
+
+  &.end {
+    justify-content: flex-end;
+  }
+
+  &.center {
+    justify-content: center;
+  }
+
   &.small-gap {
-    gap: 12px;
+    gap: 0.5rem;
   }
 
   .no-gap {

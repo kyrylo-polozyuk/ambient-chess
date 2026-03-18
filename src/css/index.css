@@ -64,7 +64,7 @@ body {
   max-width: 800px;
   height: 100vh;
   overflow: auto;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .top-bar {
@@ -102,7 +102,6 @@ body {
 
 .game-component {
   width: 100%;
-  padding: 4px;
 }
 
 .game-controls {
