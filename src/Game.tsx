@@ -5,6 +5,7 @@ import type { ChessboardRef } from "./chess/Chessboard"
 import { Icons } from "./components/Icon"
 import { AudiotoolContext } from "./context"
 import { useDialog } from "./dialog/useDialog"
+import { SettingsDialogContent } from "./SettingsDialogContent"
 import { useAuth } from "./hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
@@ -139,6 +140,22 @@ export const Game = (props: {
     })
   }, [showDialog, closeDialog])
 
+  const showSettingsDialog = useCallback(() => {
+    const id = "settings"
+    showDialog({
+      id,
+      title: "Settings",
+      content: <SettingsDialogContent />,
+      buttons: [
+        {
+          label: "Close",
+          variant: "default",
+          onClick: () => closeDialog(id),
+        },
+      ],
+    })
+  }, [showDialog, closeDialog])
+
   const getRestartButton = () => (
     <button
       className="hug responsive"
@@ -210,6 +227,13 @@ export const Game = (props: {
                 Share Link
               </button>
             )}
+            <button
+              className="hug responsive"
+              onClick={showSettingsDialog}
+            >
+              <Icons.Settings />
+              Settings
+            </button>
             {getRestartButton()}
             <button
               className="hug responsive"
