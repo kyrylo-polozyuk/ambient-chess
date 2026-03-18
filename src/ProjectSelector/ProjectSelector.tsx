@@ -152,13 +152,17 @@ export const ProjectSelector = ({
 
   return (
     <div className="column grow center project-selector-container">
-      <h2>Connect to a Project</h2>
+      <h2>Get Started</h2>
       <blockquote className="project-selector-intro">
-        To use this app, you need to connect it to an Audiotool project. An
-        empty project is recommended for the best experience.
-
-        Once connected, you can start playing chess and the app will automatically update the tonematrix based on the chess game.
-        Press <Icons.Play /> in Audiotool to start the music.
+        <p>
+          <strong>Play chess. Generate ambient music.</strong> Each move you
+          make shapes the soundscape in real time on Audiotool.
+        </p>
+        <ol>
+          <li>Click below to open a project in Audiotool where the soundscape will be generated.</li>
+          <li>Press <Icons.Play /> in Audiotool to start the music.</li>
+          <li>Come back to this tab to play chess and hear your game come to life.</li>
+        </ol>
       </blockquote>
 
       <div className="column grow full-width">
