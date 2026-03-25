@@ -221,7 +221,7 @@ export const setupNewProject = (
     vibratoFrequencyHz: 1,
   })
   const pulverisateur_0 = t.create("pulverisateur", {
-    displayName: "Ambient Chess Pulverisateur",
+    displayName: "Pulverisateur",
     positionX: -365,
     positionY: 859,
     gain: 0.1780480593442917,
