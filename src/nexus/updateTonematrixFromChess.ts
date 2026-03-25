@@ -1,5 +1,6 @@
 import type { SyncedDocument } from "@audiotool/nexus"
 import type { ChessBoard } from "../chess/chess"
+import { materialFromBoard } from "../chess/material"
 import { chessBoardToTonematrixPattern } from "./chessToPattern"
 import { fenToPatterns, patternsToFen } from "./fenEncoding"
 import { getSquaresWithMovedPieces } from "./piecesMovedFromStart"
@@ -9,6 +10,116 @@ const SETTINGS_SLOT_INDEX = 3
 
 /** Bit index in settings pattern for piecesSoundAfterMoveOnly */
 const SETTINGS_BIT_PIECES_SOUND_AFTER_MOVE_ONLY = 0
+
+const AMBIENT_CHESS_PULVERISATEUR_NAME = "Ambient Chess Pulverisateur"
+
+/** Filter cutoff at even material (|white − black| = 0 pawn-equivalents). */
+const PULVER_MATERIAL_CUTOFF_MIN_HZ = 380
+
+/** Filter cutoff when |material lead| reaches the normalizer. */
+const PULVER_MATERIAL_CUTOFF_MAX_HZ = 3800
+
+/** |Lead| in pawn units that maps to max cutoff (~queen + rook + pawn). */
+const PULVER_MATERIAL_LEAD_NORMALIZER = 12
+
+const pulverisateurCutoffFromAbsMaterialLead = (absLead: number): number => {
+  const materialLeadFactor = Math.min(
+    Math.max(absLead / PULVER_MATERIAL_LEAD_NORMALIZER, 0),
+    1,
+  )
+  return (
+    PULVER_MATERIAL_CUTOFF_MIN_HZ +
+    (PULVER_MATERIAL_CUTOFF_MAX_HZ - PULVER_MATERIAL_CUTOFF_MIN_HZ) *
+      materialLeadFactor
+  )
+}
+
+/** Fraction of the distance to the target applied per animation frame (~60 Hz). */
+const PULVER_CUTOFF_SMOOTH_ALPHA = 0.02
+
+/** Snap to target when this close (Hz) to avoid endless tiny updates. */
+const PULVER_CUTOFF_SNAP_EPS = 12
+
+/** Counter to prevent frames chaining out of order */
+let frameCounter = 0
+let pendingFrame:
+  | number
+  | undefined
+
+const schedulePulverisateurCutoff = (
+  nexus: SyncedDocument,
+  targetCutoffHz: number,
+): void => {
+  if (
+    pendingFrame !== undefined
+  ) {
+    cancelAnimationFrame(
+      pendingFrame,
+    )
+    pendingFrame = undefined
+  }
+
+  const currentFrameCount = ++frameCounter
+
+  const scheduleNextCutoffSmoothingFrame = (): void => {
+    pendingFrame = undefined
+    let scheduleNextFrame = false
+
+    void nexus
+      .modify((transaction) => {
+        const pulverisateurEntity = transaction.entities
+          .ofTypes("pulverisateur")
+          .get()
+          .find(
+            (device) =>
+              device.fields.displayName.value ===
+              AMBIENT_CHESS_PULVERISATEUR_NAME,
+          )
+
+        if (!pulverisateurEntity) {
+          return
+        }
+
+        const cutoffFrequencyField =
+          pulverisateurEntity.fields.filter.fields.cutoffFrequencyHz
+        const currentCutoffHz = cutoffFrequencyField.value
+        const smoothingTargetHz = targetCutoffHz
+
+        if (
+          Math.abs(smoothingTargetHz - currentCutoffHz) <=
+          PULVER_CUTOFF_SNAP_EPS
+        ) {
+          if (cutoffFrequencyField.value !== smoothingTargetHz) {
+            transaction.update(cutoffFrequencyField, smoothingTargetHz)
+          }
+          return
+        }
+
+        const nextCutoffHz =
+          currentCutoffHz +
+          (smoothingTargetHz - currentCutoffHz) * PULVER_CUTOFF_SMOOTH_ALPHA
+        transaction.update(cutoffFrequencyField, nextCutoffHz)
+        scheduleNextFrame = true
+      })
+      .then(() => {
+        if (
+          currentFrameCount !== frameCounter
+        ) {
+          return
+        }
+        if (scheduleNextFrame) {
+          pendingFrame =
+            requestAnimationFrame(scheduleNextCutoffSmoothingFrame)
+        }
+      })
+      .catch(() => {
+        /* `modify` rejects after `nexus.stop()` and similar — do not chain another frame. */
+      })
+  }
+
+  pendingFrame =
+    requestAnimationFrame(scheduleNextCutoffSmoothingFrame)
+}
 
 export type StoredSettings = {
   piecesSoundAfterMoveOnly: boolean
@@ -202,6 +313,10 @@ export const updateTonematrixFromChessBoard = async (
     squaresWithMovedPieces,
   })
   const [fenPattern1, fenPattern2] = fenToPatterns(fen)
+  const { white: matW, black: matB } = materialFromBoard(board)
+  const targetCutoffHz = pulverisateurCutoffFromAbsMaterialLead(
+    Math.abs(matW - matB),
+  )
 
   await nexus.modify((t) => {
     const tonematrix = t.entities
@@ -254,4 +369,6 @@ export const updateTonematrixFromChessBoard = async (
     updateOrCreatePattern(1, fenPattern1)
     updateOrCreatePattern(2, fenPattern2)
   })
+
+  schedulePulverisateurCutoff(nexus, targetCutoffHz)
 }
