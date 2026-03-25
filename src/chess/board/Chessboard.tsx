@@ -30,8 +30,7 @@ import type { PieceSymbol } from "../chess"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
 
-const FEN_START =
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+const FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 const PROMOTION_PIECES: PieceSymbol[] = ["q", "r", "n", "b"]
 
@@ -72,9 +71,10 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const [position, setPosition] = useState(FEN_START)
     const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
-    const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(
-      null,
-    )
+    const [lastMove, setLastMove] = useState<{
+      from: string
+      to: string
+    } | null>(null)
     const [ready, setReady] = useState(false)
     const [fenPatternsReady, setFenPatternsReady] = useState(false)
 
@@ -86,25 +86,15 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const syncBoardToTonematrix = useCallback(() => {
       if (nexus) {
         const game = gameRef.current
-        return updateTonematrixFromChessBoard(
-          nexus,
-          game.board(),
-          game.fen(),
-          {
-            piecesSoundAfterMoveOnly,
-            moveHistory: game.getHistory(),
-          },
-        )
+        return updateTonematrixFromChessBoard(nexus, game.board(), game.fen(), {
+          piecesSoundAfterMoveOnly,
+        })
       }
       return Promise.resolve()
     }, [nexus, piecesSoundAfterMoveOnly])
 
-    const whiteLabel = whitePlayerName
-      ? `${whitePlayerName} (white)`
-      : "White"
-    const blackLabel = blackPlayerName
-      ? `${blackPlayerName} (black)`
-      : "Black"
+    const whiteLabel = whitePlayerName ? `${whitePlayerName} (white)` : "White"
+    const blackLabel = blackPlayerName ? `${blackPlayerName} (black)` : "Black"
 
     const updateStatus = useCallback(() => {
       const game = gameRef.current
@@ -204,10 +194,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         syncBoardToTonematrix()
 
         if (autoPlayRef.current) {
-          timerRef.current = setTimeout(
-            () => void makeAiMove(delayMs),
-            delayMs,
-          )
+          timerRef.current = setTimeout(() => void makeAiMove(delayMs), delayMs)
         }
       },
       [updateStatus, syncBoardToTonematrix],
@@ -232,8 +219,14 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
                   onClick={() => {
                     closeDialog(id)
                     applyMove(from, to, piece)
-                    if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
-                      setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+                    if (
+                      computerPlaysAs &&
+                      gameRef.current.turn() === computerPlaysAs
+                    ) {
+                      setTimeout(
+                        () => void makeAiMove(moveDelayMs),
+                        moveDelayMs,
+                      )
                     }
                   }}
                   title={
@@ -257,7 +250,14 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           closeOnBackdropClick: false,
         })
       },
-      [showDialog, closeDialog, applyMove, computerPlaysAs, makeAiMove, moveDelayMs],
+      [
+        showDialog,
+        closeDialog,
+        applyMove,
+        computerPlaysAs,
+        makeAiMove,
+        moveDelayMs,
+      ],
     )
 
     useImperativeHandle(ref, () => ({ restart }), [restart])
@@ -377,8 +377,15 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     )
 
     const handlePieceDrop = useCallback(
-      ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }) => {
-        if (!targetSquare || sourceSquare === targetSquare || !canInteract) return false
+      ({
+        sourceSquare,
+        targetSquare,
+      }: {
+        sourceSquare: string
+        targetSquare: string | null
+      }) => {
+        if (!targetSquare || sourceSquare === targetSquare || !canInteract)
+          return false
         const pieceColor = gameRef.current.getPieceColorAt(sourceSquare)
         if (pieceColor !== gameRef.current.turn()) return false
         if (isPromotionMove(gameRef.current, sourceSquare, targetSquare)) {
@@ -391,7 +398,13 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     )
 
     const handleSquareClick = useCallback(
-      ({ piece, square }: { piece: { pieceType: string } | null; square: string }) => {
+      ({
+        piece,
+        square,
+      }: {
+        piece: { pieceType: string } | null
+        square: string
+      }) => {
         if (!canInteract) return
 
         const game = gameRef.current

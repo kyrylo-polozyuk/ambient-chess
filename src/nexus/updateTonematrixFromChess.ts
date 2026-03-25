@@ -82,7 +82,9 @@ export const updateStoredSettings = async (
           length: 16
         },
       }
-      const blankSteps = Array.from({ length: 16 }, () => ({ ...blankStep })) as {
+      const blankSteps = Array.from({ length: 16 }, () => ({
+        ...blankStep,
+      })) as {
         notes: boolean[] & { length: 16 }
       }[] & { length: 16 }
       t.create("tonematrixPattern", {
@@ -176,17 +178,14 @@ const blankSteps = () => {
 export type UpdateTonematrixOptions = {
   /** When true, only pieces that have moved from their starting square add sound. */
   piecesSoundAfterMoveOnly?: boolean
-  /** Move history for tracking piece identity. When empty, position is used to infer. */
-  moveHistory?: Array<{ from: string; to: string }>
 }
 
 /**
  * Updates the "Ambient Chess" tonematrix pattern to reflect the current chess board.
  * Slot 0: visual board. Slots 1-2: binary FEN encoding. Slot 3: settings (separate).
- * When piecesSoundAfterMoveOnly is true, only pieces that have moved from their
- * starting square contribute to the pattern. Uses move history when available;
- * when history is empty (e.g. loaded from FEN), infers from position (pieces not
- * on their starting square are assumed to have moved).
+ * When piecesSoundAfterMoveOnly is true, only pieces not on their standard
+ * starting square (for their color and type) contribute to the pattern, so
+ * initial setup is silent and works the same after a FEN load (no full history).
  */
 export const updateTonematrixFromChessBoard = async (
   nexus: SyncedDocument,
@@ -194,13 +193,9 @@ export const updateTonematrixFromChessBoard = async (
   fen: string,
   options?: UpdateTonematrixOptions,
 ): Promise<void> => {
-  const squaresWithMovedPieces =
-    options?.piecesSoundAfterMoveOnly
-      ? getSquaresWithMovedPieces(
-          options.moveHistory ?? [],
-          options.moveHistory?.length === 0 ? board : undefined,
-        )
-      : undefined
+  const squaresWithMovedPieces = options?.piecesSoundAfterMoveOnly
+    ? getSquaresWithMovedPieces(board)
+    : undefined
 
   const grid = chessBoardToTonematrixPattern(board, {
     piecesSoundAfterMoveOnly: options?.piecesSoundAfterMoveOnly,
