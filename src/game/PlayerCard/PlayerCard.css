@@ -1,0 +1,29 @@
+.player-card {
+  align-items: center;
+  gap: 0.5rem;
+
+  .player-name {
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.25rem;
+
+    &.waiting {
+      opacity: 0.5;
+    }
+  }
+
+  &.black .player-name {
+    background: var(--chess-piece-black);
+    color: var(--chess-piece-white);
+  }
+
+  &.white .player-name {
+    background: var(--chess-piece-white);
+    color: var(--chess-piece-black);
+  }
+
+  .player-score {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    opacity: 0.95;
+  }
+}

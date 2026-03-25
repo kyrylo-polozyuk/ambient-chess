@@ -16,6 +16,7 @@ import type { Settings } from "../settings/settings-context"
 import { useSettings } from "../settings/useSettings"
 import { trimUsername } from "../utils/username"
 import { GameModeButton } from "./GameModeButton"
+import { PlayerCard } from "./PlayerCard/PlayerCard"
 import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
@@ -202,6 +203,14 @@ export const Game = (props: {
       <div
         className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
       >
+        <div className="row full-width start">
+          <PlayerCard
+            variant="black"
+            name="Black"
+            score={3}
+            turnToMove={true}
+          />
+        </div>
         <Chessboard
           ref={chessboardRef}
           tonematrix={props.tonematrix}
@@ -212,7 +221,14 @@ export const Game = (props: {
           blackPlayerName={blackPlayerName}
           onStatusChange={setStatus}
         />
-
+        <div className="row full-width start">
+          <PlayerCard
+            variant="white"
+            name="White"
+            score={0}
+            turnToMove={false}
+          />
+        </div>
         <div className="column full-width">
           <div className="game-status">{status.message}</div>
           <div className="row small-gap">
