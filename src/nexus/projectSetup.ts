@@ -12,10 +12,14 @@ export const AMBIENT_CHESS_TONEMATRIX_NAME = "Ambient Chess"
 
 export const setupProject = async (
   nexus: SyncedDocument,
-): Promise<NexusEntity<"tonematrix"> | undefined> => {
+): Promise<{
+  tonematrix: NexusEntity<"tonematrix"> | undefined
+  fenTonematrix: NexusEntity<"tonematrix"> | undefined
+}> => {
   return nexus.modify((t) => {
     let groove = t.entities.ofTypes("groove").getOne()
     let config = t.entities.ofTypes("config").getOne()
+
     if (groove === undefined) {
       groove = t.create("groove", {
         functionIndex: 1,
@@ -63,7 +67,7 @@ export const setupProject = async (
       }
     }
 
-    return tonematrix
+    return { tonematrix, fenTonematrix }
   })
 }
 

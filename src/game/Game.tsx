@@ -61,6 +61,7 @@ const playerCardDisplayNames = (input: {
 export const Game = (props: {
   projectUrl: string
   tonematrix: NexusEntity<"tonematrix">
+  fenTonematrix: NexusEntity<"tonematrix">
   onExit: () => void | Promise<void>
 }) => {
   const { client } = useContext(AudiotoolContext)

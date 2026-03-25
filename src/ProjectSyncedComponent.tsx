@@ -12,20 +12,27 @@ export const ProjectSyncedComponent = (props: {
   const [tonematrix, setTonematrix] = useState<
     NexusEntity<"tonematrix"> | undefined
   >(undefined)
+  const [fenTonematrix, setFenTonematrix] = useState<
+    NexusEntity<"tonematrix"> | undefined
+  >(undefined)
 
   useEffect(() => {
     if (props.projectUrl && context.nexus) {
-      setupProject(context.nexus).then(setTonematrix)
+      setupProject(context.nexus).then(({ tonematrix, fenTonematrix }) => {
+        setTonematrix(tonematrix)
+        setFenTonematrix(fenTonematrix)
+      })
     }
   }, [context.nexus, props.projectUrl])
 
-  if (!tonematrix) return null
+  if (!tonematrix || !fenTonematrix) return null
 
   return (
     <div className="column grow full-width">
       <Game
         projectUrl={props.projectUrl}
         tonematrix={tonematrix}
+        fenTonematrix={fenTonematrix}
         onExit={props.onClose}
       />
     </div>
