@@ -65,9 +65,9 @@ const schedulePulverisateurCutoff = (
     pendingFrame = undefined
     let scheduleNextFrame = false
 
-    void nexus
-      .modify((transaction) => {
-        const pulverisateurEntity = transaction.entities
+    nexus
+      .modify((t) => {
+        const pulverisateurEntity = t.entities
           .ofTypes("pulverisateur")
           .get()
           .find(
@@ -90,7 +90,7 @@ const schedulePulverisateurCutoff = (
           PULVER_CUTOFF_SNAP_EPS
         ) {
           if (cutoffFrequencyField.value !== smoothingTargetHz) {
-            transaction.update(cutoffFrequencyField, smoothingTargetHz)
+            t.update(cutoffFrequencyField, smoothingTargetHz)
           }
           return
         }
@@ -98,7 +98,7 @@ const schedulePulverisateurCutoff = (
         const nextCutoffHz =
           currentCutoffHz +
           (smoothingTargetHz - currentCutoffHz) * PULVER_CUTOFF_SMOOTH_ALPHA
-        transaction.update(cutoffFrequencyField, nextCutoffHz)
+        t.update(cutoffFrequencyField, nextCutoffHz)
         scheduleNextFrame = true
       })
       .then(() => {
