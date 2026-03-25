@@ -24,7 +24,7 @@ export const PlayerCard = ({
         ) : (
           <Icons.User size="1em" />
         )}
-        <span className="player-name__label">{name}</span>
+        <span>{name}</span>
       </div>
       {score > 0 && <div className="player-score">+{score}</div>}
     </div>

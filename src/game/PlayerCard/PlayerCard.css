@@ -1,3 +1,14 @@
+@keyframes player-name-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+}
+
 .player-card {
   align-items: center;
   gap: 0.5rem;
@@ -8,6 +19,10 @@
     gap: 0.35rem;
     padding: 0.35rem 0.6rem;
     border-radius: 0.25rem;
+
+    &:not(.waiting) {
+      animation: player-name-glow 2s ease-in-out infinite;
+    }
 
     & .icon {
       font-size: inherit;
