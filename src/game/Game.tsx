@@ -291,9 +291,9 @@ export const Game = (props: {
   )
 
   return (
-    <div className="column center grow game-component">
+    <div className="column center grow game-component ">
       <div
-        className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
+        className={`column center full-width grow small-gap game-content${showContent ? " ready" : ""}`}
       >
         {boardFacesBlack ? playerCardWhite : playerCardBlack}
         <Chessboard
@@ -308,9 +308,9 @@ export const Game = (props: {
         />
         {boardFacesBlack ? playerCardBlack : playerCardWhite}
         <div className="column full-width">
-          <p className="game-result secondary-text">
-            {status.resultMessage ?? ""}
-          </p>
+          <div className="game-result secondary-text">
+            {status.resultMessage}
+          </div>
           <div className="row small-gap">
             {mode !== undefined && !isVsCollaborator && (
               <GameModeButton

@@ -10,11 +10,11 @@
 }
 
 .player-card {
-  align-items: center;
-
   --name-background: var(--chess-piece-white);
   --name-color: var(--chess-piece-black);
   --captures-color: var(--accent-0);
+
+  align-items: center;
 
   &.black {
     --name-background: var(--chess-piece-black);

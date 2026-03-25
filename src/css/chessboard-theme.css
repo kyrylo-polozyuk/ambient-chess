@@ -1,4 +1,6 @@
 .board-wrapper {
+  --chessboard-padding: 1rem;
+
   aspect-ratio: 1;
   min-height: 12.5rem;
   min-width: 0;
@@ -8,6 +10,10 @@
   align-items: center;
   width: 100%;
   container-type: size;
+
+  background: #0000004a;
+  border-radius: 0.5rem;
+  padding: var(--chessboard-padding);
 }
 
 .board-container {
@@ -37,6 +43,3 @@
     filter: var(--chess-piece-filter-hover);
   }
 }
-
-/* Chessboard ambient theme - react-chessboard uses inline styles for squares;
-   coordinate colors can be overridden via darkSquareNotationStyle/lightSquareNotationStyle in options */
