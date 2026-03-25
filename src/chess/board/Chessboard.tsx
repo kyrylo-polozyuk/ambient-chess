@@ -240,7 +240,11 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
                   }
                 >
                   <span className="promotion-piece-icon">
-                    <Icons.ChessPiece piece={piece} color={color} size={28} />
+                    <Icons.ChessPiece
+                      piece={piece}
+                      color={color}
+                      size="1.75rem"
+                    />
                   </span>
                 </button>
               ))}

@@ -1,6 +1,6 @@
 .board-wrapper {
   aspect-ratio: 1;
-  min-height: 200px;
+  min-height: 12.5rem;
   min-width: 0;
   align-self: stretch;
   display: flex;
@@ -17,13 +17,23 @@
   min-height: 0;
   max-width: 100%;
   max-height: 100%;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   overflow: hidden;
+  box-shadow: var(--chess-board-shadow);
 
   svg {
     width: 100%;
     height: 100%;
     display: block;
+  }
+
+  & [data-piece] svg {
+    filter: var(--chess-piece-filter);
+    transition: filter 0.25s;
+
+    &:hover {
+      filter: var(--chess-piece-filter-hover);
+    }
   }
 }
 
@@ -43,7 +53,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   transition: background-color 0.15s;
 }
 
@@ -59,7 +69,7 @@
 
   & .white-piece {
     color: var(--chess-piece-white);
-    text-shadow: 0 0 1px var(--chess-piece-black);
+    text-shadow: 0 0 0.0625rem var(--chess-piece-black);
   }
 }
 
@@ -75,7 +85,7 @@
 
   & .black-piece {
     color: var(--chess-piece-black);
-    text-shadow: 0 0 1px var(--chess-piece-white);
+    text-shadow: 0 0 0.0625rem var(--chess-piece-white);
   }
 }
 

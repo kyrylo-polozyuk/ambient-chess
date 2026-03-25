@@ -1,6 +1,6 @@
-import type { ProjectListItemType } from "./ProjectList"
 import { Icons } from "../components/Icon"
 import { trimUsername } from "../utils/username"
+import type { ProjectListItemType } from "./ProjectList"
 import "./ProjectListItem.css"
 
 type ProjectListItemProps = {

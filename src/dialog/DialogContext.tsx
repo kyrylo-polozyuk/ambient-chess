@@ -3,9 +3,6 @@ import type { DialogConfig } from "./Dialog"
 import { Dialog } from "./Dialog"
 import { DialogContext } from "./useDialogContext"
 
-
-
-
 type DialogProviderProps = {
   children: React.ReactNode
 }
@@ -52,7 +49,9 @@ export const DialogProvider = ({ children }: DialogProviderProps) => {
   }, [])
 
   return (
-    <DialogContext.Provider value={{ showDialog, closeDialog, closeAllDialogs }}>
+    <DialogContext.Provider
+      value={{ showDialog, closeDialog, closeAllDialogs }}
+    >
       {children}
       {dialogs.map((dialog) => (
         <Dialog
@@ -64,4 +63,3 @@ export const DialogProvider = ({ children }: DialogProviderProps) => {
     </DialogContext.Provider>
   )
 }
-

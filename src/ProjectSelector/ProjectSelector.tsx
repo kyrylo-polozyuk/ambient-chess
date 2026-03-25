@@ -6,8 +6,8 @@ import {
 } from "@audiotool/nexus"
 import { useCallback, useEffect, useState } from "react"
 import { Icons } from "../components/Icon"
-import { ProjectList } from "./ProjectList"
 import { GetStartedIntro } from "./GetStartedIntro"
+import { ProjectList } from "./ProjectList"
 import "./ProjectSelector.css"
 import {
   AUDIOTOOL_STUDIO_BASE,

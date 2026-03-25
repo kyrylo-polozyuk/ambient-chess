@@ -10,6 +10,7 @@ import {
   LuBot,
   LuCopy,
   LuGlobe,
+  LuLink,
   LuList,
   LuLoaderCircle,
   LuLogIn,
@@ -19,15 +20,14 @@ import {
   LuPopcorn,
   LuRefreshCw,
   LuSettings,
-  LuShare,
   LuUser,
   LuUsers,
   LuX,
 } from "react-icons/lu"
 
-const ICON_SIZE = 20
+const ICON_SIZE = "1.25rem"
 
-const CHESS_PIECE_SIZE = 24
+const CHESS_PIECE_SIZE = "1.5rem"
 
 export const ChessPieceIcons = {
   p: GiChessPawn,
@@ -43,7 +43,7 @@ export const Icons = {
   ChessPiece: (props: {
     piece: keyof typeof ChessPieceIcons
     color: "w" | "b"
-    size?: number
+    size?: string | number
     className?: string
   }) => {
     const IconComponent = ChessPieceIcons[props.piece]
@@ -62,7 +62,7 @@ export const Icons = {
   Copy: () => <LuCopy size={ICON_SIZE} className="icon" />,
   Refresh: () => <LuRefreshCw size={ICON_SIZE} className="icon" />,
   Settings: () => <LuSettings size={ICON_SIZE} className="icon" />,
-  Share: () => <LuShare size={ICON_SIZE} className="icon" />,
+  Link: () => <LuLink size={ICON_SIZE} className="icon" />,
   Users: () => <LuUsers size={ICON_SIZE} className="icon" />,
   Popcorn: () => <LuPopcorn size={ICON_SIZE} className="icon" />,
   Globe: () => <LuGlobe size={ICON_SIZE} className="icon" />,

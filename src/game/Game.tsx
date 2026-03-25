@@ -1,22 +1,22 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
-import { Chessboard } from "../chess/board/Chessboard"
-import type { ChessboardRef, GameStatus } from "../chess/Chessboard"
-import { Icons } from "../components/Icon"
-import { AudiotoolContext } from "../context"
-import { useDialog } from "../dialog/useDialog"
-import { useAuth } from "../hooks/useAuth"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
   openAudiotoolInWindow,
 } from "../ProjectSelector/projectId"
-import type { Settings } from "../settings/settings-context"
+import type { ChessboardRef, GameStatus } from "../chess/Chessboard"
+import { Chessboard } from "../chess/board/Chessboard"
+import { Icons } from "../components/Icon"
+import { AudiotoolContext } from "../context"
+import { useDialog } from "../dialog/useDialog"
+import { useAuth } from "../hooks/useAuth"
 import { SettingsDialogContent } from "../settings/SettingsDialogContent"
+import type { Settings } from "../settings/settings-context"
 import { useSettings } from "../settings/useSettings"
 import { trimUsername } from "../utils/username"
-import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
 import { GameModeButton } from "./GameModeButton"
+import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
@@ -29,10 +29,8 @@ export const Game = (props: {
   const { client } = useContext(AudiotoolContext)
   const { loginStatus } = useAuth()
   const { showDialog, closeDialog, showConfirmation } = useDialog()
-  const {
-    piecesSoundAfterMoveOnly,
-    setPiecesSoundAfterMoveOnly,
-  } = useSettings()
+  const { piecesSoundAfterMoveOnly, setPiecesSoundAfterMoveOnly } =
+    useSettings()
   const chessboardRef = useRef<ChessboardRef>(null)
 
   const [mode, setMode] = useState<GameMode | undefined>(undefined)
@@ -74,12 +72,12 @@ export const Game = (props: {
     ])
 
     const collaborators = (
-      rolesResponse instanceof Error ? [] : rolesResponse.projectRoles ?? []
+      rolesResponse instanceof Error ? [] : (rolesResponse.projectRoles ?? [])
     ).map((role) => ({ userName: role.userName, roleType: role.roleType }))
     const owner =
       projectResponse instanceof Error
         ? null
-        : projectResponse.project?.creatorName ?? null
+        : (projectResponse.project?.creatorName ?? null)
 
     const hasMultipleCollaborators = collaborators.length >= 2 && owner
     if (hasMultipleCollaborators) {
@@ -89,8 +87,9 @@ export const Game = (props: {
       setMode("vsCollaborator")
       setIsCurrentUserOwner(currentUserName === owner)
       setWhitePlayerName(trimUsername(owner))
-      const blackUser = collaborators.find((c) => c.userName !== owner)
-        ?.userName
+      const blackUser = collaborators.find(
+        (c) => c.userName !== owner,
+      )?.userName
       setBlackPlayerName(blackUser ? trimUsername(blackUser) : undefined)
       return true
     }
@@ -116,23 +115,17 @@ export const Game = (props: {
       title: "Ready to play!",
       content: (
         <div className="column small-gap">
-          <p>
-            Your collaborator can jump into this game with this link
-          </p>
+          <p>Your collaborator can jump into this game with this link</p>
           <div className="row small-gap full-width">
             <input
               type="text"
               readOnly
               value={shareUrl}
               className="share-link-input"
-              onClick={(e) =>
-                (e.target as HTMLInputElement).select()
-              }
+              onClick={(e) => (e.target as HTMLInputElement).select()}
             />
             <button
-              onClick={() =>
-                void navigator.clipboard.writeText(shareUrl)
-              }
+              onClick={() => void navigator.clipboard.writeText(shareUrl)}
               className="hug"
             >
               <Icons.Copy /> Copy
@@ -235,14 +228,11 @@ export const Game = (props: {
             )}
             {isVsCollaborator && (
               <button className="hug responsive" onClick={showShareDialog}>
-                <Icons.Share />
+                <Icons.Link />
                 Share Link
               </button>
             )}
-            <button
-              className="hug responsive"
-              onClick={showSettingsDialog}
-            >
+            <button className="hug responsive" onClick={showSettingsDialog}>
               <Icons.Settings />
               Settings
             </button>
@@ -289,7 +279,7 @@ export const Game = (props: {
 
         <div className="grow fit-content">
           <p>
-            Press <Icons.Play /> in{" "}
+            Press ▶ in{" "}
             <a
               href={buildAudiotoolUrl(props.projectUrl)}
               onClick={(e) => {

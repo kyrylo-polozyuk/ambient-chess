@@ -20,9 +20,7 @@ export const App = () => {
   const { showDialog, closeDialog } = useDialog()
 
   const [client, setClient] = useState<AudiotoolClient | undefined>(undefined)
-  const [nexus, setNexus] = useState<
-    SyncedDocument | undefined
-  >(undefined)
+  const [nexus, setNexus] = useState<SyncedDocument | undefined>(undefined)
   const [projectUrl, setProjectUrl] = useState<string>("")
 
   useEffect(() => {
@@ -120,22 +118,19 @@ export const App = () => {
               </button>
             </div>
             <div className="user-info">
-              {authStatus === "logged-in" &&
-                nexus &&
-                client &&
-                projectUrl && (
-                  <button
-                    className="hug primary"
-                    onClick={() => {
-                      const projectId = extractProjectId(projectUrl)
-                      const url = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
-                      openAudiotoolInWindow(url)
-                    }}
-                  >
-                    <Icons.Play />
-                    <span>Open Studio</span>
-                  </button>
-                )}
+              {authStatus === "logged-in" && nexus && client && projectUrl && (
+                <button
+                  className="hug primary"
+                  onClick={() => {
+                    const projectId = extractProjectId(projectUrl)
+                    const url = `${AUDIOTOOL_STUDIO_BASE}${projectId}`
+                    openAudiotoolInWindow(url)
+                  }}
+                >
+                  <Icons.Play />
+                  <span>Open Studio</span>
+                </button>
+              )}
               <button
                 className={`hug responsive ${loading ? "loading" : ""}`}
                 onClick={() => {
@@ -156,9 +151,7 @@ export const App = () => {
                     ) : (
                       <Icons.LogIn />
                     )}
-                    <span>
-                      {loading ? "Redirecting..." : "Log in"}
-                    </span>
+                    <span>{loading ? "Redirecting..." : "Log in"}</span>
                   </>
                 )}
               </button>
