@@ -307,26 +307,24 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       void initFromStored()
     }, [ready, nexus, tonematrix, syncBoardToTonematrix, updateStatus])
 
+    /** One scheduler for autoplay chain and for vs-computer kick-off (avoids losing the bot's turn when mode switches). */
     useEffect(() => {
+      clearTimeout(timerRef.current)
       if (ready && autoPlay) {
         timerRef.current = setTimeout(
           () => void makeAiMove(moveDelayMs),
           moveDelayMs,
         )
-      } else {
-        clearTimeout(timerRef.current)
+      } else if (ready && computerPlaysAs) {
+        const game = gameRef.current
+        if (!game.isGameOver() && game.turn() === computerPlaysAs) {
+          timerRef.current = setTimeout(
+            () => void makeAiMove(moveDelayMs),
+            moveDelayMs,
+          )
+        }
       }
       return () => clearTimeout(timerRef.current)
-    }, [ready, autoPlay, makeAiMove, moveDelayMs])
-
-    useEffect(() => {
-      if (!ready || !computerPlaysAs || autoPlay) return
-      const game = gameRef.current
-      if (game.isGameOver()) return
-      if (game.turn() === computerPlaysAs) {
-        const t = setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
-        return () => clearTimeout(t)
-      }
     }, [ready, autoPlay, computerPlaysAs, makeAiMove, moveDelayMs])
 
     const canInteract =
