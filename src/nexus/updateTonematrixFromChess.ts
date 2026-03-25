@@ -1,5 +1,6 @@
 import type { SyncedDocument } from "@audiotool/nexus"
 import type { ChessBoard } from "../chess/chess"
+import { materialFromBoard } from "../chess/material"
 import { chessBoardToTonematrixPattern } from "./chessToPattern"
 import { fenToPatterns, patternsToFen } from "./fenEncoding"
 import { getSquaresWithMovedPieces } from "./piecesMovedFromStart"
@@ -9,6 +10,25 @@ const SETTINGS_SLOT_INDEX = 3
 
 /** Bit index in settings pattern for piecesSoundAfterMoveOnly */
 const SETTINGS_BIT_PIECES_SOUND_AFTER_MOVE_ONLY = 0
+
+const AMBIENT_CHESS_PULVERISATEUR_NAME = "Ambient Chess Pulverisateur"
+
+/** Filter cutoff at even material (|white − black| = 0 pawn-equivalents). */
+const PULVER_MATERIAL_CUTOFF_MIN_HZ = 380
+
+/** Filter cutoff when |material lead| reaches the normalizer. */
+const PULVER_MATERIAL_CUTOFF_MAX_HZ = 6800
+
+/** |Lead| in pawn units that maps to max cutoff (~queen + rook + pawn). */
+const PULVER_MATERIAL_LEAD_NORMALIZER = 12
+
+const pulverisateurCutoffFromAbsMaterialLead = (absLead: number): number => {
+  const t = Math.min(Math.max(absLead / PULVER_MATERIAL_LEAD_NORMALIZER, 0), 1)
+  return (
+    PULVER_MATERIAL_CUTOFF_MIN_HZ +
+    (PULVER_MATERIAL_CUTOFF_MAX_HZ - PULVER_MATERIAL_CUTOFF_MIN_HZ) * t
+  )
+}
 
 export type StoredSettings = {
   piecesSoundAfterMoveOnly: boolean
@@ -202,8 +222,26 @@ export const updateTonematrixFromChessBoard = async (
     squaresWithMovedPieces,
   })
   const [fenPattern1, fenPattern2] = fenToPatterns(fen)
+  const { white: matW, black: matB } = materialFromBoard(board)
+  const targetCutoffHz = pulverisateurCutoffFromAbsMaterialLead(
+    Math.abs(matW - matB),
+  )
 
   await nexus.modify((t) => {
+    const pulverisateur = t.entities
+      .ofTypes("pulverisateur")
+      .get()
+      .find(
+        (p) => p.fields.displayName.value === AMBIENT_CHESS_PULVERISATEUR_NAME,
+      )
+
+    if (pulverisateur) {
+      const cutoffField = pulverisateur.fields.filter.fields.cutoffFrequencyHz
+      if (cutoffField.value !== targetCutoffHz) {
+        t.update(cutoffField, targetCutoffHz)
+      }
+    }
+
     const tonematrix = t.entities
       .ofTypes("tonematrix")
       .get()
