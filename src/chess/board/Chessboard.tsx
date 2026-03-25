@@ -14,7 +14,6 @@ import {
   type PieceHandlerArgs,
   type SquareRenderer,
 } from "react-chessboard"
-import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
 import { useDialog } from "../../dialog/useDialog"
 import { DEFAULT_PLAYER_DISPLAY_NAME } from "../../game/gameMode"
@@ -35,11 +34,10 @@ import { capturedPiecesForVictimColor } from "../captures"
 import type { PieceSymbol } from "../chess"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
-import { materialFromBoard } from "../material"
+import { materialFromBoard } from "../material.ts"
+import { PromotionChoiceContent } from "./PromotionChoiceContent"
 
 const FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
-const PROMOTION_PIECES: PieceSymbol[] = ["q", "r", "n", "b"]
 
 const squareToBoardIndices = (sq: string): [number, number] => {
   const file = sq.charCodeAt(0) - 97
@@ -251,46 +249,19 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           id,
           title: "Promotion",
           content: (
-            <div
-              className={`row small-gap promotion-choices promotion-choices-${color}`}
-            >
-              {PROMOTION_PIECES.map((piece) => (
-                <button
-                  key={piece}
-                  className="promotion-choice hug"
-                  onClick={() => {
-                    closeDialog(id)
-                    applyMove(from, to, piece)
-                    if (
-                      computerPlaysAs &&
-                      gameRef.current.turn() === computerPlaysAs
-                    ) {
-                      setTimeout(
-                        () => void makeAiMove(moveDelayMs),
-                        moveDelayMs,
-                      )
-                    }
-                  }}
-                  title={
-                    piece === "q"
-                      ? "Queen"
-                      : piece === "r"
-                        ? "Rook"
-                        : piece === "n"
-                          ? "Knight"
-                          : "Bishop"
-                  }
-                >
-                  <span className="promotion-piece-icon">
-                    <Icons.ChessPiece
-                      piece={piece}
-                      color={color}
-                      size="1.75rem"
-                    />
-                  </span>
-                </button>
-              ))}
-            </div>
+            <PromotionChoiceContent
+              color={color}
+              onChoose={(piece) => {
+                closeDialog(id)
+                applyMove(from, to, piece)
+                if (
+                  computerPlaysAs &&
+                  gameRef.current.turn() === computerPlaysAs
+                ) {
+                  setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+                }
+              }}
+            />
           ),
           dismissible: true,
           closeOnBackdropClick: false,
