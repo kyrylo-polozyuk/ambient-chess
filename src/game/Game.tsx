@@ -335,15 +335,14 @@ export const Game = (props: {
             <button
               className={`hug responsive${status.phase === "finished" ? " primary" : ""}`}
               onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
                 showConfirmation({
-                  id: "restart-confirmation",
-                  title: "Restart game",
-                  content: <p>Are you sure you want to restart the game?</p>,
-                  confirmLabel: "Restart",
+                  id: "reset-confirmation",
+                  title: "Reset game",
+                  content: <p>Are you sure you want to reset the game?</p>,
+                  confirmLabel: "Reset",
                   confirmVariant: "primary",
                   onConfirm: () => {
-                    if (mode !== "autoplay" && !isVsCollaborator) {
+                    if (mode === "autoplay" || !isVsCollaborator) {
                       setMode(DEFAULT_GAME_MODE)
                     }
                     chessboardRef.current?.restart()
@@ -352,12 +351,11 @@ export const Game = (props: {
               }}
             >
               <Icons.Refresh />
-              Restart
+              Reset
             </button>
             <button
               className="hug responsive"
               onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
                 showConfirmation({
                   id: "exit-confirmation",
                   title: "Exit game",
