@@ -17,97 +17,108 @@ const AMBIENT_CHESS_PULVERISATEUR_NAME = "Ambient Chess Pulverisateur"
 const PULVER_MATERIAL_CUTOFF_MIN_HZ = 380
 
 /** Filter cutoff when |material lead| reaches the normalizer. */
-const PULVER_MATERIAL_CUTOFF_MAX_HZ = 6800
+const PULVER_MATERIAL_CUTOFF_MAX_HZ = 3800
 
 /** |Lead| in pawn units that maps to max cutoff (~queen + rook + pawn). */
 const PULVER_MATERIAL_LEAD_NORMALIZER = 12
 
 const pulverisateurCutoffFromAbsMaterialLead = (absLead: number): number => {
-  const t = Math.min(Math.max(absLead / PULVER_MATERIAL_LEAD_NORMALIZER, 0), 1)
+  const materialLeadFactor = Math.min(
+    Math.max(absLead / PULVER_MATERIAL_LEAD_NORMALIZER, 0),
+    1,
+  )
   return (
     PULVER_MATERIAL_CUTOFF_MIN_HZ +
-    (PULVER_MATERIAL_CUTOFF_MAX_HZ - PULVER_MATERIAL_CUTOFF_MIN_HZ) * t
+    (PULVER_MATERIAL_CUTOFF_MAX_HZ - PULVER_MATERIAL_CUTOFF_MIN_HZ) *
+      materialLeadFactor
   )
 }
 
 /** Fraction of the distance to the target applied per animation frame (~60 Hz). */
-const PULVER_CUTOFF_SMOOTH_ALPHA = 0.01
+const PULVER_CUTOFF_SMOOTH_ALPHA = 0.02
 
 /** Snap to target when this close (Hz) to avoid endless tiny updates. */
 const PULVER_CUTOFF_SNAP_EPS = 12
 
-type PulverCutoffSmoothState = {
-  targetHz: number
-  rafId: number
-}
+/** Counter to prevent frames chaining out of order */
+let frameCounter = 0
+let pendingFrame:
+  | number
+  | undefined
 
-const pulverCutoffSmoothByNexus = new WeakMap<
-  SyncedDocument,
-  PulverCutoffSmoothState
->()
-
-function schedulePulverisateurCutoffToward(
+const schedulePulverisateurCutoff = (
   nexus: SyncedDocument,
-  targetHz: number,
-): void {
-  let state = pulverCutoffSmoothByNexus.get(nexus)
-  if (!state) {
-    state = { targetHz, rafId: 0 }
-    pulverCutoffSmoothByNexus.set(nexus, state)
-  } else {
-    state.targetHz = targetHz
+  targetCutoffHz: number,
+): void => {
+  if (
+    pendingFrame !== undefined
+  ) {
+    cancelAnimationFrame(
+      pendingFrame,
+    )
+    pendingFrame = undefined
   }
 
-  if (state.rafId !== 0) {
-    return
-  }
+  const currentFrameCount = ++frameCounter
 
-  const st = state
-
-  const pump = (): void => {
-    st.rafId = 0
-    let needsAnotherFrame = false
+  const scheduleNextCutoffSmoothingFrame = (): void => {
+    pendingFrame = undefined
+    let scheduleNextFrame = false
 
     void nexus
-      .modify((t) => {
-        const pulverisateur = t.entities
+      .modify((transaction) => {
+        const pulverisateurEntity = transaction.entities
           .ofTypes("pulverisateur")
           .get()
           .find(
-            (p) =>
-              p.fields.displayName.value === AMBIENT_CHESS_PULVERISATEUR_NAME,
+            (device) =>
+              device.fields.displayName.value ===
+              AMBIENT_CHESS_PULVERISATEUR_NAME,
           )
 
-        if (!pulverisateur) {
+        if (!pulverisateurEntity) {
           return
         }
 
-        const field = pulverisateur.fields.filter.fields.cutoffFrequencyHz
-        const cur = field.value
-        const tgt = st.targetHz
+        const cutoffFrequencyField =
+          pulverisateurEntity.fields.filter.fields.cutoffFrequencyHz
+        const currentCutoffHz = cutoffFrequencyField.value
+        const smoothingTargetHz = targetCutoffHz
 
-        if (Math.abs(tgt - cur) <= PULVER_CUTOFF_SNAP_EPS) {
-          if (field.value !== tgt) {
-            t.update(field, tgt)
+        if (
+          Math.abs(smoothingTargetHz - currentCutoffHz) <=
+          PULVER_CUTOFF_SNAP_EPS
+        ) {
+          if (cutoffFrequencyField.value !== smoothingTargetHz) {
+            transaction.update(cutoffFrequencyField, smoothingTargetHz)
           }
           return
         }
 
-        const next = cur + (tgt - cur) * PULVER_CUTOFF_SMOOTH_ALPHA
-        t.update(field, next)
-        needsAnotherFrame = true
+        const nextCutoffHz =
+          currentCutoffHz +
+          (smoothingTargetHz - currentCutoffHz) * PULVER_CUTOFF_SMOOTH_ALPHA
+        transaction.update(cutoffFrequencyField, nextCutoffHz)
+        scheduleNextFrame = true
       })
       .then(() => {
-        if (needsAnotherFrame) {
-          st.rafId = requestAnimationFrame(pump)
+        if (
+          currentFrameCount !== frameCounter
+        ) {
+          return
+        }
+        if (scheduleNextFrame) {
+          pendingFrame =
+            requestAnimationFrame(scheduleNextCutoffSmoothingFrame)
         }
       })
       .catch(() => {
-        pulverCutoffSmoothByNexus.delete(nexus)
+        /* `modify` rejects after `nexus.stop()` and similar — do not chain another frame. */
       })
   }
 
-  st.rafId = requestAnimationFrame(pump)
+  pendingFrame =
+    requestAnimationFrame(scheduleNextCutoffSmoothingFrame)
 }
 
 export type StoredSettings = {
@@ -359,5 +370,5 @@ export const updateTonematrixFromChessBoard = async (
     updateOrCreatePattern(2, fenPattern2)
   })
 
-  schedulePulverisateurCutoffToward(nexus, targetCutoffHz)
+  schedulePulverisateurCutoff(nexus, targetCutoffHz)
 }
