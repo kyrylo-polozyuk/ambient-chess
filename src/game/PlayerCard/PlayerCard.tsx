@@ -25,7 +25,7 @@ export const PlayerCard = ({
   const captureIconColor = variant === "white" ? "b" : "w"
 
   return (
-    <div className={`player-card ${variant} row`}>
+    <div className={`player-card ${variant} row overflow-hidden wrap center`}>
       <div className={`player-name ${!turnToMove ? "waiting" : ""}`}>
         {name === BOT_DISPLAY_NAME ? (
           <Icons.Bot size="1em" />
