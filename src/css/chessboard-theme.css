@@ -30,10 +30,11 @@
   & [data-piece] svg {
     filter: var(--chess-piece-filter);
     transition: filter 0.25s;
+  }
 
-    &:hover {
-      filter: var(--chess-piece-filter-hover);
-    }
+  /* Set on the square piece layer in Chessboard.tsx via squareRenderer (same rules as canDragPiece) */
+  & [data-user-movable-piece] svg:hover {
+    filter: var(--chess-piece-filter-hover);
   }
 }
 

@@ -9,7 +9,11 @@ import {
   useRef,
   useState,
 } from "react"
-import { Chessboard as ReactChessboard } from "react-chessboard"
+import {
+  Chessboard as ReactChessboard,
+  type PieceHandlerArgs,
+  type SquareRenderer,
+} from "react-chessboard"
 import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
 import { useDialog } from "../../dialog/useDialog"
@@ -370,12 +374,35 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     }, [lastMove, selectedSquare, canInteract])
 
     const canDragPiece = useCallback(
-      ({ piece }: { piece: { pieceType: string } }) => {
+      ({ piece }: PieceHandlerArgs) => {
         if (!canInteract) return false
         const pieceColor = piece.pieceType.startsWith("w") ? "w" : "b"
         return pieceColor === gameRef.current.turn()
       },
       [canInteract],
+    )
+
+    const squareRenderer = useCallback<SquareRenderer>(
+      ({ piece, square, children }) => (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            ...squareStyles[square],
+          }}
+          {...(piece != null &&
+          canDragPiece({
+            piece,
+            isSparePiece: false,
+            square,
+          })
+            ? { "data-user-movable-piece": "" }
+            : {})}
+        >
+          {children}
+        </div>
+      ),
+      [canDragPiece, squareStyles],
     )
 
     const handlePieceDrop = useCallback(
@@ -462,6 +489,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         canDragPiece,
         onPieceDrop: handlePieceDrop,
         onSquareClick: handleSquareClick,
+        squareRenderer,
         squareStyles,
         darkSquareStyle: { backgroundColor: "var(--chess-board-bg-dark)" },
         lightSquareStyle: { backgroundColor: "var(--chess-board-bg-light)" },
@@ -477,6 +505,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         canDragPiece,
         handlePieceDrop,
         handleSquareClick,
+        squareRenderer,
         squareStyles,
       ],
     )
