@@ -122,6 +122,12 @@ body {
   width: 100%;
 }
 
+.game-result {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
 /* Hidden until ready - lets board complete layout/resize before reveal */
 .game-content {
   opacity: 0;

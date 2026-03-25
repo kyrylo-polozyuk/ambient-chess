@@ -13,8 +13,15 @@ import type { NexusEntity } from "@audiotool/nexus/document"
 export type GameStatusPhase = "ongoing" | "finished"
 
 export type GameStatus = {
-  message: string
   phase: GameStatusPhase
+  /** Side to move while ongoing; null when the game has ended. */
+  turnToMove: "w" | "b" | null
+  whiteLabel: string
+  blackLabel: string
+  /** White material minus black (pawn 1, knight/bishop 3, rook 5, queen 9). */
+  materialLeadWhite: number
+  /** Terminal outcome text (checkmate, draw, …); empty while ongoing. */
+  resultMessage: string
 }
 
 export type ChessboardProps = {

@@ -36,8 +36,12 @@ export const Game = (props: {
 
   const [mode, setMode] = useState<GameMode | undefined>(undefined)
   const [status, setStatus] = useState<GameStatus>({
-    message: "",
     phase: "ongoing",
+    turnToMove: "w",
+    whiteLabel: "White",
+    blackLabel: "Black",
+    materialLeadWhite: 0,
+    resultMessage: "",
   })
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
@@ -203,14 +207,12 @@ export const Game = (props: {
       <div
         className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
       >
-        <div className="row full-width start">
-          <PlayerCard
-            variant="black"
-            name="Black"
-            score={3}
-            turnToMove={true}
-          />
-        </div>
+        <PlayerCard
+          variant="black"
+          name={status.blackLabel}
+          score={-status.materialLeadWhite}
+          turnToMove={status.turnToMove === "b"}
+        />
         <Chessboard
           ref={chessboardRef}
           tonematrix={props.tonematrix}
@@ -221,16 +223,16 @@ export const Game = (props: {
           blackPlayerName={blackPlayerName}
           onStatusChange={setStatus}
         />
-        <div className="row full-width start">
-          <PlayerCard
-            variant="white"
-            name="White"
-            score={0}
-            turnToMove={false}
-          />
-        </div>
+        <PlayerCard
+          variant="white"
+          name={status.whiteLabel}
+          score={status.materialLeadWhite}
+          turnToMove={status.turnToMove === "w"}
+        />
         <div className="column full-width">
-          <div className="game-status">{status.message}</div>
+          <p className="game-result secondary-text">
+            {status.resultMessage ?? ""}
+          </p>
           <div className="row small-gap">
             {mode !== undefined && !isVsCollaborator && (
               <GameModeButton

@@ -29,8 +29,9 @@ import {
   chessLegalMoveHighlight,
   chessSelectedSquareHighlight,
 } from "../../theme"
-import type { ChessboardProps, ChessboardRef } from "../Chessboard"
+import type { ChessboardProps, ChessboardRef, GameStatus } from "../Chessboard"
 import type { PieceSymbol } from "../chess"
+import { materialFromBoard } from "../material"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
 
@@ -100,27 +101,55 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     const whiteLabel = whitePlayerName ? `${whitePlayerName} (white)` : "White"
     const blackLabel = blackPlayerName ? `${blackPlayerName} (black)` : "Black"
 
-    const updateStatus = useCallback(() => {
-      const game = gameRef.current
-      if (game.isCheckmate()) {
-        onStatusChange({
-          message:
-            game.turn() === "w"
-              ? `${blackLabel} wins by checkmate!`
-              : `${whiteLabel} wins by checkmate!`,
-          phase: "finished",
-        })
-      } else if (game.isDraw()) {
-        onStatusChange({ message: "Game drawn!", phase: "finished" })
-      } else if (game.isStalemate()) {
-        onStatusChange({ message: "Stalemate!", phase: "finished" })
-      } else {
-        onStatusChange({
-          message: `${game.turn() === "w" ? whiteLabel : blackLabel} to move`,
+    const buildGameStatus = useCallback(
+      (game: Chess): GameStatus => {
+        const material = materialFromBoard(game.board())
+        const materialLeadWhite = material.white - material.black
+        const base = {
+          whiteLabel,
+          blackLabel,
+          materialLeadWhite,
+        }
+        if (game.isCheckmate()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage:
+              game.turn() === "w"
+                ? `${blackLabel} wins by checkmate!`
+                : `${whiteLabel} wins by checkmate!`,
+          }
+        }
+        if (game.isDraw()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage: "Game drawn!",
+          }
+        }
+        if (game.isStalemate()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage: "Stalemate!",
+          }
+        }
+        return {
+          ...base,
           phase: "ongoing",
-        })
-      }
-    }, [whiteLabel, blackLabel, onStatusChange])
+          turnToMove: game.turn(),
+          resultMessage: "",
+        }
+      },
+      [whiteLabel, blackLabel],
+    )
+
+    const updateStatus = useCallback(() => {
+      onStatusChange(buildGameStatus(gameRef.current))
+    }, [buildGameStatus, onStatusChange])
 
     const { showDialog, closeDialog } = useDialog()
 
