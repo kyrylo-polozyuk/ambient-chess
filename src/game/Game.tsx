@@ -1,5 +1,12 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
-import { useCallback, useContext, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
@@ -16,10 +23,40 @@ import type { Settings } from "../settings/settings-context"
 import { useSettings } from "../settings/useSettings"
 import { trimUsername } from "../utils/username"
 import { GameModeButton } from "./GameModeButton"
-import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
+import { PlayerCard } from "./PlayerCard/PlayerCard"
+import {
+  BOT_DISPLAY_NAME,
+  DEFAULT_GAME_MODE,
+  DEFAULT_PLAYER_DISPLAY_NAME,
+  type GameMode,
+} from "./gameMode"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
+
+const playerCardDisplayNames = (input: {
+  mode: GameMode | undefined
+  localDisplayName: string | undefined
+  whitePlayerName: string | undefined
+  blackPlayerName: string | undefined
+}): { white: string; black: string } => {
+  const { mode, localDisplayName, whitePlayerName, blackPlayerName } = input
+  const p = DEFAULT_PLAYER_DISPLAY_NAME
+  if (mode === undefined) return { white: p, black: p }
+  if (mode === "autoplay")
+    return { white: BOT_DISPLAY_NAME, black: BOT_DISPLAY_NAME }
+  if (mode === "vsComputer")
+    return {
+      white: localDisplayName ?? p,
+      black: BOT_DISPLAY_NAME,
+    }
+  if (mode === "vsCollaborator")
+    return {
+      white: whitePlayerName ?? p,
+      black: blackPlayerName ?? p,
+    }
+  return { white: p, black: p }
+}
 
 export const Game = (props: {
   projectUrl: string
@@ -35,8 +72,14 @@ export const Game = (props: {
 
   const [mode, setMode] = useState<GameMode | undefined>(undefined)
   const [status, setStatus] = useState<GameStatus>({
-    message: "",
     phase: "ongoing",
+    turnToMove: "w",
+    whiteLabel: DEFAULT_PLAYER_DISPLAY_NAME,
+    blackLabel: DEFAULT_PLAYER_DISPLAY_NAME,
+    materialLeadWhite: 0,
+    capturedByWhite: [],
+    capturedByBlack: [],
+    resultMessage: "",
   })
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
     boolean | undefined
@@ -47,6 +90,22 @@ export const Game = (props: {
   const [blackPlayerName, setBlackPlayerName] = useState<string | undefined>(
     undefined,
   )
+  const [localDisplayName, setLocalDisplayName] = useState<string | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    if (!loginStatus?.loggedIn) {
+      setLocalDisplayName(undefined)
+      return
+    }
+    void (async () => {
+      const result = await loginStatus.getUserName()
+      setLocalDisplayName(
+        result instanceof Error ? undefined : trimUsername(result),
+      )
+    })()
+  }, [loginStatus])
 
   const isVsCollaborator = mode === "vsCollaborator"
   const userPlaysAs =
@@ -55,6 +114,9 @@ export const Game = (props: {
         ? "w"
         : "b"
       : undefined
+
+  /** Same rule as Chessboard `boardOrientation`: black at bottom when the collaborator plays black. */
+  const boardFacesBlack = userPlaysAs === "b"
 
   const checkCollaboratorMode = useCallback(async () => {
     if (!client || !loginStatus?.loggedIn) return
@@ -197,11 +259,43 @@ export const Game = (props: {
     return () => cancelAnimationFrame(id)
   }, [isFullyReady])
 
+  const { white: whiteCardName, black: blackCardName } = useMemo(
+    () =>
+      playerCardDisplayNames({
+        mode,
+        localDisplayName,
+        whitePlayerName,
+        blackPlayerName,
+      }),
+    [mode, localDisplayName, whitePlayerName, blackPlayerName],
+  )
+
+  const playerCardWhite = (
+    <PlayerCard
+      variant="white"
+      name={whiteCardName}
+      score={status.materialLeadWhite}
+      turnToMove={status.turnToMove === "w"}
+      capturedPieces={status.capturedByWhite}
+    />
+  )
+
+  const playerCardBlack = (
+    <PlayerCard
+      variant="black"
+      name={blackCardName}
+      score={-status.materialLeadWhite}
+      turnToMove={status.turnToMove === "b"}
+      capturedPieces={status.capturedByBlack}
+    />
+  )
+
   return (
-    <div className="column center grow game-component">
+    <div className="column center grow game-component ">
       <div
-        className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
+        className={`column center full-width grow small-gap game-content${showContent ? " ready" : ""}`}
       >
+        {boardFacesBlack ? playerCardWhite : playerCardBlack}
         <Chessboard
           ref={chessboardRef}
           tonematrix={props.tonematrix}
@@ -212,9 +306,11 @@ export const Game = (props: {
           blackPlayerName={blackPlayerName}
           onStatusChange={setStatus}
         />
-
+        {boardFacesBlack ? playerCardBlack : playerCardWhite}
         <div className="column full-width">
-          <div className="game-status">{status.message}</div>
+          <div className="game-result secondary-text">
+            {status.resultMessage}
+          </div>
           <div className="row small-gap">
             {mode !== undefined && !isVsCollaborator && (
               <GameModeButton
@@ -239,15 +335,14 @@ export const Game = (props: {
             <button
               className={`hug responsive${status.phase === "finished" ? " primary" : ""}`}
               onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
                 showConfirmation({
-                  id: "restart-confirmation",
-                  title: "Restart game",
-                  content: <p>Are you sure you want to restart the game?</p>,
-                  confirmLabel: "Restart",
+                  id: "reset-confirmation",
+                  title: "Reset game",
+                  content: <p>Are you sure you want to reset the game?</p>,
+                  confirmLabel: "Reset",
                   confirmVariant: "primary",
                   onConfirm: () => {
-                    if (mode !== "autoplay" && !isVsCollaborator) {
+                    if (mode === "autoplay" || !isVsCollaborator) {
                       setMode(DEFAULT_GAME_MODE)
                     }
                     chessboardRef.current?.restart()
@@ -256,12 +351,11 @@ export const Game = (props: {
               }}
             >
               <Icons.Refresh />
-              Restart
+              Reset
             </button>
             <button
               className="hug responsive"
               onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- useDialog return type
                 showConfirmation({
                   id: "exit-confirmation",
                   title: "Exit game",

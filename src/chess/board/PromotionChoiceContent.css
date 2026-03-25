@@ -1,0 +1,45 @@
+.promotion-choice-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.promotion-choice-option {
+  font-size: 2rem;
+  padding: 0.5rem;
+  min-width: 3rem;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: background-color 0.15s;
+}
+
+/* White promoting: dark background for white piece contrast */
+.promotion-choice-content-w .promotion-choice-option {
+  background-color: var(--promotion-btn-bg-light);
+}
+
+.promotion-choice-content-w .white-piece {
+  color: var(--chess-piece-white);
+  text-shadow: 0 0 0.0625rem var(--chess-piece-black);
+}
+
+/* Black promoting: light background for black piece contrast */
+.promotion-choice-content-b .promotion-choice-option {
+  background-color: var(--promotion-btn-bg-dark);
+}
+
+.promotion-choice-content-b .black-piece {
+  color: var(--chess-piece-black);
+  text-shadow: 0 0 0.0625rem var(--chess-piece-white);
+}
+
+.promotion-choice-icon {
+  line-height: 1;
+}

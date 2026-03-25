@@ -73,6 +73,12 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+
+    &:hover {
+      background: none;
+    }
 
     .icon {
       margin-top: -0.33rem;
@@ -114,6 +120,12 @@ body {
 
 .game-component {
   width: 100%;
+}
+
+.game-result {
+  height: 1.25rem;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
 /* Hidden until ready - lets board complete layout/resize before reveal */

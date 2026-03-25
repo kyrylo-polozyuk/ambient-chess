@@ -9,10 +9,14 @@ import {
   useRef,
   useState,
 } from "react"
-import { Chessboard as ReactChessboard } from "react-chessboard"
-import { Icons } from "../../components/Icon"
+import {
+  Chessboard as ReactChessboard,
+  type PieceHandlerArgs,
+  type SquareRenderer,
+} from "react-chessboard"
 import { AudiotoolContext } from "../../context"
 import { useDialog } from "../../dialog/useDialog"
+import { DEFAULT_PLAYER_DISPLAY_NAME } from "../../game/gameMode"
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
@@ -25,14 +29,15 @@ import {
   chessLegalMoveHighlight,
   chessSelectedSquareHighlight,
 } from "../../theme"
-import type { ChessboardProps, ChessboardRef } from "../Chessboard"
+import type { ChessboardProps, ChessboardRef, GameStatus } from "../Chessboard"
+import { capturedPiecesForVictimColor } from "../captures"
 import type { PieceSymbol } from "../chess"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
+import { materialFromBoard } from "../material.ts"
+import { PromotionChoiceContent } from "./PromotionChoiceContent"
 
 const FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
-const PROMOTION_PIECES: PieceSymbol[] = ["q", "r", "n", "b"]
 
 const squareToBoardIndices = (sq: string): [number, number] => {
   const file = sq.charCodeAt(0) - 97
@@ -93,30 +98,65 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       return Promise.resolve()
     }, [nexus, piecesSoundAfterMoveOnly])
 
-    const whiteLabel = whitePlayerName ? `${whitePlayerName} (white)` : "White"
-    const blackLabel = blackPlayerName ? `${blackPlayerName} (black)` : "Black"
+    const whiteLabel = whitePlayerName
+      ? `${whitePlayerName} (white)`
+      : DEFAULT_PLAYER_DISPLAY_NAME
+    const blackLabel = blackPlayerName
+      ? `${blackPlayerName} (black)`
+      : DEFAULT_PLAYER_DISPLAY_NAME
+
+    const buildGameStatus = useCallback(
+      (game: Chess): GameStatus => {
+        const board = game.board()
+        const material = materialFromBoard(board)
+        const materialLeadWhite = material.white - material.black
+        const base = {
+          whiteLabel,
+          blackLabel,
+          materialLeadWhite,
+          capturedByWhite: capturedPiecesForVictimColor(board, "b"),
+          capturedByBlack: capturedPiecesForVictimColor(board, "w"),
+        }
+        if (game.isCheckmate()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage:
+              game.turn() === "w"
+                ? `${blackLabel} wins by checkmate!`
+                : `${whiteLabel} wins by checkmate!`,
+          }
+        }
+        if (game.isDraw()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage: "Game drawn!",
+          }
+        }
+        if (game.isStalemate()) {
+          return {
+            ...base,
+            phase: "finished",
+            turnToMove: null,
+            resultMessage: "Stalemate!",
+          }
+        }
+        return {
+          ...base,
+          phase: "ongoing",
+          turnToMove: game.turn(),
+          resultMessage: "",
+        }
+      },
+      [whiteLabel, blackLabel],
+    )
 
     const updateStatus = useCallback(() => {
-      const game = gameRef.current
-      if (game.isCheckmate()) {
-        onStatusChange({
-          message:
-            game.turn() === "w"
-              ? `${blackLabel} wins by checkmate!`
-              : `${whiteLabel} wins by checkmate!`,
-          phase: "finished",
-        })
-      } else if (game.isDraw()) {
-        onStatusChange({ message: "Game drawn!", phase: "finished" })
-      } else if (game.isStalemate()) {
-        onStatusChange({ message: "Stalemate!", phase: "finished" })
-      } else {
-        onStatusChange({
-          message: `${game.turn() === "w" ? whiteLabel : blackLabel} to move`,
-          phase: "ongoing",
-        })
-      }
-    }, [whiteLabel, blackLabel, onStatusChange])
+      onStatusChange(buildGameStatus(gameRef.current))
+    }, [buildGameStatus, onStatusChange])
 
     const { showDialog, closeDialog } = useDialog()
 
@@ -209,46 +249,19 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           id,
           title: "Promotion",
           content: (
-            <div
-              className={`row small-gap promotion-choices promotion-choices-${color}`}
-            >
-              {PROMOTION_PIECES.map((piece) => (
-                <button
-                  key={piece}
-                  className="promotion-choice hug"
-                  onClick={() => {
-                    closeDialog(id)
-                    applyMove(from, to, piece)
-                    if (
-                      computerPlaysAs &&
-                      gameRef.current.turn() === computerPlaysAs
-                    ) {
-                      setTimeout(
-                        () => void makeAiMove(moveDelayMs),
-                        moveDelayMs,
-                      )
-                    }
-                  }}
-                  title={
-                    piece === "q"
-                      ? "Queen"
-                      : piece === "r"
-                        ? "Rook"
-                        : piece === "n"
-                          ? "Knight"
-                          : "Bishop"
-                  }
-                >
-                  <span className="promotion-piece-icon">
-                    <Icons.ChessPiece
-                      piece={piece}
-                      color={color}
-                      size="1.75rem"
-                    />
-                  </span>
-                </button>
-              ))}
-            </div>
+            <PromotionChoiceContent
+              color={color}
+              onChoose={(piece) => {
+                closeDialog(id)
+                applyMove(from, to, piece)
+                if (
+                  computerPlaysAs &&
+                  gameRef.current.turn() === computerPlaysAs
+                ) {
+                  setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+                }
+              }}
+            />
           ),
           dismissible: true,
           closeOnBackdropClick: false,
@@ -307,26 +320,24 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       void initFromStored()
     }, [ready, nexus, tonematrix, syncBoardToTonematrix, updateStatus])
 
+    /** One scheduler for autoplay chain and for vs-computer kick-off (avoids losing the bot's turn when mode switches). */
     useEffect(() => {
+      clearTimeout(timerRef.current)
       if (ready && autoPlay) {
         timerRef.current = setTimeout(
           () => void makeAiMove(moveDelayMs),
           moveDelayMs,
         )
-      } else {
-        clearTimeout(timerRef.current)
+      } else if (ready && computerPlaysAs) {
+        const game = gameRef.current
+        if (!game.isGameOver() && game.turn() === computerPlaysAs) {
+          timerRef.current = setTimeout(
+            () => void makeAiMove(moveDelayMs),
+            moveDelayMs,
+          )
+        }
       }
       return () => clearTimeout(timerRef.current)
-    }, [ready, autoPlay, makeAiMove, moveDelayMs])
-
-    useEffect(() => {
-      if (!ready || !computerPlaysAs || autoPlay) return
-      const game = gameRef.current
-      if (game.isGameOver()) return
-      if (game.turn() === computerPlaysAs) {
-        const t = setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
-        return () => clearTimeout(t)
-      }
     }, [ready, autoPlay, computerPlaysAs, makeAiMove, moveDelayMs])
 
     const canInteract =
@@ -372,12 +383,35 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     }, [lastMove, selectedSquare, canInteract])
 
     const canDragPiece = useCallback(
-      ({ piece }: { piece: { pieceType: string } }) => {
+      ({ piece }: PieceHandlerArgs) => {
         if (!canInteract) return false
         const pieceColor = piece.pieceType.startsWith("w") ? "w" : "b"
         return pieceColor === gameRef.current.turn()
       },
       [canInteract],
+    )
+
+    const squareRenderer = useCallback<SquareRenderer>(
+      ({ piece, square, children }) => (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            ...squareStyles[square],
+          }}
+          {...(piece != null &&
+          canDragPiece({
+            piece,
+            isSparePiece: false,
+            square,
+          })
+            ? { "data-user-movable-piece": "" }
+            : {})}
+        >
+          {children}
+        </div>
+      ),
+      [canDragPiece, squareStyles],
     )
 
     const handlePieceDrop = useCallback(
@@ -464,6 +498,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         canDragPiece,
         onPieceDrop: handlePieceDrop,
         onSquareClick: handleSquareClick,
+        squareRenderer,
         squareStyles,
         darkSquareStyle: { backgroundColor: "var(--chess-board-bg-dark)" },
         lightSquareStyle: { backgroundColor: "var(--chess-board-bg-light)" },
@@ -479,6 +514,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         canDragPiece,
         handlePieceDrop,
         handleSquareClick,
+        squareRenderer,
         squareStyles,
       ],
     )
