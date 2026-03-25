@@ -58,9 +58,7 @@ export const App = () => {
         ? `${window.location.pathname}?${params.toString()}`
         : window.location.pathname,
     )
-    if (nexus !== undefined) {
-      await nexus.stop()
-    }
+    if (nexus !== undefined) await nexus.stop()
     setClient(undefined)
     setNexus(undefined)
   }, [nexus])
