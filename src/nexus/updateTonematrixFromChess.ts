@@ -30,86 +30,6 @@ const pulverisateurCutoffFromAbsMaterialLead = (absLead: number): number => {
   )
 }
 
-/** Fraction of the distance to the target applied per animation frame (~60 Hz). */
-const PULVER_CUTOFF_SMOOTH_ALPHA = 0.01
-
-/** Snap to target when this close (Hz) to avoid endless tiny updates. */
-const PULVER_CUTOFF_SNAP_EPS = 12
-
-type PulverCutoffSmoothState = {
-  targetHz: number
-  rafId: number
-}
-
-const pulverCutoffSmoothByNexus = new WeakMap<
-  SyncedDocument,
-  PulverCutoffSmoothState
->()
-
-function schedulePulverisateurCutoffToward(
-  nexus: SyncedDocument,
-  targetHz: number,
-): void {
-  let state = pulverCutoffSmoothByNexus.get(nexus)
-  if (!state) {
-    state = { targetHz, rafId: 0 }
-    pulverCutoffSmoothByNexus.set(nexus, state)
-  } else {
-    state.targetHz = targetHz
-  }
-
-  if (state.rafId !== 0) {
-    return
-  }
-
-  const st = state
-
-  const pump = (): void => {
-    st.rafId = 0
-    let needsAnotherFrame = false
-
-    void nexus
-      .modify((t) => {
-        const pulverisateur = t.entities
-          .ofTypes("pulverisateur")
-          .get()
-          .find(
-            (p) =>
-              p.fields.displayName.value === AMBIENT_CHESS_PULVERISATEUR_NAME,
-          )
-
-        if (!pulverisateur) {
-          return
-        }
-
-        const field = pulverisateur.fields.filter.fields.cutoffFrequencyHz
-        const cur = field.value
-        const tgt = st.targetHz
-
-        if (Math.abs(tgt - cur) <= PULVER_CUTOFF_SNAP_EPS) {
-          if (field.value !== tgt) {
-            t.update(field, tgt)
-          }
-          return
-        }
-
-        const next = cur + (tgt - cur) * PULVER_CUTOFF_SMOOTH_ALPHA
-        t.update(field, next)
-        needsAnotherFrame = true
-      })
-      .then(() => {
-        if (needsAnotherFrame) {
-          st.rafId = requestAnimationFrame(pump)
-        }
-      })
-      .catch(() => {
-        pulverCutoffSmoothByNexus.delete(nexus)
-      })
-  }
-
-  st.rafId = requestAnimationFrame(pump)
-}
-
 export type StoredSettings = {
   piecesSoundAfterMoveOnly: boolean
 }
@@ -308,6 +228,20 @@ export const updateTonematrixFromChessBoard = async (
   )
 
   await nexus.modify((t) => {
+    const pulverisateur = t.entities
+      .ofTypes("pulverisateur")
+      .get()
+      .find(
+        (p) => p.fields.displayName.value === AMBIENT_CHESS_PULVERISATEUR_NAME,
+      )
+
+    if (pulverisateur) {
+      const cutoffField = pulverisateur.fields.filter.fields.cutoffFrequencyHz
+      if (cutoffField.value !== targetCutoffHz) {
+        t.update(cutoffField, targetCutoffHz)
+      }
+    }
+
     const tonematrix = t.entities
       .ofTypes("tonematrix")
       .get()
@@ -358,6 +292,4 @@ export const updateTonematrixFromChessBoard = async (
     updateOrCreatePattern(1, fenPattern1)
     updateOrCreatePattern(2, fenPattern2)
   })
-
-  schedulePulverisateurCutoffToward(nexus, targetCutoffHz)
 }
