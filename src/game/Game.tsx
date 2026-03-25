@@ -1,5 +1,12 @@
 import type { NexusEntity } from "@audiotool/nexus/document"
-import { useCallback, useContext, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
@@ -17,10 +24,39 @@ import { useSettings } from "../settings/useSettings"
 import { trimUsername } from "../utils/username"
 import { GameModeButton } from "./GameModeButton"
 import { PlayerCard } from "./PlayerCard/PlayerCard"
-import { DEFAULT_GAME_MODE, type GameMode } from "./gameMode"
+import {
+  BOT_DISPLAY_NAME,
+  DEFAULT_GAME_MODE,
+  DEFAULT_PLAYER_DISPLAY_NAME,
+  type GameMode,
+} from "./gameMode"
 
 const buildAudiotoolUrl = (projectUrl: string): string =>
   `${AUDIOTOOL_STUDIO_BASE}${extractProjectId(projectUrl)}`
+
+const playerCardDisplayNames = (input: {
+  mode: GameMode | undefined
+  localDisplayName: string | undefined
+  whitePlayerName: string | undefined
+  blackPlayerName: string | undefined
+}): { white: string; black: string } => {
+  const { mode, localDisplayName, whitePlayerName, blackPlayerName } = input
+  const p = DEFAULT_PLAYER_DISPLAY_NAME
+  if (mode === undefined) return { white: p, black: p }
+  if (mode === "autoplay")
+    return { white: BOT_DISPLAY_NAME, black: BOT_DISPLAY_NAME }
+  if (mode === "vsComputer")
+    return {
+      white: localDisplayName ?? p,
+      black: BOT_DISPLAY_NAME,
+    }
+  if (mode === "vsCollaborator")
+    return {
+      white: whitePlayerName ?? p,
+      black: blackPlayerName ?? p,
+    }
+  return { white: p, black: p }
+}
 
 export const Game = (props: {
   projectUrl: string
@@ -38,8 +74,8 @@ export const Game = (props: {
   const [status, setStatus] = useState<GameStatus>({
     phase: "ongoing",
     turnToMove: "w",
-    whiteLabel: "White",
-    blackLabel: "Black",
+    whiteLabel: DEFAULT_PLAYER_DISPLAY_NAME,
+    blackLabel: DEFAULT_PLAYER_DISPLAY_NAME,
     materialLeadWhite: 0,
     resultMessage: "",
   })
@@ -52,6 +88,22 @@ export const Game = (props: {
   const [blackPlayerName, setBlackPlayerName] = useState<string | undefined>(
     undefined,
   )
+  const [localDisplayName, setLocalDisplayName] = useState<string | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    if (!loginStatus?.loggedIn) {
+      setLocalDisplayName(undefined)
+      return
+    }
+    void (async () => {
+      const result = await loginStatus.getUserName()
+      setLocalDisplayName(
+        result instanceof Error ? undefined : trimUsername(result),
+      )
+    })()
+  }, [loginStatus])
 
   const isVsCollaborator = mode === "vsCollaborator"
   const userPlaysAs =
@@ -202,6 +254,17 @@ export const Game = (props: {
     return () => cancelAnimationFrame(id)
   }, [isFullyReady])
 
+  const { white: whiteCardName, black: blackCardName } = useMemo(
+    () =>
+      playerCardDisplayNames({
+        mode,
+        localDisplayName,
+        whitePlayerName,
+        blackPlayerName,
+      }),
+    [mode, localDisplayName, whitePlayerName, blackPlayerName],
+  )
+
   return (
     <div className="column center grow game-component">
       <div
@@ -209,7 +272,7 @@ export const Game = (props: {
       >
         <PlayerCard
           variant="black"
-          name={status.blackLabel}
+          name={blackCardName}
           score={-status.materialLeadWhite}
           turnToMove={status.turnToMove === "b"}
         />
@@ -225,7 +288,7 @@ export const Game = (props: {
         />
         <PlayerCard
           variant="white"
-          name={status.whiteLabel}
+          name={whiteCardName}
           score={status.materialLeadWhite}
           turnToMove={status.turnToMove === "w"}
         />

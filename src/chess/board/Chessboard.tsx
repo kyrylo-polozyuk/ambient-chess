@@ -17,6 +17,7 @@ import {
 import { Icons } from "../../components/Icon"
 import { AudiotoolContext } from "../../context"
 import { useDialog } from "../../dialog/useDialog"
+import { DEFAULT_PLAYER_DISPLAY_NAME } from "../../game/gameMode"
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
@@ -31,9 +32,9 @@ import {
 } from "../../theme"
 import type { ChessboardProps, ChessboardRef, GameStatus } from "../Chessboard"
 import type { PieceSymbol } from "../chess"
-import { materialFromBoard } from "../material"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
+import { materialFromBoard } from "../material"
 
 const FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
@@ -98,8 +99,12 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       return Promise.resolve()
     }, [nexus, piecesSoundAfterMoveOnly])
 
-    const whiteLabel = whitePlayerName ? `${whitePlayerName} (white)` : "White"
-    const blackLabel = blackPlayerName ? `${blackPlayerName} (black)` : "Black"
+    const whiteLabel = whitePlayerName
+      ? `${whitePlayerName} (white)`
+      : DEFAULT_PLAYER_DISPLAY_NAME
+    const blackLabel = blackPlayerName
+      ? `${blackPlayerName} (black)`
+      : DEFAULT_PLAYER_DISPLAY_NAME
 
     const buildGameStatus = useCallback(
       (game: Chess): GameStatus => {

@@ -2,6 +2,7 @@ import "./PlayerCard.css"
 
 export type PlayerCardProps = {
   variant: "white" | "black"
+  /** Display name: account, collaborator, `Bot`, or default `"Player"`. */
   name: string
   score: number
   turnToMove: boolean
