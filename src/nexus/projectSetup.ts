@@ -243,7 +243,7 @@ export const setupNewProject = (
       oscillator: { tuneSemitones: 0, tuneOctaves: 0, waveform: 0 },
       doesTrackKeyboard: true,
     },
-    noise: { channel: { isActive: false, panning: 0, gain: 1 }, color: 1 },
+    noise: { channel: { isActive: true, panning: 0, gain: 0.25 }, color: 1 },
     audio: { channel: { isActive: false, panning: 0, gain: 1 }, drive: 0 },
     filter: {
       modeIndex: 1,
@@ -309,27 +309,27 @@ export const setupNewProject = (
   t.create("desktopAudioCable", {
     fromSocket: quasar_0.fields.audioOutput.location,
     toSocket: pulsar_0.fields.audioInput.location,
-    colorIndex: 0,
+    colorIndex: 12,
   })
   t.create("desktopAudioCable", {
     fromSocket: pulverisateur_0.fields.audioOutput.location,
     toSocket: stompboxPhaser_0.fields.audioInput.location,
-    colorIndex: 0,
+    colorIndex: 8,
   })
   t.create("desktopAudioCable", {
     fromSocket: stompboxPhaser_0.fields.audioOutput.location,
     toSocket: quasar_0.fields.audioInput.location,
-    colorIndex: 0,
+    colorIndex: 13,
   })
   t.create("desktopAudioCable", {
     fromSocket: pulsar_0.fields.audioOutput.location,
     toSocket: mixerChannel.fields.audioInput.location,
-    colorIndex: 0,
+    colorIndex: 32,
   })
   t.create("desktopNoteCable", {
     fromSocket: tonematrix_0.fields.noteOutput.location,
     toSocket: pulverisateur_0.fields.notesInput.location,
-    colorIndex: 0,
+    colorIndex: 31,
   })
   return tonematrix_0
 }
