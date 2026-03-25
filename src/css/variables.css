@@ -1,11 +1,12 @@
 :root {
-  --content-max-width: 800px;
+  --content-max-width: 50rem;
 
   --accent-0: #4a5c52;
   --accent-1: #6b8076;
   --accent-2: #d0ddd6;
   --accent-3: #eef4f1;
 
+  --color-bg-dark: #0a0b14;
   --color-bg: #16171d;
   --color-bg-raised: #1e1f26;
   --color-text: var(--accent-2);
@@ -28,15 +29,13 @@
 
   --chess-board-bounce-light: #4f515e69;
   --chess-board-shadow-color: #000000bb;
-  --chess-piece-shadow-color: #0000008e;
 
   --chess-board-shadow:
     0 19px 61px var(--chess-board-shadow-color),
     0 -22px 58px var(--chess-board-bounce-light);
 
-  --chess-piece-filter-black: drop-shadow(
-    0 6px 4px var(--chess-piece-shadow-color)
-  );
+  --chess-piece-filter: drop-shadow(0 6px 4px #0000008e);
+  --chess-piece-filter-hover: drop-shadow(0 10px 8px #0000005e);
 
   --promotion-btn-bg-dark: var(--chess-board-bg-light);
   --promotion-btn-bg-light: var(--color-bg-raised);

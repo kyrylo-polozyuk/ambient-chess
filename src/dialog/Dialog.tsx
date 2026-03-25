@@ -95,4 +95,3 @@ export const Dialog = ({ config, onClose }: DialogProps) => {
     </div>
   )
 }
-

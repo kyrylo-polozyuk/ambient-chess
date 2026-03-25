@@ -25,9 +25,9 @@ import {
   LuX,
 } from "react-icons/lu"
 
-const ICON_SIZE = 20
+const ICON_SIZE = "1.25rem"
 
-const CHESS_PIECE_SIZE = 24
+const CHESS_PIECE_SIZE = "1.5rem"
 
 export const ChessPieceIcons = {
   p: GiChessPawn,
@@ -43,7 +43,7 @@ export const Icons = {
   ChessPiece: (props: {
     piece: keyof typeof ChessPieceIcons
     color: "w" | "b"
-    size?: number
+    size?: string | number
     className?: string
   }) => {
     const IconComponent = ChessPieceIcons[props.piece]

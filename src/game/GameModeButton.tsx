@@ -59,7 +59,8 @@ export const GameModeButton = ({
                       content: (
                         <>
                           <p>
-                            To play against an Audiotool project collaborator. In{" "}
+                            To play against an Audiotool project collaborator.
+                            In{" "}
                             <a
                               href={projectUrl}
                               onClick={(e) => {
@@ -74,7 +75,8 @@ export const GameModeButton = ({
                           </p>
                           <p>
                             The collaborator options are accessed via the{" "}
-                            <Icons.Users /> button on top right of the Audiotool.
+                            <Icons.Users /> button on top right of the
+                            Audiotool.
                           </p>
                         </>
                       ),

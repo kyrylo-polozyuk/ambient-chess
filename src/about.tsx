@@ -3,7 +3,7 @@ import { LuGlobe } from "react-icons/lu"
 import { SiBandcamp, SiGithub, SiInstagram, SiSoundcloud } from "react-icons/si"
 import { useDialog } from "./dialog/useDialog"
 
-const SOCIAL_ICON_SIZE = 20
+const SOCIAL_ICON_SIZE = "1.25rem"
 
 const ABOUT_DIALOG_ID = "about"
 
@@ -26,9 +26,7 @@ export const useShowAboutDialog = () => {
               Kyrylo Polozyuk
             </a>
           </p>
-          <p>
-            Powered by
-          </p>
+          <p>Powered by</p>
           <ul>
             <li>
               <a
@@ -38,7 +36,8 @@ export const useShowAboutDialog = () => {
               >
                 Audiotool SDK
               </a>
-              : Enabling the connection between the chessboard and the Audiotool DAW
+              : Enabling the connection between the chessboard and the Audiotool
+              DAW
             </li>
             <li>
               <a
@@ -51,11 +50,7 @@ export const useShowAboutDialog = () => {
               : React UI library with a chessboard component
             </li>
             <li>
-              <a
-                href="https://chess-api.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://chess-api.com/" target="_blank" rel="noreferrer">
                 chess-api.com
               </a>
               : Providing an API endpoint for Stockfish chess engine
@@ -75,31 +70,51 @@ export const useShowAboutDialog = () => {
           <p>You can find, connect and show support for my work here:</p>
           <ul className="social-links">
             <li>
-              <a href="https://www.instagram.com/kooscha.music" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.instagram.com/kooscha.music"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiInstagram size={SOCIAL_ICON_SIZE} className="icon" />
                 Instagram
               </a>
             </li>
             <li>
-              <a href="https://www.soundcloud.com/kooscha" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.soundcloud.com/kooscha"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiSoundcloud size={SOCIAL_ICON_SIZE} className="icon" />
                 Soundcloud
               </a>
             </li>
             <li>
-              <a href="https://kooscha.bandcamp.com" target="_blank" rel="noreferrer">
+              <a
+                href="https://kooscha.bandcamp.com"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiBandcamp size={SOCIAL_ICON_SIZE} className="icon" />
                 Bandcamp
               </a>
             </li>
             <li>
-              <a href="https://www.audiotool.com/user/kepz/music" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.audiotool.com/user/kepz/music"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <LuGlobe size={SOCIAL_ICON_SIZE} className="icon" />
                 Audiotool
               </a>
             </li>
             <li>
-              <a href="https://github.com/kyrylo-polozyuk" target="_blank" rel="noreferrer">
+              <a
+                href="https://github.com/kyrylo-polozyuk"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiGithub size={SOCIAL_ICON_SIZE} className="icon" />
                 GitHub
               </a>

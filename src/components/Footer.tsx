@@ -1,9 +1,9 @@
 import { LuGlobe } from "react-icons/lu"
-import "./Footer.css"
 import { SiBandcamp, SiGithub, SiInstagram, SiSoundcloud } from "react-icons/si"
 import { useShowAboutDialog } from "../about"
+import "./Footer.css"
 
-const SOCIAL_ICON_SIZE = 18
+const SOCIAL_ICON_SIZE = "1.125rem"
 
 export const Footer = () => {
   const showAboutDialog = useShowAboutDialog()
