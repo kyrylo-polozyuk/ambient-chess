@@ -26,29 +26,31 @@ export const PlayerCard = ({
 
   return (
     <div className={`player-card ${variant} row full-width wrap start`}>
-      <div className={`player-name ${!turnToMove ? "waiting" : ""}`}>
-        {name === BOT_DISPLAY_NAME ? (
-          <Icons.Bot size="1em" />
-        ) : (
-          <Icons.User size="1em" />
-        )}
-        <span>{name}</span>
-      </div>
-      {capturedPieces.length > 0 && (
-        <div
-          className="player-captures row no-gap"
-          aria-label="Captured pieces"
-        >
-          {capturedPieces.map((piece, index) => (
-            <Icons.ChessPiece
-              key={`${piece}-${index}`}
-              piece={piece}
-              color={captureIconColor}
-              size={CAPTURE_ICON_SIZE}
-            />
-          ))}
+      <div className={`player-card-inner row no-gap`}>
+        <div className={`player-name ${!turnToMove ? "waiting" : ""}`}>
+          {name === BOT_DISPLAY_NAME ? (
+            <Icons.Bot size="1em" />
+          ) : (
+            <Icons.User size="1em" />
+          )}
+          <span>{name}</span>
         </div>
-      )}
+        {capturedPieces.length > 0 && (
+          <div
+            className="player-captures row no-gap"
+            aria-label="Captured pieces"
+          >
+            {capturedPieces.map((piece, index) => (
+              <Icons.ChessPiece
+                key={`${piece}-${index}`}
+                piece={piece}
+                color={captureIconColor}
+                size={CAPTURE_ICON_SIZE}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       {score > 0 && <div className="player-score">+{score}</div>}
     </div>
   )
