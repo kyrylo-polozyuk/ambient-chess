@@ -38,7 +38,7 @@ button {
   }
 
   &.primary {
-    background: var(--btn-hover);
+    background: var(--accent-0);
 
     &:hover {
       background: var(--accent-1);

@@ -2,7 +2,7 @@
   --content-max-width: 800px;
 
   --accent-0: #4a5c52;
-  --accent-1: #8a9d94;
+  --accent-1: #6b8076;
   --accent-2: #d0ddd6;
   --accent-3: #eef4f1;
 
@@ -15,7 +15,7 @@
 
   /* Buttons */
   --btn-bg: #25262e;
-  --btn-hover: var(--accent-0);
+  --btn-hover: #3f4049;
   --btn-secondary-bg: var(--color-bg-raised);
   --btn-warning-bg: #6b3a3a;
   --btn-warning-hover: #8b4a4a;

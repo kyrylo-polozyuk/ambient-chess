@@ -279,7 +279,7 @@ export const Game = (props: {
 
         <div className="grow fit-content">
           <p>
-            Press <Icons.Play /> in{" "}
+            Press ▶ in{" "}
             <a
               href={buildAudiotoolUrl(props.projectUrl)}
               onClick={(e) => {
