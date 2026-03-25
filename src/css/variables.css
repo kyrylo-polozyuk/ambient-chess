@@ -25,6 +25,19 @@
   --chess-board-bg-light: #f0d9b5;
   --chess-piece-white: white;
   --chess-piece-black: black;
+
+  --chess-board-bounce-light: #4f515e69;
+  --chess-board-shadow-color: #000000bb;
+  --chess-piece-shadow-color: #0000008e;
+
+  --chess-board-shadow:
+    0 19px 61px var(--chess-board-shadow-color),
+    0 -22px 58px var(--chess-board-bounce-light);
+
+  --chess-piece-filter-black: drop-shadow(
+    0 6px 4px var(--chess-piece-shadow-color)
+  );
+
   --promotion-btn-bg-dark: var(--chess-board-bg-light);
   --promotion-btn-bg-light: var(--color-bg-raised);
 }
