@@ -11,23 +11,22 @@
 
 .player-card {
   align-items: center;
-  gap: 0.35rem;
 
   --name-background: var(--chess-piece-white);
   --name-color: var(--chess-piece-black);
-
-  --captures-color: var(--accent-1);
+  --captures-color: var(--accent-0);
 
   &.black {
     --name-background: var(--chess-piece-black);
     --name-color: var(--chess-piece-white);
-    --captures-color: var(--accent-2);
+    --captures-color: var(--chess-piece-white);
   }
 
   .player-name,
   .player-captures {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     padding: 0.35rem 0.6rem;
     height: 1.75rem;
     border-radius: 0.25rem;
@@ -58,6 +57,6 @@
     font-variant-numeric: tabular-nums;
     font-weight: 600;
     font-size: 0.75rem;
-    color: var(--accent-0);
+    color: var(--accent-1);
   }
 }
