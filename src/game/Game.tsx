@@ -113,6 +113,9 @@ export const Game = (props: {
         : "b"
       : undefined
 
+  /** Same rule as Chessboard `boardOrientation`: black at bottom when the collaborator plays black. */
+  const boardFacesBlack = userPlaysAs === "b"
+
   const checkCollaboratorMode = useCallback(async () => {
     if (!client || !loginStatus?.loggedIn) return
     const projectId = extractProjectId(props.projectUrl)
@@ -265,17 +268,30 @@ export const Game = (props: {
     [mode, localDisplayName, whitePlayerName, blackPlayerName],
   )
 
+  const playerCardWhite = (
+    <PlayerCard
+      variant="white"
+      name={whiteCardName}
+      score={status.materialLeadWhite}
+      turnToMove={status.turnToMove === "w"}
+    />
+  )
+
+  const playerCardBlack = (
+    <PlayerCard
+      variant="black"
+      name={blackCardName}
+      score={-status.materialLeadWhite}
+      turnToMove={status.turnToMove === "b"}
+    />
+  )
+
   return (
     <div className="column center grow game-component">
       <div
         className={`column center full-width grow game-content${showContent ? " ready" : ""}`}
       >
-        <PlayerCard
-          variant="black"
-          name={blackCardName}
-          score={-status.materialLeadWhite}
-          turnToMove={status.turnToMove === "b"}
-        />
+        {boardFacesBlack ? playerCardWhite : playerCardBlack}
         <Chessboard
           ref={chessboardRef}
           tonematrix={props.tonematrix}
@@ -286,12 +302,7 @@ export const Game = (props: {
           blackPlayerName={blackPlayerName}
           onStatusChange={setStatus}
         />
-        <PlayerCard
-          variant="white"
-          name={whiteCardName}
-          score={status.materialLeadWhite}
-          turnToMove={status.turnToMove === "w"}
-        />
+        {boardFacesBlack ? playerCardBlack : playerCardWhite}
         <div className="column full-width">
           <p className="game-result secondary-text">
             {status.resultMessage ?? ""}

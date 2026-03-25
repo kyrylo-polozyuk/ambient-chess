@@ -55,8 +55,12 @@ export const Icons = {
     )
   },
   Play: () => <LuPlay size={ICON_SIZE} className="icon" />,
-  Bot: () => <LuBot size={ICON_SIZE} className="icon" />,
-  User: () => <LuUser size={ICON_SIZE} className="icon" />,
+  Bot: (props?: { size?: string | number }) => (
+    <LuBot size={props?.size ?? ICON_SIZE} className="icon" />
+  ),
+  User: (props?: { size?: string | number }) => (
+    <LuUser size={props?.size ?? ICON_SIZE} className="icon" />
+  ),
   LogOut: () => <LuLogOut size={ICON_SIZE} className="icon" />,
   Close: () => <LuX size={ICON_SIZE} className="icon" />,
   Copy: () => <LuCopy size={ICON_SIZE} className="icon" />,

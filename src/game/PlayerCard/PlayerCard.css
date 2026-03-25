@@ -3,11 +3,18 @@
   gap: 0.5rem;
 
   .player-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     padding: 0.35rem 0.6rem;
     border-radius: 0.25rem;
 
+    & .icon {
+      font-size: inherit;
+    }
+
     &.waiting {
-      opacity: 0.5;
+      opacity: 0.25;
     }
   }
 
