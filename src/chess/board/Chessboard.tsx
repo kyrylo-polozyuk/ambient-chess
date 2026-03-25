@@ -31,6 +31,7 @@ import {
   chessSelectedSquareHighlight,
 } from "../../theme"
 import type { ChessboardProps, ChessboardRef, GameStatus } from "../Chessboard"
+import { capturedPiecesForVictimColor } from "../captures"
 import type { PieceSymbol } from "../chess"
 import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
@@ -108,12 +109,15 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
 
     const buildGameStatus = useCallback(
       (game: Chess): GameStatus => {
-        const material = materialFromBoard(game.board())
+        const board = game.board()
+        const material = materialFromBoard(board)
         const materialLeadWhite = material.white - material.black
         const base = {
           whiteLabel,
           blackLabel,
           materialLeadWhite,
+          capturedByWhite: capturedPiecesForVictimColor(board, "b"),
+          capturedByBlack: capturedPiecesForVictimColor(board, "w"),
         }
         if (game.isCheckmate()) {
           return {

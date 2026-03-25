@@ -11,21 +11,38 @@
 
 .player-card {
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
 
-  .player-name {
+  --name-background: var(--chess-piece-white);
+  --name-color: var(--chess-piece-black);
+
+  --captures-color: var(--accent-1);
+
+  &.black {
+    --name-background: var(--chess-piece-black);
+    --name-color: var(--chess-piece-white);
+    --captures-color: var(--accent-2);
+  }
+
+  .player-name,
+  .player-captures {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
     padding: 0.35rem 0.6rem;
+    height: 1.75rem;
     border-radius: 0.25rem;
+
+    svg {
+      margin-top: -0.25rem;
+    }
+  }
+
+  .player-name {
+    background: var(--name-background);
+    color: var(--name-color);
 
     &:not(.waiting) {
       animation: player-name-glow 2s ease-in-out infinite;
-    }
-
-    & .icon {
-      font-size: inherit;
     }
 
     &.waiting {
@@ -33,19 +50,14 @@
     }
   }
 
-  &.black .player-name {
-    background: var(--chess-piece-black);
-    color: var(--chess-piece-white);
-  }
-
-  &.white .player-name {
-    background: var(--chess-piece-white);
-    color: var(--chess-piece-black);
+  .player-captures {
+    color: var(--captures-color);
   }
 
   .player-score {
     font-variant-numeric: tabular-nums;
     font-weight: 600;
-    opacity: 0.95;
+    font-size: 0.75rem;
+    color: var(--accent-0);
   }
 }

@@ -77,6 +77,8 @@ export const Game = (props: {
     whiteLabel: DEFAULT_PLAYER_DISPLAY_NAME,
     blackLabel: DEFAULT_PLAYER_DISPLAY_NAME,
     materialLeadWhite: 0,
+    capturedByWhite: [],
+    capturedByBlack: [],
     resultMessage: "",
   })
   const [isCurrentUserOwner, setIsCurrentUserOwner] = useState<
@@ -274,6 +276,7 @@ export const Game = (props: {
       name={whiteCardName}
       score={status.materialLeadWhite}
       turnToMove={status.turnToMove === "w"}
+      capturedPieces={status.capturedByWhite}
     />
   )
 
@@ -283,6 +286,7 @@ export const Game = (props: {
       name={blackCardName}
       score={-status.materialLeadWhite}
       turnToMove={status.turnToMove === "b"}
+      capturedPieces={status.capturedByBlack}
     />
   )
 
