@@ -1,5 +1,3 @@
-import { Icons } from "../components/Icon"
-
 export const GetStartedIntro = () => (
   <>
     <p className="intro-tagline">
@@ -12,9 +10,7 @@ export const GetStartedIntro = () => (
           Click below to open a project in Audiotool where the soundscape will
           be generated.
         </li>
-        <li>
-          Press <Icons.Play /> in Audiotool to start the music.
-        </li>
+        <li>Press ▶ in Audiotool to start the music.</li>
         <li>
           Come back to this tab to play chess and hear your game come to life.
         </li>

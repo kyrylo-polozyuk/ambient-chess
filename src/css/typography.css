@@ -56,12 +56,7 @@ blockquote {
   padding: 1.25rem 1.5rem;
   margin: 0 0 1.5rem;
   border: 0.0625rem dashed var(--accent-1);
-  background: linear-gradient(
-    135deg,
-    rgba(194, 209, 200, 0.08) 0%,
-    rgba(74, 92, 82, 0.06) 50%,
-    transparent 100%
-  );
+  background-color: var(--color-bg-raised);
   border-radius: 1rem;
 
   & ol {

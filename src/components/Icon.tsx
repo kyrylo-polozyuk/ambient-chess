@@ -15,7 +15,6 @@ import {
   LuLoaderCircle,
   LuLogIn,
   LuLogOut,
-  LuPlay,
   LuPlus,
   LuPopcorn,
   LuRefreshCw,
@@ -54,7 +53,6 @@ export const Icons = {
       />
     )
   },
-  Play: () => <LuPlay size={ICON_SIZE} className="icon" />,
   Bot: (props?: { size?: string | number }) => (
     <LuBot size={props?.size ?? ICON_SIZE} className="icon" />
   ),

@@ -1,18 +1,18 @@
 import { type AudiotoolClient, type SyncedDocument } from "@audiotool/nexus"
 import { useCallback, useEffect, useState } from "react"
-import { Footer } from "./components/Footer"
-import { Icons } from "./components/Icon"
-import { AudiotoolContext } from "./context"
-import { useDialog } from "./dialog/useDialog"
-import { useAuth } from "./hooks/useAuth"
 import { LoginScreen } from "./LoginScreen"
+import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import {
   AUDIOTOOL_STUDIO_BASE,
   extractProjectId,
   openAudiotoolInWindow,
 } from "./ProjectSelector/projectId"
-import { ProjectSelector } from "./ProjectSelector/ProjectSelector"
 import { ProjectSyncedComponent } from "./ProjectSyncedComponent"
+import { Footer } from "./components/Footer"
+import { Icons } from "./components/Icon"
+import { AudiotoolContext } from "./context"
+import { useDialog } from "./dialog/useDialog"
+import { useAuth } from "./hooks/useAuth"
 import { SettingsProvider } from "./settings/SettingsProvider"
 
 export const App = () => {
@@ -127,8 +127,7 @@ export const App = () => {
                     openAudiotoolInWindow(url)
                   }}
                 >
-                  <Icons.Play />
-                  <span>Open Studio</span>
+                  ▶ Open Studio
                 </button>
               )}
               <button
