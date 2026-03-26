@@ -20,7 +20,7 @@ import { DEFAULT_PLAYER_DISPLAY_NAME } from "../../game/gameMode"
 import {
   getStoredFen,
   updateTonematrixFromChessBoard,
-} from "../../nexus/updateTonematrixFromChess"
+} from "../../nexus/updateFenTonematrix"
 import { useBpm } from "../../nexus/useBpm"
 import { useFenSyncFromNexus } from "../../nexus/useFenSyncFromNexus"
 import { useSettings } from "../../settings/useSettings"
@@ -36,6 +36,7 @@ import { Chess, type Square } from "../engine/chessAdapter"
 import { getStockfishMove } from "../engine/chessApi"
 import { materialFromBoard } from "../material.ts"
 import { PromotionChoiceContent } from "./PromotionChoiceContent"
+import "./chessboard-theme.css"
 
 const FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
@@ -57,6 +58,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
   (
     {
       tonematrix,
+      fenTonematrix,
       autoPlay,
       computerPlaysAs,
       userPlaysAs,
@@ -286,7 +288,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     }, [updateStatus])
 
     useEffect(() => {
-      if (!ready || !tonematrix) return
+      if (!ready || !tonematrix || !fenTonematrix) return
       if (!nexus) {
         setFenPatternsReady(true)
         return
@@ -318,7 +320,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
       }
 
       void initFromStored()
-    }, [ready, nexus, tonematrix, syncBoardToTonematrix, updateStatus])
+    }, [ready, nexus, tonematrix, fenTonematrix, syncBoardToTonematrix, updateStatus])
 
     /** One scheduler for autoplay chain and for vs-computer kick-off (avoids losing the bot's turn when mode switches). */
     useEffect(() => {
@@ -400,11 +402,11 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
             ...squareStyles[square],
           }}
           {...(piece != null &&
-          canDragPiece({
-            piece,
-            isSparePiece: false,
-            square,
-          })
+            canDragPiece({
+              piece,
+              isSparePiece: false,
+              square,
+            })
             ? { "data-user-movable-piece": "" }
             : {})}
         >

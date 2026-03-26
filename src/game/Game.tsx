@@ -300,6 +300,7 @@ export const Game = (props: {
         <Chessboard
           ref={chessboardRef}
           tonematrix={props.tonematrix}
+          fenTonematrix={props.fenTonematrix}
           autoPlay={mode === "autoplay"}
           computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
           userPlaysAs={userPlaysAs}

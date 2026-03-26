@@ -3,7 +3,7 @@ import { AudiotoolContext } from "../context"
 import {
   getStoredSettings,
   updateStoredSettings,
-} from "../nexus/updateTonematrixFromChess"
+} from "../nexus/updateSettings"
 import {
   DEFAULT_SETTINGS,
   type Settings,

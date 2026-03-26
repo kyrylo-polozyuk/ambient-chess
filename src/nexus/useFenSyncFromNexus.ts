@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef } from "react"
 import { AudiotoolContext } from "../context"
-import { getStoredFen } from "./updateTonematrixFromChess"
+import { FEN_TONEMATRIX_NAME } from "./projectSetup"
+import { getStoredFen } from "./updateFenTonematrix"
 
 const DEBOUNCE_MS = 100
 
@@ -35,14 +36,14 @@ export const useFenSyncFromNexus = (
     }
 
     void nexus.modify((t) => {
-      const tonematrix = t.entities
+      const fenTonematrix = t.entities
         .ofTypes("tonematrix")
         .get()
-        .find((tm) => tm.fields.displayName.value === "Ambient Chess")
+        .find((tm) => tm.fields.displayName.value === FEN_TONEMATRIX_NAME)
 
-      if (!tonematrix) return
+      if (!fenTonematrix) return
 
-      const slots = tonematrix.fields.patternSlots.array
+      const slots = fenTonematrix.fields.patternSlots.array
       if (slots.length < 3) return
 
       const slot1Loc = slots[1].location

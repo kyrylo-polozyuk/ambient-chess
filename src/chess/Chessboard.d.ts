@@ -32,6 +32,7 @@ export type GameStatus = {
 
 export type ChessboardProps = {
   tonematrix: NexusEntity<"tonematrix">
+  fenTonematrix: NexusEntity<"tonematrix">
   autoPlay: boolean
   onStatusChange: (status: GameStatus) => void
   computerPlaysAs?: "w" | "b"
