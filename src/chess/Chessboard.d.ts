@@ -34,9 +34,9 @@ export type ChessboardProps = {
   tonematrix: NexusEntity<"tonematrix">
   autoPlay: boolean
   onStatusChange: (status: GameStatus) => void
-  computerPlaysAs?: "w" | "b"
+  botColor?: "w" | "b"
   /** When set, user can only move pieces of this color (e.g. vsCollaborator mode). */
-  userPlaysAs?: "w" | "b"
+  userColor?: "w" | "b"
   /** Display names for white/black (e.g. in vsCollaborator mode). Format: "name (white)" / "name (black)". */
   whitePlayerName?: string
   blackPlayerName?: string

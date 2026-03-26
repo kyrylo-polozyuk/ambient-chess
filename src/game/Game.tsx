@@ -108,7 +108,7 @@ export const Game = (props: {
   }, [loginStatus])
 
   const isVsCollaborator = mode === "vsCollaborator"
-  const userPlaysAs =
+  const userColor =
     isVsCollaborator && isCurrentUserOwner !== undefined
       ? isCurrentUserOwner
         ? "w"
@@ -116,7 +116,7 @@ export const Game = (props: {
       : undefined
 
   /** Same rule as Chessboard `boardOrientation`: black at bottom when the collaborator plays black. */
-  const boardFacesBlack = userPlaysAs === "b"
+  const boardFacesBlack = userColor === "b"
 
   const checkCollaboratorMode = useCallback(async () => {
     if (!client || !loginStatus?.loggedIn) return
@@ -300,8 +300,8 @@ export const Game = (props: {
           ref={chessboardRef}
           tonematrix={props.tonematrix}
           autoPlay={mode === "autoplay"}
-          computerPlaysAs={mode === "vsComputer" ? "b" : undefined}
-          userPlaysAs={userPlaysAs}
+          botColor={mode === "vsComputer" ? "b" : undefined}
+          userColor={userColor}
           whitePlayerName={whitePlayerName}
           blackPlayerName={blackPlayerName}
           onStatusChange={setStatus}

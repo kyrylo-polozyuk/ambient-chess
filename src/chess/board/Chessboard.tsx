@@ -58,8 +58,8 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     {
       tonematrix,
       autoPlay,
-      computerPlaysAs,
-      userPlaysAs,
+      botColor,
+      userColor,
       whitePlayerName,
       blackPlayerName,
       onStatusChange,
@@ -254,10 +254,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
               onChoose={(piece) => {
                 closeDialog(id)
                 applyMove(from, to, piece)
-                if (
-                  computerPlaysAs &&
-                  gameRef.current.turn() === computerPlaysAs
-                ) {
+                if (botColor && gameRef.current.turn() === botColor) {
                   setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
                 }
               }}
@@ -267,14 +264,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           closeOnBackdropClick: false,
         })
       },
-      [
-        showDialog,
-        closeDialog,
-        applyMove,
-        computerPlaysAs,
-        makeAiMove,
-        moveDelayMs,
-      ],
+      [showDialog, closeDialog, applyMove, botColor, makeAiMove, moveDelayMs],
     )
 
     useImperativeHandle(ref, () => ({ restart }), [restart])
@@ -328,9 +318,9 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           () => void makeAiMove(moveDelayMs),
           moveDelayMs,
         )
-      } else if (ready && computerPlaysAs) {
+      } else if (ready && botColor) {
         const game = gameRef.current
-        if (!game.isGameOver() && game.turn() === computerPlaysAs) {
+        if (!game.isGameOver() && game.turn() === botColor) {
           timerRef.current = setTimeout(
             () => void makeAiMove(moveDelayMs),
             moveDelayMs,
@@ -338,12 +328,12 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         }
       }
       return () => clearTimeout(timerRef.current)
-    }, [ready, autoPlay, computerPlaysAs, makeAiMove, moveDelayMs])
+    }, [ready, autoPlay, botColor, makeAiMove, moveDelayMs])
 
     const canInteract =
       !autoPlay &&
-      (!computerPlaysAs || gameRef.current?.turn() !== computerPlaysAs) &&
-      (!userPlaysAs || gameRef.current?.turn() === userPlaysAs)
+      (!botColor || gameRef.current?.turn() !== botColor) &&
+      (!userColor || gameRef.current?.turn() === userColor)
 
     useEffect(() => {
       if (!canInteract) setSelectedSquare(null)
@@ -430,9 +420,24 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
           applyMoveWithPromotionChoice(sourceSquare, targetSquare)
           return false
         }
-        return applyMove(sourceSquare, targetSquare)
+        const successfullyMoved = applyMove(sourceSquare, targetSquare)
+        if (
+          successfullyMoved &&
+          botColor &&
+          gameRef.current.turn() === botColor
+        ) {
+          setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
+        }
+        return successfullyMoved
       },
-      [canInteract, applyMove, applyMoveWithPromotionChoice],
+      [
+        canInteract,
+        applyMove,
+        applyMoveWithPromotionChoice,
+        botColor,
+        makeAiMove,
+        moveDelayMs,
+      ],
     )
 
     const handleSquareClick = useCallback(
@@ -459,7 +464,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
             applyMoveWithPromotionChoice(selectedSquare, square)
           } else {
             applyMove(selectedSquare, square)
-            if (computerPlaysAs && gameRef.current.turn() === computerPlaysAs) {
+            if (botColor && gameRef.current.turn() === botColor) {
               setTimeout(() => void makeAiMove(moveDelayMs), moveDelayMs)
             }
           }
@@ -471,15 +476,15 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
         if (!piece) return
         const pieceColor = piece.pieceType.startsWith("w") ? "w" : "b"
         if (pieceColor !== game.turn()) return
-        if (userPlaysAs && pieceColor !== userPlaysAs) return
+        if (userColor && pieceColor !== userColor) return
 
         setSelectedSquare(square)
       },
       [
         canInteract,
         selectedSquare,
-        computerPlaysAs,
-        userPlaysAs,
+        botColor,
+        userColor,
         applyMove,
         applyMoveWithPromotionChoice,
         makeAiMove,
@@ -488,7 +493,7 @@ export const Chessboard = forwardRef<ChessboardRef, ChessboardProps>(
     )
 
     const boardOrientation: "white" | "black" =
-      userPlaysAs === "b" ? "black" : "white"
+      userColor === "b" ? "black" : "white"
 
     const chessboardOptions = useMemo(
       () => ({
